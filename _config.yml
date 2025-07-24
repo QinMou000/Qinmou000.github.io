@@ -108,7 +108,10 @@ deploy:
 
 style: black
 favicon: # TODO
-
+# 首页URL
+link: #TODO
+# 昵称
+author: Qin
 # 菜单栏配置
 menu:
   关于我: /about
