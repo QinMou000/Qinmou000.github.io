@@ -1,6 +1,6 @@
 ---
 title: C语言：sizeof和strlen的区别
-date: 2024-3-3
+date: 2024-03-03
 categories:
   - C语言
 ---

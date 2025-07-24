@@ -1,6 +1,6 @@
 ---
 title: Linux：进程信号
-date: 2025-6-29
+date: 2025-06-29
 categories:
   - Linux
   - 操作系统

@@ -1,6 +1,6 @@
 ---
 title: C语言：循环
-date: 2023-12-9
+date: 2023-12-09
 categories:
   - C语言
 ---

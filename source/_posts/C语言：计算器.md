@@ -1,6 +1,6 @@
 ---
 title: C语言：计算器
-date: 2024-2-6
+date: 2024-02-06
 categories:
   - C语言
 ---

@@ -1,6 +1,6 @@
 ---
 title: C语言：的文件和文件操作
-date: 2024-3-30
+date: 2024-03-30
 categories:
   - C语言
 ---

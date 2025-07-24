@@ -1,6 +1,6 @@
 ---
 title: C语言：分支
-date: 2023-12-6
+date: 2023-12-06
 categories:
   - C语言
 ---

@@ -1,6 +1,6 @@
 ---
 title: C语言：计算器（回调）
-date: 2024-2-7
+date: 2024-02-07
 categories:
   - C语言
 ---
