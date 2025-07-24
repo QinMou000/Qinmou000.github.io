@@ -27,13 +27,13 @@ favicon: /img/favicon.ico
 # 菜单栏配置
 menu:
   关于我👀: /about
-  访问主站🎉: https://liuxunzhuo.tech
+  Gitee🎉: https://gitee.com/wang-qin928
   GitHub🐒: https://github.com/QinMou000
 
 # 做了域名限制，请改成自己的 KEY
 # 若关闭valine 设置enable为false∂
 valine:
-  enable: true
+  enable: false
   appId: NOsswOncKgc8HOxqo9oxIWlX-gzGzoHsz
   appKey: z1FihjWEbS8uIfUQdmCtK7zz
 
