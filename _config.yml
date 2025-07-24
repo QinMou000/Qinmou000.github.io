@@ -44,7 +44,9 @@ post_asset_folder: false
 relative_link: false
 future: true
 syntax_highlighter: highlight.js
+# 代码高亮 ｜ Code Highlight
 highlight:
+  enable: true
   line_number: true
   auto_detect: false
   tab_replace: ''
@@ -128,7 +130,3 @@ valine:
   appId: # TODO
   appKey: # TODO
 
-
-# 代码高亮 ｜ Code Highlight
-highlight:
-  enable: true
