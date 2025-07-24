@@ -1,5 +1,5 @@
 ---
-title:C语言：库函数qsort
+title: C语言：库函数qsort
 date: 2024-3-2
 categories:
   - C语言
