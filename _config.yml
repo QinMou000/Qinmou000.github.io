@@ -7,7 +7,6 @@ title: 汪钦的博客
 subtitle: '分享一些没用的东西'
 description: ''
 keywords:
-author: 汪钦
 language: zh-Hans
 timezone: ''
 
@@ -104,32 +103,3 @@ theme: hexo-theme-coder 2
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
-
-
-style: black
-favicon: # TODO
-# 首页URL
-link: #TODO
-# 昵称
-author: Qin
-# 菜单栏配置
-menu:
-  关于我: /about
-  访问主站: # TODO
-  GitHub: https://github.com/QinMou000
-
-# 站内关键词搜索 | Local Search
-search:
-  enable: true
-  path: search.xml
-  field: post
-  # onload: true
-
-# Valine 评论系统 | Comments of Valine
-## 请改成自己的 KEY ｜ Replace Your Own Key
-## 若关闭valine 设置enable为false 
-valine:
-  enable: true
-  appId: # TODO
-  appKey: # TODO
-
