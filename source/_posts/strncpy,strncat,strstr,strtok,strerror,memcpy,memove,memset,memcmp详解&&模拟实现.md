@@ -1,10 +1,10 @@
 ---
-title: C语言字符函数strncpy,strncat,strstr,strtok,strerror内存函数memcpy，memove，memset，memcmp详解||模拟实现
+title: strncpy,strncat,strstr,strtok,strerror,memcpy,memove,memset,memcmp详解&&模拟实现
 date: 2024-03-15
 categories:
   - C语言
 ---
-# C语言字符函数strncpy,strncat,strstr,strtok,strerror内存函数memcpy，memove，memset，memcmp详解||模拟实现
+# strncpy,strncat,strstr,strtok,strerror,memcpy,memove,memset,memcmp详解&&模拟实现
 
 # strncpy：
 
