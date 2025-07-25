@@ -17,8 +17,6 @@ if(判断)
     表达式
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 也就是说当判断为真的时候程序就会执行if后面的内容。
 
 例：
@@ -35,8 +33,6 @@ int mian()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 此代码判断了一个数是否为偶数。在此代码中 x%2==0 非常容易写成 x%=0。此处注意"="和 "=="的区别。
 
@@ -55,8 +51,6 @@ int mian()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 else后面的语句是当if的判断语句为假时执行
 
@@ -81,9 +75,6 @@ int main()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 诸如此类当我们面对有很多情况需要判断时可以使用
 
 ```cpp
@@ -103,7 +94,6 @@ else
 表达式
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 这样来进行判断。
 
@@ -122,7 +112,6 @@ else
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 此代码的运行结果为void。因为在C语言中else 总是跟最接近的 if 匹配。终归来说是这段代码的格式问题，导致容易误判。
 
@@ -139,7 +128,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 如果写成这样，就增加了可读性。
 
@@ -164,7 +152,6 @@ default:statement;break;
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 #### switch中的break
 
@@ -188,7 +175,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ```cpp
 int main()
@@ -210,7 +196,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 注：每个case语句写完后要加上break跳出语句。
 
@@ -238,7 +223,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 可以将上面的代码修改。如果输入1~5则输出 '上学'，输入6，7输出 '放假'。如果输入的数字不是在1~7那么输出 '输入错误'。
 
@@ -250,4 +234,4 @@ int main()
 
 否则因为case从上到下执行，就会出现此类情况：
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/e059601982a78cceb3e378ae4a78cbe5.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/e059601982a78cceb3e378ae4a78cbe5.png)

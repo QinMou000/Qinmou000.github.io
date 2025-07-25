@@ -29,7 +29,6 @@ int find_mine_count(char mine[ROWS][COLS], int x, int y)
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ##     话不多说上代码！
 
@@ -155,7 +154,6 @@ void find_mine(char mine[ROWS][COLS],char show[ROWS][COLS],int row, int col)
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ###  head.h
 
@@ -192,7 +190,6 @@ void set_mine(char board[ROWS][COLS], int row, int col);
 void find_mine(char mine[ROWS][COLS], char show[ROWS][COLS], int row, int col);
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ###  test.c
 
@@ -243,8 +240,8 @@ int main()
 	return 0;
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 ## 这个版本的扫雷游戏只是最简版本，后续还可以添加其他有趣功能：
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/2169590e4c7f1ad17c6573517e229fb1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/2169590e4c7f1ad17c6573517e229fb1.png)

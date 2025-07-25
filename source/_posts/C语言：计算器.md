@@ -165,6 +165,4 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 **如果有什么错误，欢迎指出，如果有帮助，点个赞，谢谢。**

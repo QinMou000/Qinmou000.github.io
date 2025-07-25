@@ -35,7 +35,7 @@ size_t my_strlen(char* s)//指针-指针
 	return s - tmp;
 }
 ```
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 # 模拟实现strcpy
 
@@ -49,7 +49,7 @@ char* my_strcpy(char* s1, const char* s2)//模拟实现strcpy
 	return tmp;
 }
 ```
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 # 模拟实现strcat
 
@@ -65,6 +65,6 @@ char* my_strcat(char* s1, const char* s2)//模拟实现strcat
 	return tmp;
 }
 ```
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 本博客旨在记录学习过程，以后忘了随时来看。

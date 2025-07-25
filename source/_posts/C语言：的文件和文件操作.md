@@ -64,12 +64,9 @@ categories:
 ```cpp
 FILE* pf;//⽂件指针变量
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 定义pf是⼀个指向FILE类型数据的指针变量。可以使pf指向某个⽂件的⽂件信息区（是⼀个结构体变量）。通过该⽂件信息区中的信息就能够访问该⽂件。也就是说，**通过⽂件指针变量能够间接找到与它关联的⽂件。**
 
-***\*![img](https://raw.githubusercontent.com/QinMou000/pic/main/55c1492f6b9e89d559c113ea41442e5d.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑\****
+***\*![img](https://raw.githubusercontent.com/QinMou000/pic/main/55c1492f6b9e89d559c113ea41442e5d.png)
 
 # ⽂件的打开和关闭
 
@@ -84,8 +81,6 @@ FILE * fopen ( const char * filename, const char * mode );
 int fclose ( FILE * stream );
 //一般都会在后面将文件指针置空防止野指针的出现
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 mode表⽰⽂件的打开模式，下⾯都是⽂件的打开模式：
 
@@ -130,8 +125,6 @@ int main ()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 # 顺序读写函数介绍
 
 | 函数名  | 功能           | 适⽤于     |
@@ -162,8 +155,6 @@ scanf/fscanf/sscanf
 int fseek ( FILE * stream, long int offset, int origin );
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 示例代码：
 
 ```cpp
@@ -187,11 +178,9 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 运行后的example.txt
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/73b69c52510d2c13680f3f6d86441437.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/73b69c52510d2c13680f3f6d86441437.png)
 
 ##  ftell
 
@@ -220,11 +209,10 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 运行结果：
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/d9fbdefd939213a5089bee21e60c5c04.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/d9fbdefd939213a5089bee21e60c5c04.jpeg)
 
 ##  rewind
 
@@ -233,8 +221,6 @@ int main()
 ```cpp
 void rewind ( FILE * stream );
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 示例代码：
 
@@ -258,9 +244,6 @@ int main()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 # ⽂件读取结束的判定
 
 ## 被错误使⽤的 feof 
@@ -307,8 +290,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 二进制文件示例代码：
 
 ```cpp
@@ -341,8 +322,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 # ⽂件缓冲区
 
 ANSIC标准采⽤“缓冲⽂件系统”处理的数据⽂件的，所谓缓冲⽂件系统是指系统⾃动地在内存中为程序中每⼀个正在使⽤的⽂件开辟⼀块“⽂件缓冲区”。从内存向磁盘输出数据会先送到内存中的缓冲区，装满缓冲区后才⼀起送到磁盘上。如果从磁盘向计算机读⼊数据，则从磁盘⽂件中读取数据输⼊到内存缓冲区（充满缓冲区），然后再从缓冲区逐个地将数据送到程序数据区（程序变量等）。缓冲区的⼤⼩根据C编译系统决定的。(大家可以复制下面这段代码，放在编译器里面自己试一下)
@@ -368,7 +347,5 @@ int main()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 **本期博客到这里就结束了，如果有什么错误，欢迎指出，如果对你有帮助，请点个赞，谢谢！**

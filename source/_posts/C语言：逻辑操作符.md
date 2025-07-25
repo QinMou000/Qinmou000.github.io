@@ -44,8 +44,6 @@ int main()//Dear submission
 
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ## 逻辑取反操作符:!
 
 例如有一个变量flag，如果flag为真，那么！flag就为假。如果flag为假，那么！flag就为真
@@ -70,15 +68,12 @@ int main()//Dear submission
 if(a >= 3 && a <= 5)
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 在此代码中如果a等于二，那么a>=就不成立，就不会再判断执行a<=5了。
 
 ```cpp
 if(a==1||a==2||a==3)
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 那么对于||。如果a等于1，a==1成立，也不会再执行判断后面的表达式了。
 
@@ -93,7 +88,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 **根据上面的介绍，这段代码的运行结果是：**
 

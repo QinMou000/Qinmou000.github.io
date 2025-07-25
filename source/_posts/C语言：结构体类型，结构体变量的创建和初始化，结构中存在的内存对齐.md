@@ -19,8 +19,6 @@ struct tag
 }variable-list;
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 例如声明一本书：
 
 ```cpp
@@ -32,8 +30,6 @@ struct Book
     int id[12] //编号
 };//别忘了分号！！！
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 创建和初始化 
 
@@ -68,7 +64,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 结构体的特殊声明
 
@@ -89,7 +84,6 @@ struct
 }a[20], *p;
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 在上面的代码的基础上 *p = &x; 是不合法的。
 
@@ -111,7 +105,6 @@ struct Node
 };
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 这样定义是不行的，因为⼀个结构体中再包含⼀个同类型的结构体变量，这样结构体变量的⼤
  ⼩就会⽆穷的⼤，是不合理的。
@@ -125,7 +118,7 @@ struct Node
 };
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 在结构体⾃引⽤使⽤的过程中，夹杂了 typedef 对匿名结构体类型重命名，也容易引⼊问题，看看
  下⾯的代码，可⾏吗？
@@ -138,7 +131,6 @@ typedef struct
 }Node;
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 
  答案是不⾏的，因为Node是对前⾯的匿名结构体类型的重命名产⽣的，但是在匿名结构体内部提前使⽤Node类型来创建成员变量，这是不⾏的。
@@ -153,7 +145,6 @@ typedef struct Node
 }Node;
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 # 2.结构体内存对⻬
 
@@ -207,7 +198,6 @@ struct S4
     printf("%d\n", sizeof(struct S4));// 32
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 为什么存在内存对⻬?
 
@@ -239,7 +229,6 @@ struct S2
 //S1和S2类型的成员⼀模⼀样，但是S1和S2所占空间的⼤⼩有了⼀些区别。
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 修改默认对⻬数
 
@@ -262,7 +251,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 结构体在对⻬⽅式不合适的时候，我们可以⾃⼰更改默认对⻬数
 
@@ -293,7 +281,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 为什么我们说结构传参的时候传地址比较好呢？在传结构体的时候相当于将原结构拷贝了一次，重新放在了一个地址上，占用了额外的空间。
 
@@ -327,7 +314,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 位段的内存分配
 
@@ -352,9 +338,11 @@ struct S s = {0};
 //空间是如何开辟的？
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-## ![img](https://raw.githubusercontent.com/QinMou000/pic/main/34192674724fa75542432a05d2adb083.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑  位段的跨平台问题
+
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/34192674724fa75542432a05d2adb083.png)
+
+## 位段的跨平台问题
 
 1. int 位段被当成有符号数还是⽆符号数是不确定的。
 2. 位段中最⼤位的数⽬不能确定。（16位机器最⼤16，32位机器最⼤32，写成27，在16位机器会
@@ -394,7 +382,5 @@ int main()
     return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 **本期博客到这里就结束了，如果有什么错误，欢迎指出，如果对你有帮助，请点个赞，谢谢！**

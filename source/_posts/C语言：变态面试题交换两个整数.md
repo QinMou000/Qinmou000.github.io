@@ -32,8 +32,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ### 第二种：
 
 ```cpp
@@ -49,8 +47,6 @@ int main()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 对于第二种，就有点难理解了，但是仔细去琢磨，还是有迹可循的，在两个printf语句中间的第一行代码，将x和y的和赋值给了x。
 
@@ -79,8 +75,6 @@ int main()
 	return 0;
 }
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 **懵逼树下懵逼果，懵逼树前你和我。**
 

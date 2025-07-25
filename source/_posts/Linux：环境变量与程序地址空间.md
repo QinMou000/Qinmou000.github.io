@@ -5,7 +5,7 @@ categories:
   - Linux
   - 操作系统
 ---
-> ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+> ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)
 >
 > ✨✨所属专栏：[Linux](https://blog.csdn.net/2301_80194476/category_12799988.html)✨✨
 >
@@ -29,7 +29,6 @@ categories:
 echo $NAME // 环境变量名
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 其中$符号的意思就是拿到后面跟的东西的值。
 
@@ -50,7 +49,7 @@ echo $NAME // 环境变量名
 
  查看环境变量PATH
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/31b8db9a2c404c3c8dfb31272a5b6f45.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/31b8db9a2c404c3c8dfb31272a5b6f45.png)
 
 那这一连串的地址究竟是指什么呢？在回答这个问题之前，我们首先要思考为什么输入指令时，直接输入指令名称即可如ls，而执行我们自己的可执行程序必须在前面加./表示当前路径呢？如./a.out。
 
@@ -58,13 +57,13 @@ echo $NAME // 环境变量名
 
 如果我们将自己编译的程序添加到这个PATH下或者改变PATH到有我们程序的路径，这样运行我们自己的程序就也不用加 ./ 了
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/4cdf49d818364f0db676676b0198fc74.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/4cdf49d818364f0db676676b0198fc74.png)
 
 ## 指令
 
 - 指令env：显示所有的环境变量。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/2be0fd29c3bf4138893968c29ecaeb5c.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/2be0fd29c3bf4138893968c29ecaeb5c.png)
 
 - 指令export：设置一个新的环境变量。
 
@@ -72,19 +71,17 @@ echo $NAME // 环境变量名
 export PATH=$PATH:/home/ubuntu/Code/progress_进度条
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/affe8d99c45f4a7cb8ac85187f892aa4.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/affe8d99c45f4a7cb8ac85187f892aa4.png)
 
 - 指令set：显示本地定义的shell变量和环境变量。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/deb1aef482374f729c4a36dcf0d6bdd7.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/deb1aef482374f729c4a36dcf0d6bdd7.png)
 
 - 指令unset：取消本地变量与环境变量。
 
 ## 环境变量的组织方式
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/7836126f74ea4ab495d463241cf96b93.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/7836126f74ea4ab495d463241cf96b93.png)
 
 ## main函数的三个参数
 
@@ -94,7 +91,6 @@ main函数其实是有参数的，但我们不常用，以下是main函数的原
 int main(int argc,char* argv[],char* env[])
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 - argc：代表命令行有效参数的个数。
 - argv : 指向命令行参数。
@@ -115,9 +111,8 @@ int main(int argc,char* argv[])
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/abaedf2f140948199b65e4ce68f7c641.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/abaedf2f140948199b65e4ce68f7c641.png)
 
 一共四个有效参数，第一个为./test ，第二个为-a，第三个为-b，第四个为-c，这三个参数都被保存在字符指针数组argv里面，argv数组的最后一个元素是NULL。
 
@@ -135,9 +130,7 @@ int main(int argc, char *argv[], char *env[])
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/911bdf27a8344b67b3952a6efc50eaf5.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/911bdf27a8344b67b3952a6efc50eaf5.png)
 
 运行程序将显示所有的环境变。 
 
@@ -156,13 +149,12 @@ int main(int argc, char* argv[])
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 结果当然也是打印所有的环境变量 
 
  函数getenv，你只需要给他传环境变量的名字，他就能获取对应的环境变量返回给你。
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/2cb046bf1cad4a27aec1a827684bab0d.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/2cb046bf1cad4a27aec1a827684bab0d.png)
 
 ```cpp
 int main(int argc, char *argv[], char *env[])
@@ -172,15 +164,14 @@ int main(int argc, char *argv[], char *env[])
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/1875cee71c6b4a8f9c91ffde13826231.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/1875cee71c6b4a8f9c91ffde13826231.png)
 
 #  程序地址空间
 
 在我们之前的学习中，下面的图片想必都不陌生 
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/cff3d37490394348b38876e5c0383835.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/cff3d37490394348b38876e5c0383835.jpeg)
 
 其中堆栈相对而生，栈向下生长(在栈上的变量先定义的地址更大)，堆向上生长(在堆上的变量先定义的地址更小)。
 
@@ -226,9 +217,8 @@ int main(int argc,char* argv[],char* env[])
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/402f8ef213504f2e96414da12dd5e6cc.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/402f8ef213504f2e96414da12dd5e6cc.png)
 
  再来看这样一段代码：
 
@@ -259,9 +249,9 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/03b0a5d4cdea445080398bd7fd4117ea.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/03b0a5d4cdea445080398bd7fd4117ea.png)
 
 我们发现，当数据发生修改的时，在父子进程当中的同一个变量，地址是相同的，但是值却是不同的，这明显不符合我们的认知，因为同一个地址的值怎么可能不同呢。
 
@@ -300,20 +290,18 @@ struct mm_struct {
 };
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 在结构体mm_struct当中，每一个的区域都代表一个虚拟地址，这些虚拟地址通过页表映射与物理内存建立联系。由于虚拟地址大小一般为4G，是由0x00000000到0xffffffff线性增长的，所以虚拟地址又叫做线性地址。
 
 每个进程被创建时，其对应的进程控制块task_struct和进程地址空间mm_struct也随之被创建。而操作系统就可以通过进程的task_struct找到对应的mm_struct(因为task_struct有一个结构体指针指向的是mm_struct)。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/db1eb3b81ee54b1787236520f24cfc46.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/db1eb3b81ee54b1787236520f24cfc46.png)
  然后我们就可以更加深入解释上面地址相同，值却不同的现象：首先父进程有自己的task_struct和mm_struct，该父进程创建的子进程也会有属于其自己的task_struct和mm_struct，父子进程的进程地址空间当中的各个虚拟地址分别通过页表映射到对应的物理内存，如下图：
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/2669c2a2679f4cd48e21166017e5b674.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/2669c2a2679f4cd48e21166017e5b674.png)
 
 此时若是将g_val改为200，此时为了维护进程的独立性，不影响父进程的数据，子进程就会发生写实拷贝。 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/0bb36184165949c38306c6226c5d032f.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/0bb36184165949c38306c6226c5d032f.png)
 
 发生写时拷贝是因为进程间具有独立性。多进程运行，需要独享各种资源，运行期间互不干扰，不能让子进程的修改影响到父进程。 
 

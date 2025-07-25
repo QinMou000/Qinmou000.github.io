@@ -19,8 +19,6 @@ if(表达式)
     语句
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ​    而whlie语句：
 
 ```cpp
@@ -28,7 +26,6 @@ while(表达式)
     语句//如果有多条语句需要用{}括起来
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ​    就是说如果if后面的表达式为真那么就会执行后面的语句，while后面的表达式为真的话也会执行语句，当执行完语句后会返回再一次判断表达式的真假。它们的区别是while语句是可以进行循环的操作的。
 
@@ -43,7 +40,6 @@ int main
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ​    也就是说如果while后面的表达式一直为真（==1）就会一直执行语句“肉末茄子报吃”
 
@@ -66,7 +62,7 @@ int main()
 
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 ### for循环
 
@@ -77,7 +73,7 @@ for(表达式1;表达式2;表达式3)
     语句//如果有多条语句可以用{}括起来
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 表达式1：**⽤于循环变量的初始化** 
 
@@ -105,13 +101,13 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 ### 对比while与for
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/621ec253a681bfe9ce72853622ce3a9b.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/621ec253a681bfe9ce72853622ce3a9b.jpeg)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/030991e34214d7965838ec594c1ffc67.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/030991e34214d7965838ec594c1ffc67.jpeg)
 
 ​    由于for循环的初始化，判断，调整相对与while来说较为集中，便于维护所以在形式上for要优于while。
 
@@ -125,7 +121,6 @@ do
 while(表达式)；
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ​    for和while是先判断再进循环，而do-while是先进入循环体执行语句后再进行判断，表达式为真（==1）则进行下一次循环，为假则结束循环。（注意分号）
 
@@ -149,7 +144,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ### break和continue
 
@@ -170,9 +164,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/7441b2295ab51c2e6fe84b77f71bf397.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/7441b2295ab51c2e6fe84b77f71bf397.png)
 
 ​    代码的执行结果是在屏幕上打印1 2 3 
 
@@ -194,9 +187,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/ebd58716a96faf2c58f001fd6c05b344.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/ebd58716a96faf2c58f001fd6c05b344.png)
 
 ​    虽然这个代码的运行结果也是1 2 3 但是程序一直没有跳出循环，大家可以自行比较这两段代码的运行结果的差异。
 
@@ -216,9 +208,6 @@ int main()
 }//结果是打印三次“肉末茄子报吃”
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-
 
 ```cpp
 int main()
@@ -234,7 +223,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ​    而换成continue的打印结果是 1 2 3 5 6 7 8 9 10 ，因为这里直接跳过了printf语句，直接到了自加环节。
 
@@ -272,7 +260,6 @@ next:
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 要注意的是如果在一个函数中大量的使用goto语句会让逻辑非常的混乱，但是在多层循环中想要快速跳出就可以使用goto：
 
@@ -295,6 +282,5 @@ for()
 next:
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 **非常好用！**

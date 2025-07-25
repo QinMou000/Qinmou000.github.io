@@ -22,8 +22,6 @@ ubuntu@VM-4-4-ubuntu:~/Code/25/2_13$ file test.o
 test.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ![1740388705932](https://raw.githubusercontent.com/QinMou000/pic/main/1740388705932.jpg)
 
  要理解编译的细节，就先要了解`ELF`文件，以下四种都是`ELF`文件：
@@ -193,8 +191,6 @@ Program Headers:
    12     .init_array .fini_array .dynamic .got
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 > **为什么要将`Section`合并成为`Segment` ？**
 >
 > - `Section`合并的主要原因是为了减少⻚⾯碎⽚，提⾼内存使⽤效率。如果不进⾏合并，假设⻚⾯⼤⼩为`4096`字节（内存块基本⼤⼩，加载，管理的基本单位），如果`.text`部分为`4097`字节，`.init`部分为`512`字节，那么它们将占⽤3个⻚⾯，⽽合并后，它们只需2个⻚⾯。
@@ -283,7 +279,6 @@ Number of section headers: 31
 Section header string table index: 30
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 #  理解连接与加载
 

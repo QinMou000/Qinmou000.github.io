@@ -32,7 +32,7 @@ categories:
 
 我们先来看一个细节：
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/9ec13d9b6b258a82b2887e341d5d431d.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/9ec13d9b6b258a82b2887e341d5d431d.png)
 
 调试的时候，我们可以看到在a中的 0x11223344 这个数字是按照字节为单位，倒着存储的。这是为什么呢？
 
@@ -72,16 +72,14 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 结果： 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/cb117f7a454ca0ba1e7902d548fa65bd.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/cb117f7a454ca0ba1e7902d548fa65bd.png)
 
  直接看肯定是看不懂的，我们先了解浮点数是如何在内存存储的。
 
 根据国际标准IEEE（电⽓和电⼦⼯程协会）754，任意⼀个⼆进制浮点数V可以表⽰成下⾯的形式：
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/01590aade7ae7421107b66f88a663465.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)​编辑
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/01590aade7ae7421107b66f88a663465.png)
 
 • (-1)S 表⽰符号位，当S=0，V为正数；当S=1，V为负数
  • M表⽰有效数字，M是⼤于等于1，⼩于2的
@@ -97,12 +95,9 @@ IEEE754规定：
 ## 3.1 具体存储过程：
 
 IEEE754对有效数字M和指数E，还有⼀些特别规定。
- 前⾯说过， 1≤M<2 ，也就是说，M可以写成 1.xxxxxx 的形式，其中 xxxxxx 表⽰⼩数部IEEE754规定，在计算机内部保存M时，默认这个数的第⼀位总是1，因此可以被舍去，只保存后⾯xxxxxx部分。⽐如保存1.01的时候，只保存01，等到读取的时候，再把第⼀位的1加上去。这样做的⽬
- 的，是节省1位有效数字。以32位浮点数为例，留给M只有23位，**将第⼀位的1舍去**以后，等于可以保存24位有效数字。
+ 前⾯说过， 1≤M<2 ，也就是说，M可以写成 1.xxxxxx 的形式，其中 xxxxxx 表⽰⼩数部IEEE754规定，在计算机内部保存M时，默认这个数的第⼀位总是1，因此可以被舍去，只保存后⾯xxxxxx部分。⽐如保存1.01的时候，只保存01，等到读取的时候，再把第⼀位的1加上去。这样做的⽬的，是节省1位有效数字。以32位浮点数为例，留给M只有23位，**将第⼀位的1舍去**以后，等于可以保存24位有效数字。
 
-⾄于指数E，情况就⽐较复杂
- ⾸先，E为⼀个⽆符号整数（unsigned int）
- 这意味着，如果E为8位，它的取值范围为0~255；如果E为11位，它的取值范围为0~2047。但是，我们知道，科学计数法中的E是可以出现负数的，所以IEEE754规定，存⼊内存时E的真实值必须再加上⼀个中间数，**对于8位的E，这个中间数是127；对于11位的E，这个中间数是1023**。⽐如，2^10的E是10，所以保存成32位浮点数时，必须保存成10+127=137，即10001001。
+⾄于指数E，情况就⽐较复杂，⾸先，E为⼀个⽆符号整数（unsigned int） 这意味着，如果E为8位，它的取值范围为0~ 255；如果E为11位，它的取值范围为0 ~ 2047。但是，我们知道，科学计数法中的E是可以出现负数的，所以IEEE754规定，存⼊内存时E的真实值必须再加上⼀个中间数，**对于8位的E，这个中间数是127；对于11位的E，这个中间数是1023**。⽐如，2^10的E是10，所以保存成32位浮点数时，必须保存成10+127=137，即10001001。
 
 ## 3.2 浮点数读取过程
 

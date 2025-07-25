@@ -12,8 +12,6 @@ categories:
 
 ![img](https://raw.githubusercontent.com/QinMou000/pic/main/d1aa13d9465af1bb76bea7e9f341e609.png)
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
-
 在C++官网[cppreference.com](https://en.cppreference.com/)上可以找到以上结果，翻译过来就是使用qsort要包含**<stdlib.h>**文件。
 
 这个函数有四个参数qsort(void * base , size_t num, size_t size, int (*cmp)(const void* ,const void* ) )，第一个参数base 是一个指针，输入要排序数组的首元素的地址。
@@ -150,7 +148,6 @@ int main()
 #endif
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 第一段和第二段代码（用/*……*/分段）分别展示了使用qsort对整型和结构体进行排序。你可以从这里了解到关于qsort具体是如何传参，如何使用，你也可以自己试着用qsort来进行排序。
 

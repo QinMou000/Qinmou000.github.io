@@ -6,7 +6,7 @@ categories:
 ---
 > # C语言：程序编译和链接
 >
->  ![img](https://raw.githubusercontent.com/QinMou000/pic/main/6f2b920cd38b273e9349974209147fee.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+>  ![img](https://raw.githubusercontent.com/QinMou000/pic/main/6f2b920cd38b273e9349974209147fee.png)
 >
 > ✨✨所属专栏：[C语言](https://blog.csdn.net/2301_80194476/category_12649617.html)✨✨
 >
@@ -16,7 +16,7 @@ categories:
  第1种是翻译环境，在这个环境中源代码被转换为可执⾏的机器指令（⼆进制指令）。
  第2种是执⾏环境，它⽤于实际执⾏代码
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/4c2eb644e2ba416c4eed6d8e9d603f5a.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/4c2eb644e2ba416c4eed6d8e9d603f5a.jpeg)
 
 # 翻译环境
 
@@ -28,7 +28,7 @@ categories:
  • 链接库是指运⾏时库(它是⽀持程序运⾏的基本函数集合)或者第三⽅库
  如果再把编译器展开成3个过程，那就变成了下⾯的过程：
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/250a17c957d22922bf3700a72913ec02.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/250a17c957d22922bf3700a72913ec02.jpeg)
 
 ## 预处理（预编译）
 
@@ -55,15 +55,11 @@ categories:
 gcc -S test.i -o test.s
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 对下⾯代码进⾏编译的时候，会怎么做呢？假设有下⾯的代码
 
 ```cpp
 array[index] = (index+4)*(2+6)
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ### 词法分析：
 
@@ -93,14 +89,14 @@ array[index] = (index+4)*(2+6)
 
 接下来语法分析器，将对扫描产⽣的记号进⾏语法分析，从⽽产⽣语法树。这些语法树是以表达式为节点的树。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/b8afc81f7bb8a47609ff5568b3cecb52.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/b8afc81f7bb8a47609ff5568b3cecb52.jpeg)
 
 ### 语义分析：
 
 由语义分析器来完成语义分析，即对表达式的语法层⾯分析。编译器所能做的分析是语义的静态分
  析。静态语义分析通常包括声明和类型的匹配，类型的转换等。这个阶段会报告错误的语法信息
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/c976c8c6b01181ad35eea43187290aa9.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/c976c8c6b01181ad35eea43187290aa9.png)
 
 ## 汇编
 
@@ -110,8 +106,6 @@ array[index] = (index+4)*(2+6)
 ```cpp
 gcc -c test.s -o test.o
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 链接
 
@@ -140,8 +134,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 add.c
 
 ```cpp
@@ -152,18 +144,7 @@ int Add(int x, int y)
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-我们已经知道，每个源⽂件都是单独经过编译器处理⽣成对应的⽬标⽂件。
- test.c 经过编译器处理⽣成test.o 
- add.c 经过编译器处理⽣成add.o 
- 我们在 test.c 的⽂件中使⽤了 add.c ⽂件中的 Add 函数和 g_val 变量。
- 我们在 test.c ⽂件中每⼀次使⽤ Add 函数和 g_val 的时候必须确切的知道 Add 和 g_val 的地
- 址，但是由于每个⽂件是单独编译的，在编译器编译 test.c 的时候并不知道 Add 函数和 g_val
- 变量的地址，所以暂时把调⽤ Add 的指令的⽬标地址和 g_val 的地址搁置。等待最后链接的时候由链接器根据引⽤的符号 Add 在其他模块中查找 Add 函数的地址，然后将 test.c 中所有引⽤到
- Add 的指令重新修正，让他们的⽬标地址为真正的 Add 函数的地址，对于全局变量 g_val 也是类
- 似的⽅法来修正地址。这个地址修正的过程也被叫做：重定位。
- 前⾯我们⾮常简洁的讲解了⼀个C的程序是如何编译和链接，到最终⽣成可执⾏程序的过程，其实很多内部的细节⽆法展开讲解。⽐如：⽬标⽂件的格式elf，链接底层实现中的空间与地址分配，符号解析和重定位等，如果你有兴趣，可以看《程序的⾃我修养》⼀书来详细了解。
+我们已经知道，每个源⽂件都是单独经过编译器处理⽣成对应的⽬标⽂件。test.c 经过编译器处理⽣成test.o  add.c 经过编译器处理⽣成add.o  我们在 test.c 的⽂件中使⽤了 add.c ⽂件中的 Add 函数和 g_val 变量。 我们在 test.c ⽂件中每⼀次使⽤ Add 函数和 g_val 的时候必须确切的知道 Add 和 g_val 的地 址，但是由于每个⽂件是单独编译的，在编译器编译 test.c 的时候并不知道 Add 函数和 g_val 变量的地址，所以暂时把调⽤ Add 的指令的⽬标地址和 g_val 的地址搁置。等待最后链接的时候由链接器根据引⽤的符号 Add 在其他模中查找 Add 函数的地址，然后将 test.c 中所有引⽤到 Add 的指令重新修正，让他们的⽬标地址为真正的 Add 函数的地址，对于全局变量 g_val 也是类 似的⽅法来修正地址。这个地址修正的过程也被叫做：重定位。 前⾯我们⾮常简洁的讲解了⼀个C的程序是如何编译和链接，到最终⽣成可执⾏程序的过程，其实很多内部的细节⽆法展开讲解。⽐如：⽬标⽂件的格式elf，链接底层实现中的空间与地址分配，符号解析和重定位等，如果你有兴趣，可以看《程序的⾃我修养》⼀书来详细了解。
 
 # 运⾏环境
 
