@@ -26,7 +26,7 @@ favicon: /img/favicon.ico
 
 # 菜单栏配置
 menu:
-  关于我👀: /about
+  关于我👀: http://wangruqin.site/
   Gitee🎉: https://gitee.com/wang-qin928
   GitHub🐒: https://github.com/QinMou000
 
