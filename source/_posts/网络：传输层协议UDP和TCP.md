@@ -106,6 +106,8 @@ categories:
 
 ### 报文格式
 
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/6v24jawhpy3hi_8298a25c5c754e8db57ee341cb9e1992.png)
+
 ![TCP报头格式](https://raw.githubusercontent.com/QinMou000/pic/main/image-20251011190615959.png)
 
 - 源端口、目的端口
