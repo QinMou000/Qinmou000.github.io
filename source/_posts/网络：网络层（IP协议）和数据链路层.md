@@ -1,5 +1,5 @@
 ---
-title: 网络：网络层（IP协议）和数据链路层❤
+title: 网络：网络层（IP协议）和数据链路层
 date: 2025-10-26
 categories:
   - Linux
