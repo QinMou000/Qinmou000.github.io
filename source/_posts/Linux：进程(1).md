@@ -5,7 +5,7 @@ categories:
   - Linux
   - 操作系统
 ---
->  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)=
+>  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)
 
 # 冯诺依曼体系结构 
 
