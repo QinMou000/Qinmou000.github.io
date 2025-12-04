@@ -37,7 +37,7 @@ int main()
 
 ![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
- 我们可以通过*echo $?* 查看最近进程的退出码
+ 我们可以通过`*echo $?*` 查看最近进程的退出码
 
 ![img](https://raw.githubusercontent.com/QinMou000/pic/main/03b7afe88bb64e448fe869709cb19fcb.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
