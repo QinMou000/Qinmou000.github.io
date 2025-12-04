@@ -5,7 +5,7 @@ categories:
   - Linux
   - 操作系统
 ---
->  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+>  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)
 
 #  进程退出
 
@@ -35,11 +35,9 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
  我们可以通过`*echo $?*` 查看最近进程的退出码
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/03b7afe88bb64e448fe869709cb19fcb.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/03b7afe88bb64e448fe869709cb19fcb.png)
 
 进程正常退出返回0，如果进程不是正常退出就会返回其对应的退出码，在C语言中我们可以通过*strerror*函数打印出对应的错误信息。
 
@@ -56,15 +54,14 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/ac24ef2674e04bfca4d146e606800736.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/ac24ef2674e04bfca4d146e606800736.png)
 
 需要注意的是： 退出码都有对应的字符串含义，帮助用户确认执行失败的原因，而这些退出码具体代表什么含义是人为规定的，不同环境下相同的退出码的字符串含义可能不同。 
 
 ## exit与_exit函数
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/b4c1f22f8fa94c60b0bd39d851da6d0a.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)![img](https://raw.githubusercontent.com/QinMou000/pic/main/4fd3eaae08674d1ab86e9761f9315f48.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/b4c1f22f8fa94c60b0bd39d851da6d0a.png)![img](https://raw.githubusercontent.com/QinMou000/pic/main/4fd3eaae08674d1ab86e9761f9315f48.png)
 
 *exit*函数可以在代码中的任何地方退出进程，并且*exit*函数在退出进程前会做一系列工作：
 
@@ -72,7 +69,7 @@ int main()
 2. 关闭所有打开的流，所有的缓存数据均被写入。
 3. 调用*_exit*函数终止进程。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/ab1683471b744225b8ed4364f448d53f.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/ab1683471b744225b8ed4364f448d53f.png)
 
  例如以下代码：
 
@@ -87,9 +84,7 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa6eefc6024d4fa585319dd950975138.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa6eefc6024d4fa585319dd950975138.png)
 
  如果我们使用的是*_exit*函数，那么进程就会直接退出，并不会做任何处理。（缓冲区不会刷新……）
 
@@ -104,9 +99,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/778623af0cbb4eb4b92c2ed9c1bcc41c.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/778623af0cbb4eb4b92c2ed9c1bcc41c.png)
 
 总结： 
 
@@ -121,7 +115,7 @@ int main()
 
 ##  怎么做？
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/e0787d8900424e78b416cc670948b8a3.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/e0787d8900424e78b416cc670948b8a3.png)
 
 ### status参数
 
@@ -131,7 +125,7 @@ int main()
 
 在*status的低16比特位当中，高8位表示进程的退出状态，即退出码。进程若是被信号所杀，则低7位表示终止信号，而第8位比特位是core dump标志。
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/0da76b59daa04202a318873aee47617c.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/0da76b59daa04202a318873aee47617c.png)
 
  一般我们可以通过相关的位运算得到进程的退出码与退出信号。
 
@@ -139,8 +133,6 @@ int main()
 exitCode = (status >> 8) & 0xFF; //退出码 11111111
 exitSignal = status & 0x7F;      //退出信号 01111111
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
  为了降低用户的使用成本，操作系统也为我们提供了两个宏表示对应的退出码与退出信号。
 
@@ -156,8 +148,6 @@ pid_t wait(int* status);
 // 参数:
 //     输出型参数，获取子进程退出状态,不关⼼则可以设置成为NULL
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
  下面的代码我们用父进程一直等待子进程，然后获取其退出信息。
 
@@ -203,17 +193,15 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
  子进程正常退出，父进程等待子进程退出后获取退出信息，没有出现僵尸。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/fe620805c8cd492bbd2c673fe0898426.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)![img](https://raw.githubusercontent.com/QinMou000/pic/main/68df940f240446b68ed4f737b69e9bed.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/fe620805c8cd492bbd2c673fe0898426.png)![img](https://raw.githubusercontent.com/QinMou000/pic/main/68df940f240446b68ed4f737b69e9bed.png)
 
 我们用*kiil -9*杀死父进程也能回收退出信息 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/5e6535b3898045a4998e35efe7cf3fdf.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/5e6535b3898045a4998e35efe7cf3fdf.png)
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/87a25e51653149bdbc8874505dab5a40.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/87a25e51653149bdbc8874505dab5a40.png)
 
 ### waitpid
 
@@ -238,7 +226,6 @@ pid_ t waitpid(pid_t pid, int *status, int options);
 //              若正常结束，则返回该子进程的ID。（非阻塞）
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 - 如果⼦进程已经退出，调⽤*wait*/*waitpid*时，*wait*/*waitpid*会⽴即返回，并且释放资源，获得⼦ 进程退出信息。 
 - 如果在任意时刻调⽤*wait*/*waitpid*，⼦进程存在且正常运⾏，则进程可能阻塞。 
@@ -283,7 +270,6 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
  并且我们还可以创建多个进程，父进程等待多个子进程。
 
@@ -327,9 +313,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/2fe5cd900b9148b3924ad608fbdd3413.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/2fe5cd900b9148b3924ad608fbdd3413.png)
 
 ## 非阻塞轮询 
 
@@ -385,9 +370,7 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/9286a8de1a2b4e0a8a344916b106d6ba.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/9286a8de1a2b4e0a8a344916b106d6ba.png)
 
 # 进程替换 
 
@@ -397,7 +380,7 @@ int main()
 
 当进程替换时，该进程的用户空间代码和数据完全被新程序替换，并从新程序的启动例程开始执行。
 
-![img](https://i-blog.csdnimg.cn/direct/4e68a9933a844b63b6c0d98ea9103c58.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/4e68a9933a844b63b6c0d98ea9103c58.png)
 
 如果父子进程共享数据与代码，当对子进程进行进程替换时就会发生写实拷贝，所以对子进程就行进程替换并不会影响父进程。 
 
@@ -405,7 +388,7 @@ int main()
 
 以下六个函数可以进行进程替换 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/7a7b346a05ec447dab9d0c891ecb69f1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/7a7b346a05ec447dab9d0c891ecb69f1.png)
 
  如果替换失败函数返回 -1 ，替换成功什么也不返回，如果要返回，那返回给谁呢？源程序的代码都被替换了。
 
@@ -471,9 +454,7 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/4c7664760a6d479383923c633e8e150e.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/4c7664760a6d479383923c633e8e150e.png)
 
 并且我们也可能通过该接口，调用其他语言的脚本，如python，shell脚本。
 
@@ -489,8 +470,6 @@ char* myenvp[] = { "MYVAL=2021", NULL };
 execle("./mycmd", "mycmd", NULL, myenvp);//执行./mycmd
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
 ### execv举例
 
 - *int execv(const char \*path, char \*const argv[]);* 
@@ -500,8 +479,6 @@ execle("./mycmd", "mycmd", NULL, myenvp);//执行./mycmd
 char* myargv[] = { "ls", "-a", "-i", "-l", NULL };
 execv("/usr/bin/ls", myargv);//执行ls -a -i -l
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
  事实上，在系统调用中，只有*execve*才是真正的系统调用，其他五个函数（如*execl、execle、execlp、execv、execvp*）都是对*execve*函数的封装，目的是为了满足不同用户的需求。这也导致了在*man*手册中，*execve*位于第 2 节，而其他五个函数在第 3 节。
 

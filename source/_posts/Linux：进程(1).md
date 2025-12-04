@@ -5,11 +5,12 @@ categories:
   - Linux
   - 操作系统
 ---
->  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编
+>  ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)=
 
 # 冯诺依曼体系结构 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/af470f5aa05f47eda8482f280888b6e9.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑现代计算机发展所遵循的基本结构形式始终是冯·诺依曼结构。这种结构特点是“程序存储，共享数据，顺序执行”，需要CPU从存储器取出指令和数据进行相应的计算。
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/af470f5aa05f47eda8482f280888b6e9.png)
+现代计算机发展所遵循的基本结构形式始终是冯·诺依曼结构。这种结构特点是“程序存储，共享数据，顺序执行”，需要CPU从存储器取出指令和数据进行相应的计算。
 
 主要特点有：
 
@@ -39,14 +40,14 @@ categories:
 1. 内核（进程管理，内存管理，⽂件管理，驱动管理）
 2. 其他程序（例如函数库，shell程序等等）
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/d3dc2ad689cd4bf98964ae442f35d3b4.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/d3dc2ad689cd4bf98964ae442f35d3b4.png)
 
 ## 设计OS的⽬的 
 
 - 对下，与硬件交互，管理所有的软硬件资源
 - 对上，为⽤户程序（应⽤程序）提供⼀个良好的执⾏环境
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/e6785f7149954b3ca04b0679954b9b18.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/e6785f7149954b3ca04b0679954b9b18.png)
 
  首先我们知道在计算机的底层存在各种硬件设备，这些硬件设备通过冯诺依曼体系结构联系在一起。
 
@@ -56,7 +57,7 @@ categories:
 
 而最上层还有一层用户层，一般是由我们用户通过指令或**图形化界面**进行各种操作。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/0d7821f2b7ef43f8b7b4e1ea8d888d60.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/0d7821f2b7ef43f8b7b4e1ea8d888d60.png)
 
 Linux严格意义上说是一个操作系统，我们称之为“核心（kernel）”，但我们一般用户不能直接使用kernel，而是通过kernel的“外壳程序”，也就是所谓的Shell，来与kernel沟通。
 
@@ -94,8 +95,6 @@ struct task_struct
     // ...
 };
 ```
-
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 task_struct-PCB的⼀种 
 
@@ -198,7 +197,6 @@ task_ struct 内容分类
 > };
 > ```
 >
-> ![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
 ## 组织进程
 
@@ -206,7 +204,7 @@ task_ struct 内容分类
 
 事实上在后续Linux版本中task_struct里面有很多的next_struct和prev_struct，一个进程会存在于多个链表、队列中，在linux内核中有一个巨大的复杂的进程网。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/5462b3de48a1489f816ea15234e8c9a1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/5462b3de48a1489f816ea15234e8c9a1.png)
 
 ##  查看进程
 
@@ -220,7 +218,7 @@ task_ struct 内容分类
 - `-u username`：只显示特定用户的进程。
 - `-p pid`：只显示指定进程的信息。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/273faae474ed4cb1b6fe845df9720799.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/273faae474ed4cb1b6fe845df9720799.png)
 
 指令 ps -[option]
 
@@ -246,13 +244,13 @@ ps 表示“process status”，用于显示当前系统中的进程状态。
 
   j 表示以作业控制格式显示进程信息，包括作业控制信息和资源限制等。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/e31aa6fe83284d63a01c6bc19eed20c4.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/e31aa6fe83284d63a01c6bc19eed20c4.png)
 
 ## 创建进程 
 
 通过系统调用函数getpid()和getppid()可以分别获取进程的`pid`(进程ID)和`ppid`(父进程ID)。 
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa3287869f4d473c9dc0a4555dcb5c8f.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa3287869f4d473c9dc0a4555dcb5c8f.png)
 
 ```cpp
 #include<stdio.h>
@@ -269,9 +267,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/2f2308e0f62541e5946eee5696146cf3.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/2f2308e0f62541e5946eee5696146cf3.png)
 
  kill -9 pid 或者ctrl+c可以杀死进程
 
@@ -293,9 +290,7 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/75c670202e084e08a1ac326c592a70d8.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/75c670202e084e08a1ac326c592a70d8.png)
 
 第一行数据是该进程的PID和PPID，第二行数据是代码中通过调用fork函数创建的子进程的PID和PPID。其中该进程的PID就是子进程的父进程PID，所以我们可以说这两个进程是父子关系。而该进程的父进程就是bash，一般而言，在命令行上运行的指令，父进程基本都是bash。
 
@@ -341,9 +336,7 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
-
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/10750f3dfe0243adb3a704825a31ddc1.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/10750f3dfe0243adb3a704825a31ddc1.png)
 
 ## 进程状态 
 
@@ -361,13 +354,13 @@ static const char *const task_state_array[] = {
 };
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+
 
 ### 运行状态-R
 
 **R运行状态(running) : 运行状态不一定占用CPU，并不意味着进程一定在运行中，一个进程处于R状态，它只是表明进程**要么是在运行中要么在运行队列里**，随时可以被CPU调度 也就是说,可以同时存在多个处于R状态的进程。比如如下所有处于运行队列的进程都处于运行状态。
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/05b8d12ff85342a3b0e61a656c6c9091.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/05b8d12ff85342a3b0e61a656c6c9091.png)
 
 ### 浅度睡眠状态-S
 
@@ -386,9 +379,8 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/29da6f9b9f244deb9e89aabb2511d224.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/29da6f9b9f244deb9e89aabb2511d224.png)
 
 浅度睡眠状态可以用`kill`指令杀死对应进程。 
 
@@ -402,7 +394,7 @@ D深度休眠状态(Disk sleep)：有时候也叫不可中断睡眠(深度睡眠
 
 T停止状态(stopped)：可以通过发送`SIGSTOP`信号来停止进程，这个被暂停的进程可以通过发送`SIGCONT` 信号让进程继续运行
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/8982e220c3e14aa19fee0cbce6d783a7.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/8982e220c3e14aa19fee0cbce6d783a7.png)
 
 ### 僵尸状态-Z
 
@@ -448,11 +440,10 @@ int main() {
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/a24ae1a3328a456ba26d2e3248f42570.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/a24ae1a3328a456ba26d2e3248f42570.png)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/07c8048f51f74da4862bb6f944aa688d.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/07c8048f51f74da4862bb6f944aa688d.png)
 
 如果僵尸进程一直不回收，子进程就会一直处于僵尸状态，而维护子进程系统会创建对应PCB，进而造成系统资源的浪费。并且随着僵尸进程的增多，实际使用的资源就会越少，会造成严重的**内存泄漏问题**。 
 
@@ -493,9 +484,9 @@ int main()
 }
 ```
 
-![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/5816513409554d3ca1bcfd1350245ef5.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/5816513409554d3ca1bcfd1350245ef5.png)
 
 ## 进程优先级 
 
@@ -505,7 +496,7 @@ int main()
 
 我们可以通过指令`ps -l`查看进程的优先级。 
 
-![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa3e9c7ec56c4a7fb80e1e0625a53a6c.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)编辑
+![img](https://raw.githubusercontent.com/QinMou000/pic/main/fa3e9c7ec56c4a7fb80e1e0625a53a6c.png)
 
 ### 修改优先级
 
@@ -523,7 +514,7 @@ int main()
 
 我们以`Linux 2.6`版本为例，详细谈一谈进程调度队列。
 
- ![img](https://raw.githubusercontent.com/QinMou000/pic/main/5f2dbbf8753f4bc6bae0d055006147d7.png)![点击并拖拽以移动](data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==)
+ ![img](https://raw.githubusercontent.com/QinMou000/pic/main/5f2dbbf8753f4bc6bae0d055006147d7.png)
 
 - active指针：永远指向活动队列。
 - active指针：永远指向活动队列。
