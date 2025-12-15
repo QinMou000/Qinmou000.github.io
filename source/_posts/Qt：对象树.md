@@ -1,3 +1,9 @@
+---
+title: Qt：对象树
+date: 2025-12-15
+categories:
+  - Qt
+---
 # Qt中的继承是存在多继承情况的
 
 比如我目前发现了widget类同时继承了Q_Widget和UI_Widget两个类
