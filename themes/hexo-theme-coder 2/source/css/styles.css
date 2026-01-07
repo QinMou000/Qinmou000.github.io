@@ -723,3 +723,10 @@ body {
   .site-search-input{width:120px}
   .pagination{bottom:12px;padding:6px}
 }
+
+/* Search results page styles */
+#search-results-container{width:55%;margin:30px auto 120px auto}
+#search-results{list-style:none;padding:0}
+#search-results li{margin-bottom:16px}
+#search-results li a{font-weight:700;color:#d2d2d2}
+#search-results li p{margin:6px 0 0;color:#bfbfbf}

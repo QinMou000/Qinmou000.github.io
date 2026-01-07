@@ -62,7 +62,7 @@ prismjs:
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
   path: ''
-  per_page: 20               # 全站分页每页20篇
+  per_page: 0
   order_by: -date
 
 pagination_dir: page       # 分页路径后缀（比如/page/2）
