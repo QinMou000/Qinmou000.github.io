@@ -62,12 +62,26 @@ prismjs:
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
   path: ''
-  per_page: 10
+  per_page: 20
   order_by: -date
+
+per_page: 20               # 全站分页每页20篇
+pagination_dir: page       # 分页路径后缀（比如/page/2）
 
 # Category & Tag
 default_category: uncategorized
 category_map:
+  随笔: essay
+  闲聊: chat
+  C语言: c
+  C++: cpp
+  单片机: microcontroller
+  Linux: linux
+  操作系统: os
+  网络: network
+  算法: algorithm
+  LeetCode: leetcode
+  Qt: qt
 tag_map:
 
 # Metadata elements
@@ -103,3 +117,15 @@ theme: hexo-theme-coder 2
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+# Valine Comment System
+valine:
+  enable: true
+  app_id: #TODO
+  app_key: # TODO
+  notify: false
+  verify: false
+  avatar: 'mp'
+  placeholder: '说点什么吧...'
+  visitor: true
+  highlight: true
