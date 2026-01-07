@@ -9,23 +9,6 @@
     </p>
 </div>
 
-<!-- <% if (page.total > 1) { %>
-<div class="pagination">
-    <% if (page.prev) { %>
-        <a class="page-prev" href="<%- url_for(page.prev.path) %>">上一页</a>
-    <% } %>
-
-    <% for (var i = 1; i <= page.total; i++) { %>
-        <% var link = i === 1 ? url_for('/') : url_for(config.pagination_dir + '/' + i + '/'); %>
-        <a class="page-num <%= page.current === i ? 'current' : '' %>" href="<%- link %>"><%= i %></a>
-    <% } %>
-
-    <% if (page.next) { %>
-        <a class="page-next" href="<%- url_for(page.next.path) %>">下一页</a>
-    <% } %>
-</div>
-<% } %> -->
-
 <%- partial('_partial/nav') %>
 <div class="hd">
     <% var last; %>
