@@ -1,35 +1,42 @@
-<div class="hd logodiv">
-    <%- image_tag(theme.gender,{class: 'logopng', alt: 'logo'}) %>
-    <p class="logot">
-         <%= theme.logo_title %> 
-         <span class="logo_2"></span>
-        <h3 class="words" style="font-weight: bold;font-family: Georgia;"> 
-            <%= theme.words %> 
-        </h3>
-    </p>
+<div class="hd home-hero logodiv">
+    <div class="home-hero-avatar">
+        <%- image_tag(theme.gender,{class: 'logopng', alt: 'logo'}) %>
+    </div>
+    <div class="home-hero-copy">
+        <p class="logot home-hero-title">
+             <%= theme.logo_title %>
+             <span class="logo_2"></span>
+        </p>
+        <p class="words home-hero-subtitle">
+            <%= theme.words %>
+        </p>
+        <div class="home-hero-actions">
+            <a class="home-hero-action" href="<%- url_for('/categories/') %>">分类导航</a>
+            <a class="home-hero-action" href="<%- url_for('/archives/') %>">文章归档</a>
+        </div>
+    </div>
 </div>
 
 <%- partial('_partial/nav') %>
-<div class="hd">
+<div class="hd home-index">
     <% var last; %>
     <% page.posts.each(function (post) { %>
         <% var year = post.date.year(); %>
         <% if (last != year){ %>
-            <div class="titlex">
-                <p><span class="jing"></span><span style="color: #6d9ee7;"> 公元</span> 
-                 <%= year %>年 🕛
-                </p>
+            <div class="titlex home-year-title">
+                <p><span class="home-year-line"></span><span><%= year %></span></p>
             </div>
             <% last = year; %>
         <% } %>
-        <a class="flink" href="<%- url_for(post.path) %>">
-            <div class="list">
-                <div class="postname">
+        <a class="flink home-post-link" href="<%- url_for(post.path) %>">
+            <div class="list home-post-item">
+                <div class="postname home-post-name">
                     <%= post.title %>
                 </div>
-                <div class="posttime">
-                    <%- full_date(post.date, 'MMMM Do') %>
+                <div class="posttime home-post-time">
+                    <%- full_date(post.date, 'MMM DD') %>
                 </div>
+                <div class="clear"></div>
             </div>
         </a>
     <% }) %>

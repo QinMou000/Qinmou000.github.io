@@ -1,8 +1,8 @@
-<div class="hd">
-    <ol class="breadcrumb">
+<div class="hd nav-shell">
+    <ol class="breadcrumb nav-menu">
         <% for (name in theme.menu) { %>
-            <li><a class="ba" href="<%- url_for(theme.menu[name]) %>"><%= name %></a></li>
+            <li class="nav-menu-item"><a class="ba nav-menu-link" href="<%- url_for(theme.menu[name]) %>"><%= name %></a></li>
         <% } %>
     </ol>
-    <hr class="breadcrumbhr">
+    <hr class="breadcrumbhr nav-divider">
 </div>
