@@ -170,3 +170,69 @@
 - 抽查结果：`/categories/` 已显示 `随笔`、`算法 / LeetCode`、`算法 / 数据结构`、`C语言 / 51单片机` 等分组，且分组标题可跳转到对应分类归档页。
 - 排序修正：分类总览内文章列表按日期倒序展示，与首页文章顺序保持一致。
 - 风险记录：仓库仍无 lint/测试框架，本次仍以本地构建成功作为最小可重复验证。
+
+## 结构化快速扫描 - 分类页树状展示
+时间：2026-03-24
+
+### 已检查文件
+- `themes/hexo-theme-coder 2/layout/categories.ejs`：确认当前分类总览页的分组逻辑。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：确认当前分类页样式扩展点。
+- `public/categories/index.html`：确认当前页面实际输出结构。
+- `themes/hexo-theme-coder 2/layout/index.ejs`：继续参考列表结构与样式复用方式。
+- `public/categories/algorithm/index.html`：确认一级分类归档页现有行为。
+- Hexo 本地数据加载结果：确认当前文章分类深度仅有一级和二级两种情况。
+
+### 关键疑问与结论
+1. **当前分类层级有多深？**
+   - 来源：Hexo 本地数据统计
+   - 结论：当前文章只有 1 级和 2 级分类，没有更深层级。
+2. **树状展示最清晰的切分点是什么？**
+   - 来源：当前 `/categories/` 输出与文章分类样例
+   - 结论：应先按一级分类分组，再在组内展示“一级分类 > 二级分类”分支；单级分类统一归到“未细分”。
+3. **最小改动落点在哪？**
+   - 来源：`layout/categories.ejs` 与 `_partial/index.styl`
+   - 结论：只需重写分类页模板聚合逻辑，并补充树状结构样式，无需改站点配置。
+
+## 编码前检查 - 分类页树状展示
+时间：2026-03-24
+
+✅ 已查阅上下文摘要文件：`.claude/context-summary-categories-page.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/layout/categories.ejs`：在现有分类页模板基础上调整聚合逻辑
+  - `themes/hexo-theme-coder 2/layout/index.ejs`：继续复用文章列表结构
+  - `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：继续在现有样式文件内补树状样式
+✅ 将遵循命名约定：树状标题使用“一级分类 > 二级分类”，单级分类显示“未细分”
+✅ 将遵循代码风格：保持当前 EJS 模板的内联数据整理方式，样式继续使用现有 CSS 类命名风格
+✅ 确认不重复造轮子，证明：已检查当前分类总览模板和现有分类归档页，确认仓库里没有现成的一级/二级树状总览实现
+
+## 编码后声明 - 分类页树状展示
+时间：2026-03-24
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/layout/categories.ejs`：复用现有分类总览入口，只重构分组逻辑。
+- `themes/hexo-theme-coder 2/layout/index.ejs`：继续复用文章列表行结构。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：在原分类页样式基础上扩展树状分支样式。
+- Hexo `post.categories.toArray()`：继续作为一级/二级分类路径的数据来源。
+
+### 2. 遵循了以下项目约定
+- 命名约定：树状节点类名继续围绕 `category-*` 命名，保持语义直接。
+- 代码风格：模板内先做数据聚合，再输出结构，保持当前主题模板的写法一致。
+- 文件组织：只修改现有分类模板和现有样式文件，没有新增无必要文件。
+
+### 3. 对比了以下相似实现
+- 旧版 `themes/hexo-theme-coder 2/layout/categories.ejs`：我的方案与其差异是改成一级分类分组 + 二级分类分支，而不是把每条分类路径平铺展示，理由是树状结构更清晰。
+- `themes/hexo-theme-coder 2/layout/index.ejs`：我的方案仍复用文章列表项，只是外层包了一层树状分支结构，理由是兼顾一致性和可读性。
+- `public/categories/algorithm/index.html`：我的方案没有替代现有单分类归档页，而是让 `/categories/` 成为更清晰的导航总览页。
+
+### 4. 未重复造轮子的证明
+- 检查了当前分类总览模板、首页模板和现有分类归档页，确认没有一级/二级树状展示能力。
+- 本次差异化价值是：保留原有分类归档页的同时，补上一个更易浏览的全站分类树。
+
+## 验证补充记录 - 分类页树状展示
+时间：2026-03-24
+
+- 执行 `npm run build`：成功。
+- 抽查 `public/categories/index.html`：已按一级分类输出大标题，并在组内显示 `一级分类 > 二级分类` 分支。
+- 抽查结果：`算法 > LeetCode`、`算法 > 数据结构`、`Linux > 网络`、`Linux > 操作系统` 均已正确展示并链接到对应分类归档页。
+- 单级分类如 `随笔`、`Qt` 已归入 `一级分类 > 未细分` 分支。
+- 风险记录：当前分类深度仅覆盖到二级；若未来出现三级分类，页面会把二级后的路径继续拼接到分支标题中，但目前未出现该情况。

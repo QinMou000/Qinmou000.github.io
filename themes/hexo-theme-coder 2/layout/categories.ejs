@@ -12,57 +12,137 @@
 <%- partial('_partial/nav') %>
 
 <%
-    var categoryGroups = [];
-    var categoryGroupMap = {};
+    var topCategories = [];
+    var topCategoryMap = {};
+    var uncategorizedPath = url_for(config.category_dir + '/' + config.default_category + '/');
 
     site.posts.sort('date', -1).each(function (post) {
         var categories = post.categories && typeof post.categories.toArray === 'function'
             ? post.categories.toArray()
             : [];
-        var categoryNames = categories.map(function (category) {
-            return category.name;
-        });
-        var categoryTitle = categoryNames.join(' / ') || '未分类';
-        var categoryPath = categories.length
-            ? url_for(categories[categories.length - 1].path)
-            : url_for(config.category_dir + '/' + config.default_category + '/');
 
-        if (!categoryGroupMap[categoryTitle]) {
-            categoryGroupMap[categoryTitle] = {
-                title: categoryTitle,
-                path: categoryPath,
-                posts: []
-            };
-            categoryGroups.push(categoryGroupMap[categoryTitle]);
+        if (!categories.length) {
+            categories = [{
+                name: '未分类',
+                path: uncategorizedPath
+            }];
         }
 
-        categoryGroupMap[categoryTitle].posts.push(post);
+        var topCategory = categories[0];
+        var topKey = topCategory.path || topCategory.name;
+        var topPath = topCategory.path ? url_for(topCategory.path) : uncategorizedPath;
+
+        if (!topCategoryMap[topKey]) {
+            topCategoryMap[topKey] = {
+                title: topCategory.name,
+                path: topPath,
+                count: 0,
+                directPosts: [],
+                children: [],
+                childMap: {}
+            };
+            topCategories.push(topCategoryMap[topKey]);
+        }
+
+        var group = topCategoryMap[topKey];
+        group.count += 1;
+
+        if (categories.length === 1) {
+            group.directPosts.push(post);
+            return;
+        }
+
+        var childCategories = categories.slice(1);
+        var childTitle = childCategories.map(function (category) {
+            return category.name;
+        }).join(' / ');
+        var childPath = url_for(categories[categories.length - 1].path);
+        var childKey = categories[categories.length - 1].path;
+
+        if (!group.childMap[childKey]) {
+            group.childMap[childKey] = {
+                title: childTitle,
+                path: childPath,
+                count: 0,
+                posts: []
+            };
+            group.children.push(group.childMap[childKey]);
+        }
+
+        group.childMap[childKey].count += 1;
+        group.childMap[childKey].posts.push(post);
     });
 %>
 
 <div class="hd categories-page">
-    <% categoryGroups.forEach(function (group) { %>
+    <% topCategories.forEach(function (category) { %>
         <div class="category-group">
             <div class="titlex">
                 <p>
-                    <a class="category-group-link" href="<%- group.path %>">
-                        <span class="jing"># </span><%= group.title %>
-                        <span class="category-group-count">（<%= group.posts.length %> 篇）</span>
+                    <a class="category-group-link" href="<%- category.path %>">
+                        <span class="jing"># </span><%= category.title %>
+                        <span class="category-group-count">（<%= category.count %> 篇）</span>
                     </a>
                 </p>
             </div>
-            <% group.posts.forEach(function (post) { %>
-                <a class="flink" href="<%- url_for(post.path) %>">
-                    <div class="list">
-                        <div class="postname">
-                            <%= post.title %>
+
+            <div class="category-tree">
+                <% if (category.directPosts.length) { %>
+                    <div class="category-branch">
+                        <div class="category-branch-title">
+                            <span class="category-branch-node">└─</span>
+                            <a class="category-branch-link" href="<%- category.path %>">
+                                <span><%= category.title %></span>
+                                <span class="category-branch-separator">&gt;</span>
+                                <span>未细分</span>
+                                <span class="category-branch-count">（<%= category.directPosts.length %> 篇）</span>
+                            </a>
                         </div>
-                        <div class="posttime">
-                            <%- full_date(post.date, 'MMMM Do') %>
+                        <div class="category-branch-posts">
+                            <% category.directPosts.forEach(function (post) { %>
+                                <a class="flink" href="<%- url_for(post.path) %>">
+                                    <div class="list category-post-list">
+                                        <div class="postname">
+                                            <%= post.title %>
+                                        </div>
+                                        <div class="posttime">
+                                            <%- full_date(post.date, 'MMMM Do') %>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
                         </div>
                     </div>
-                </a>
-            <% }) %>
+                <% } %>
+
+                <% category.children.forEach(function (child) { %>
+                    <div class="category-branch">
+                        <div class="category-branch-title">
+                            <span class="category-branch-node">└─</span>
+                            <a class="category-branch-link" href="<%- child.path %>">
+                                <span><%= category.title %></span>
+                                <span class="category-branch-separator">&gt;</span>
+                                <span><%= child.title %></span>
+                                <span class="category-branch-count">（<%= child.count %> 篇）</span>
+                            </a>
+                        </div>
+                        <div class="category-branch-posts">
+                            <% child.posts.forEach(function (post) { %>
+                                <a class="flink" href="<%- url_for(post.path) %>">
+                                    <div class="list category-post-list">
+                                        <div class="postname">
+                                            <%= post.title %>
+                                        </div>
+                                        <div class="posttime">
+                                            <%- full_date(post.date, 'MMMM Do') %>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
         </div>
     <% }) %>
 </div>
