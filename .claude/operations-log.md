@@ -98,3 +98,75 @@
 - **边界条件**：主题目录名包含空格，脚本或路径引用时要注意引用完整路径。
 - **性能瓶颈**：无显著运行时瓶颈，主要为静态生成开销。
 - **安全考虑**：主题配置中存在 Valine `appId/appKey` 字段，修改相关说明时需避免鼓励把敏感配置误提交到公共仓库。
+
+## 结构化快速扫描 - 按文章 categories 分类展示
+时间：2026-03-24
+
+### 已检查文件
+- `_config.yml`：确认 `category_dir`、`category_map` 与分类层级路径。
+- `themes/hexo-theme-coder 2/layout/index.ejs`：确认首页文章列表与头部结构可复用。
+- `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：确认导航入口由 `theme.menu` 驱动。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：确认列表样式与标题样式可复用。
+- `themes/hexo-theme-coder 2/layout/post.ejs`：确认普通页面内容容器模式。
+- `public/categories/essay/index.html`：确认现有分类归档页行为。
+- `public/categories/algorithm/index.html`：确认父级分类页表现。
+- `source/_posts/2026.3.16随笔：爽的前提是你得足够痛苦.md`：确认单级分类样例。
+- `source/_posts/LeetCode_1304.和为零的 N 个不同整数.md`：确认多级分类样例一。
+- `source/_posts/数据结构_顺序表基本操作代码：.md`：确认多级分类样例二。
+- `source/_posts/51单片机LED88点阵显示坤坤跳舞打篮球画面.md`：确认另一组多级分类样例。
+
+### 关键疑问与结论
+1. **当前站点是否已经有分类页？**
+   - 来源：`public/categories/**/index.html`
+   - 结论：Hexo 已生成各分类归档页，但缺少 `/categories/` 根入口页。
+2. **文章分类数据在模板里如何表达？**
+   - 来源：Hexo 本地数据加载结果
+   - 结论：`post.categories.toArray()` 可得到从父到子的分类对象数组，末级对象的 `path` 可直接链接到对应分类归档页。
+3. **最小改动应该落在哪？**
+   - 来源：`layout/index.ejs`、`layout/_partial/nav.ejs`、`_partial/index.styl`
+   - 结论：新增分类总览页模板、补导航入口并复用现有列表样式即可。
+
+## 编码前检查 - 按文章 categories 分类展示
+时间：2026-03-24
+
+✅ 已查阅上下文摘要文件：`.claude/context-summary-categories-page.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/layout/index.ejs`：复用站点头部与文章列表结构
+  - `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：复用导航渲染方式
+  - `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用 `.titlex`、`.list`、`.postname`、`.posttime` 样式
+  - Hexo 已生成的 `categories/*` 路径：作为分类标题链接目标
+✅ 将遵循命名约定：页面与模板命名使用仓库既有简洁命名，如 `categories.ejs`、`source/categories/index.md`
+✅ 将遵循代码风格：模板继续使用当前主题的 EJS 写法和缩进风格，样式继续写入现有 `_partial/index.styl`
+✅ 确认不重复造轮子，证明：已检查现有 `layout/*.ejs`、`public/categories/**/index.html` 与 `source/` 页面目录，确认仓库目前没有分类总览入口页，也没有现成的分类总览模板
+
+## 编码后声明 - 按文章 categories 分类展示
+时间：2026-03-24
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/layout/index.ejs`：复用站点头图、导航和文章列表结构。
+- `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：通过主题 `menu` 配置接入分类入口。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用首页标题与列表样式，只补最小分类页样式。
+- Hexo 现有分类归档路径：分类标题直接链接到已经生成的分类归档页。
+
+### 2. 遵循了以下项目约定
+- 命名约定：页面与模板命名保持简洁直接，使用 `categories.ejs` 与 `source/categories/index.md`。
+- 代码风格：EJS 模板继续沿用当前主题的内联变量与循环写法；样式继续集中在 `_partial/index.styl`。
+- 文件组织：页面源文件放在 `source/categories/`，主题模板与样式改动落在现有主题目录中。
+
+### 3. 对比了以下相似实现
+- `themes/hexo-theme-coder 2/layout/index.ejs`：我的方案与其差异是按分类分组而非按年份分组，理由是任务要求按文章 `categories` 展示。
+- `public/categories/essay/index.html`：我的方案与其差异是补了 `/categories/` 总览入口，并聚合所有分类路径，理由是现有分类页只能单分类浏览。
+- `themes/hexo-theme-coder 2/layout/post.ejs`：我的方案没有复用文章正文容器，而是复用首页列表结构，理由是分类总览更接近文章索引而不是单页正文。
+
+### 4. 未重复造轮子的证明
+- 检查了 `themes/hexo-theme-coder 2/layout/*.ejs`、`source/`、`public/categories/**/index.html`，确认不存在分类总览入口页。
+- 如存在相似能力，Hexo 只负责生成单个分类归档页；本次新增的价值是补齐全站分类总览与导航入口。
+
+## 验证补充记录 - 按文章 categories 分类展示
+时间：2026-03-24
+
+- 执行 `npm run build`：成功。
+- Hexo 成功生成 `public/categories/index.html`，分类总览页可访问。
+- 抽查结果：`/categories/` 已显示 `随笔`、`算法 / LeetCode`、`算法 / 数据结构`、`C语言 / 51单片机` 等分组，且分组标题可跳转到对应分类归档页。
+- 排序修正：分类总览内文章列表按日期倒序展示，与首页文章顺序保持一致。
+- 风险记录：仓库仍无 lint/测试框架，本次仍以本地构建成功作为最小可重复验证。
