@@ -362,6 +362,129 @@
 ## 结束标记
 - 首页极简博客风首版完成。
 
+## 结构化快速扫描 - 文章页极简风统一
+时间：2026-03-24
+
+### 已检查文件
+- `themes/hexo-theme-coder 2/layout/post.ejs`：确认文章页当前结构仅包含返回按钮、标题、正文和可选评论。
+- `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：确认首页和分类页已共用统一导航壳层。
+- `themes/hexo-theme-coder 2/source/css/_partial/post.styl`：确认文章页壳层样式与全局污染问题。
+- `themes/hexo-theme-coder 2/source/css/_partial/markdown.styl`：确认正文排版、代码块、引用和图片样式落点。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：确认首页极简风的色板、分隔线与交互语法可复用。
+- `themes/hexo-theme-coder 2/source/css/style.styl`：确认 `.hd`、`nav-*` 与 `.bg_while` 深浅主题规则。
+- `themes/hexo-theme-coder 2/layout/_partial/head.ejs`、`layout/_partial/footer.ejs`、`source/js/js.js`：确认文章页外围资源与评论逻辑现状。
+
+### 关键疑问与结论
+1. **文章页最小改动应该落在哪些文件？**
+   - 来源：`layout/post.ejs`、`_partial/post.styl`、`_partial/markdown.styl`
+   - 结论：结构层改 `post.ejs`，壳层样式改 `post.styl`，正文阅读感收敛改 `markdown.styl` 即可。
+2. **哪些既有模式可以直接复用？**
+   - 来源：`layout/_partial/nav.ejs`、`style.styl`、`_partial/index.styl`
+   - 结论：顶部导航、主列宽度、极简配色、轻分隔和浅色主题兼容都可直接沿用。
+3. **这轮是否顺手扩大到评论逻辑和全站 head？**
+   - 来源：计划边界与调研结果
+   - 结论：本轮只统一文章页结构与视觉，不扩大到评论默认策略和全站 SEO 修复，除非实现中出现直接冲突。
+
+## 编码前检查 - 文章页极简风统一
+时间：2026-03-24 23:54:52
+
+✅ 已查阅上下文摘要文件：`C:\Users\wq\.claude\plans\cheerful-wondering-snail.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：复用统一导航壳层
+  - `themes/hexo-theme-coder 2/source/css/style.styl`：复用 `.hd`、`nav-*` 与 `.bg_while` 规则
+  - `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用首页极简风的配色、分隔和留白语言
+  - `themes/hexo-theme-coder 2/layout/post.ejs`：在现有文章页模板上做最小重排
+✅ 将遵循命名约定：新增类名继续使用 `post-*` 语义前缀，不混入首页 `home-*` 结构语义
+✅ 将遵循代码风格：模板继续使用当前 EJS 写法，样式继续写入现有 Stylus 分片并限制在文章页作用域内
+✅ 确认不重复造轮子，证明：已检查首页、分类页、文章页、导航模板和正文样式，确认仓库中没有现成的文章页极简风变体可直接切换
+
+## 编码后声明 - 文章页极简风统一
+时间：2026-03-24 23:59:24
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/layout/_partial/nav.ejs`：直接复用首页和分类页统一导航壳层，让文章页接入同一套顶部导航。
+- `themes/hexo-theme-coder 2/source/css/style.styl`：继续复用 `.hd` 主列宽度和现有 `nav-*`、`.bg_while` 深浅主题体系。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用首页极简风的低饱和配色、分隔线和留白语言作为文章页视觉参考。
+- `themes/hexo-theme-coder 2/source/css/_partial/markdown.styl`：保留现有 Markdown 语义样式能力，只收敛影响阅读感的颜色、间距和代码块表现。
+
+### 2. 遵循了以下项目约定
+- 命名约定：新增类名统一采用 `post-*` 语义前缀，如 `post-page`、`post-hero`、`post-meta`、`post-comments`。
+- 代码风格：模板仍使用当前主题的 EJS 内联变量与条件渲染写法；样式继续集中在现有 `post.styl` 与 `markdown.styl`。
+- 文件组织：只修改现有文章模板和现有样式分片，没有新增无必要文件。
+
+### 3. 对比了以下相似实现
+- 旧版 `themes/hexo-theme-coder 2/layout/post.ejs`：我的方案与其差异是接入统一导航并补文章头部信息层，理由是消除首页与文章页的风格断层。
+- `themes/hexo-theme-coder 2/layout/index.ejs`：我的方案与其差异是复用极简设计语言但不复制首页 Hero，理由是文章页应保持阅读优先而不是入口页结构。
+- 旧版 `themes/hexo-theme-coder 2/source/css/_partial/post.styl`：我的方案与其差异是把全局 `p/li/a` 污染收口到 `.post-content`，理由是减少对首页和分类页的副作用。
+
+### 4. 未重复造轮子的证明
+- 检查了首页模板、分类页模板、导航模板、文章模板、文章样式和正文样式，确认仓库中没有现成的文章页极简风实现。
+- 如存在相似能力，我的差异化价值是：让文章页在保留现有 Hexo 内容结构的前提下，接入首页已经建立好的极简设计语言。
+
+## 验证补充记录 - 文章页极简风统一
+时间：2026-03-24
+
+- 执行 `npm run build`：成功。
+- 抽查 `public/index.html`：首页结构保持不变，未被文章页样式回归污染。
+- 抽查 `public/2025/07/25/我又有自己的个人博客啦/index.html`：文章页已接入统一导航，并显示日期与分类元信息。
+- 抽查 `public/2025/10/27/网络：网络层（IP协议）和数据链路层/index.html`：技术文章页已接入同样的文章头部结构，代码块、列表、引用和图片仍能正常输出。
+- 抽查 `public/css/style.css`：已生成 `post-page`、`post-hero`、`post-meta` 等文章页样式规则，说明 Stylus 编译通过。
+- 风险记录：文章正文若在 Markdown 首行再次写 `# 一级标题`，仍会在正文中出现一个内容标题；本轮未扩大到正文内容去重策略。
+
+## 风险补充 - 文章页极简风统一
+时间：2026-03-24
+
+- 文章页当前仍沿用旧的 `head.ejs` 与 `footer.ejs` 输出，因此页面级 `<title>`、评论脚本按需加载等历史问题暂未纳入本轮。
+- 当前验证仍以构建成功和生成页面抽查为主，未覆盖真实浏览器中的截图级视觉回归。
+- 部分文章内嵌大量外链图片，本轮只调整了容器与边框样式，不处理图源可用性问题。
+
+## 关键风险点补充 - 文章页极简风统一
+时间：2026-03-24
+
+- **并发问题**：无。
+- **边界条件**：长标题、Markdown 内重复一级标题、超宽表格与超大图片仍依赖正文样式本身的适配能力。
+- **性能瓶颈**：仅模板与样式调整，无新增运行时脚本负担。
+- **安全考虑**：本轮不引入新的外部输入，仅消费 Hexo 已生成的文章数据和站内模板逻辑。
+
+## 选择方案记录 - 文章页极简风统一
+时间：2026-03-24
+
+### 为什么用这个方案
+- 用户要求让文章页与首页统一成同一套极简风，而当前首页已经有可复用的导航与配色语言，因此最合适的做法是最小重排文章页结构并收敛正文样式，而不是重做整套页面。
+
+### 优势
+- 首页、分类页、文章页开始共享同一套设计语言，站点整体感更强。
+- 改动集中在文章模板和样式，不影响 Hexo 数据层与内容文件。
+- 保留 Markdown 既有能力，技术文章和随笔都能继续正常渲染。
+
+### 劣势和风险
+- 本轮未顺手清理页面级 title/meta 与评论脚本失配问题，因此文章页外围仍保留部分旧主题痕迹。
+- 正文内容如果本身写法不统一，例如正文首行再写一级标题，页面仍会显示二次标题层级。
+
+### 关键风险点
+- **并发问题**：无。
+- **边界条件**：长标题、超宽表格、重复一级标题需要后续继续观察。
+- **性能瓶颈**：无明显新增瓶颈。
+- **安全考虑**：仅模板与样式调整，无新增外部输入面。
+
+### 懒惰检查结果
+- ✅ 使用了计划中列出的可复用组件：`nav.ejs`、`style.styl`、`index.styl`、`post.ejs`
+- ✅ 命名符合项目约定：新增类名均为语义直接的 `post-*`
+- ✅ 代码风格与现有主题一致：继续使用 EJS 模板和 Stylus 分片，不额外引入新的抽象层
+
+结论：未触发懒惰检测。
+
+## 验证结论 - 文章页极简风统一
+时间：2026-03-24
+
+本次文章页极简风统一已通过本地构建验证，可以继续做细节微调或提交。
+
+## 后续可选优化 - 文章页极简风统一
+- 若继续打磨，可优先处理文章页 `<title>` / `meta`、评论脚本按需加载，以及移动端文章头部排版。
+
+## 结束标记
+- 文章页极简风首版完成。
+
 
 
 

@@ -1,18 +1,38 @@
-<div class="hd posts">
-    <a href="/index.html"><i class="fa fa-home
- replay-btn" aria-hidden="true"></i></a>
-    <div class="post-title">
-        <p>
-            <%= page.title %>
-        </p>
-        <hr>
-    </div>
-    <div class="post-content">
-        <%- page.content %>
+<%- partial('_partial/nav') %>
+
+<%
+    var categoryPath = page.categories && typeof page.categories.toArray === 'function'
+        ? page.categories.toArray().map(function (category) {
+            return category.name;
+        }).join(' / ')
+        : '';
+%>
+
+<div class="hd post-page posts">
+    <div class="post-hero">
+        <div class="post-meta">
+            <span class="post-meta-item post-meta-date"><%- full_date(page.date, 'MMM DD, YYYY') %></span>
+            <% if (categoryPath) { %>
+                <span class="post-meta-separator">·</span>
+                <span class="post-meta-item post-meta-category"><%= categoryPath %></span>
+            <% } %>
+        </div>
+        <div class="post-title post-hero-title">
+            <p><%= page.title %></p>
+        </div>
+        <hr class="post-hero-divider">
     </div>
 
+    <article class="post-article">
+        <div class="post-content post-article-body">
+            <%- page.content %>
+        </div>
+    </article>
+
     <% if (theme.valine.enable && page.comments) { %>
-        <hr class="fhr">
-        <div id="vcomments"></div>
+        <hr class="fhr post-comments-divider">
+        <div class="post-comments">
+            <div id="vcomments"></div>
+        </div>
     <% } %>
 </div>

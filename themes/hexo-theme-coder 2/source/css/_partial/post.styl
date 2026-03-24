@@ -1,53 +1,118 @@
-.posts
-    .replay-btn
-        background-color: #696969;
-        width: 40px;
-        color: #fff;
-        height: 40px;
-        line-height: 40px;
-        text-align: center;
-        border-radius: 80%;
-        position: absolute;
+.post-page {
+    padding-bottom: 30px;
+}
 
+.post-hero {
+    padding: 16px 0 12px;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+    color: #8f9bb3;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.post-meta-separator {
+    color: #4d5768;
+}
+
+.post-hero-title {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.post-hero-title p {
+    margin: 0;
+    font-size: 38px;
+    line-height: 1.35;
+    color: #eef2ff;
+}
+
+.post-hero-divider {
+    margin: 0;
+    border-color: #232938;
+}
+
+.post-article {
+    padding-top: 28px;
+}
+
+.post-article-body,
 .post-content {
     width: 100%;
     height: 100%;
     margin: auto;
 }
 
-p {
-    font-size: 18px;
-    font-weight: 8000;
-}
-
-li {
+.post-content p {
     font-size: 17px;
-    font-weight: 1000;
+    font-weight: 400;
 }
-a {
-     font-size: 20px;
+
+.post-content li {
+    font-size: 16px;
+    font-weight: 400;
 }
-    .post-title
-        text-align: center;
-        font-size: 24px;
-        line-height: 40px;
-        margin-bottom: 10px;
-    
-    .post-content
-        a
-             color: #699be9;
 
-    .fhr
-        margin-top: 20px;
+.post-content a {
+    font-size: inherit;
+}
 
-    .highlight
-        .gutter
-            .hljs
-                border-top-left-radius: 5px;
-                border-bottom-left-radius: 5px;
+.post-comments-divider {
+    margin-top: 34px;
+    margin-bottom: 24px;
+    border-color: #232938;
+}
 
-    .highlight 
-        .code
-            .hljs
-                border-top-right-radius: 5px;
-                border-bottom-right-radius: 5px;
+.post-comments {
+    padding-bottom: 10px;
+}
+
+.posts .fhr {
+    margin-top: 20px;
+}
+
+.posts .highlight
+    .gutter
+        .hljs
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+.posts .highlight
+    .code
+        .hljs
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+
+.bg_while .post-meta {
+    color: #7a8597;
+}
+
+.bg_while .post-meta-separator {
+    color: #b3bfd3;
+}
+
+.bg_while .post-hero-title p {
+    color: #1f2937;
+}
+
+.bg_while .post-hero-divider,
+.bg_while .post-comments-divider {
+    border-color: #d8deea;
+}
+
+.bg_while .post-content p,
+.bg_while .post-content li {
+    color: #4b5565;
+}
+
+.bg_while .post-comments {
+    color: #4b5565;
+}
