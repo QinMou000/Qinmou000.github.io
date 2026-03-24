@@ -1,3 +1,6 @@
+<%
+    var shouldLoadValine = theme.valine.enable && page.comments;
+%>
 <div class="footer" id="footer">
     <p><h4>Copyright © 2020 | Author: <%= theme.author %> | Theme By <a class="theme-author" href="https://github.com/Xunzhuo/hexo-theme-coder" style="font-size:14px; color: #969696">Coder</a></h4>
     <label class="el-switch el-switch-blue el-switch-sm" style="vertical-align: sub;">
@@ -11,12 +14,17 @@
 </p>
 </div>
 <input type="hidden" id="web_style" value="<%= theme.style %>">
+<% if (shouldLoadValine) { %>
 <input type="hidden" id="valine_appid" value="<%= theme.valine.appId %>">
 <input type="hidden" id="valine_appKey" value="<%= theme.valine.appKey %>">
+<% } %>
 <%- js('libs/jquery.min.js') %>
 <%- js('libs/highlight/highlight.pack.js') %>
+<% if (shouldLoadValine) { %>
 <script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<% } %>
 <%- js('js/js.js') %>
+<% if (shouldLoadValine) { %>
 <style type="text/css">
 .v * {
 color: #698fca;
@@ -37,3 +45,4 @@ color: #8696b1;
 color: #669bfc;
 }
 </style>
+<% } %>

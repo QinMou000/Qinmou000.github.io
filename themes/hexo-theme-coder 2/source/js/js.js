@@ -1,14 +1,17 @@
 var web_style = $("#web_style").val();
 var valine_appid = $("#valine_appid").val();
 var valine_appKey = $("#valine_appKey").val();
+var valineContainer = document.getElementById('vcomments');
 
-new Valine({
-    el: '#vcomments',
-    appId: valine_appid,
-    appKey: valine_appKey,
-    placeholder: '有什么想说的吗？',
-    avatar: "wavatar"
-})
+if (valineContainer && typeof Valine !== 'undefined' && valine_appid && valine_appKey) {
+    new Valine({
+        el: '#vcomments',
+        appId: valine_appid,
+        appKey: valine_appKey,
+        placeholder: '有什么想说的吗？',
+        avatar: "wavatar"
+    })
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelectorAll('pre').forEach((block) => {

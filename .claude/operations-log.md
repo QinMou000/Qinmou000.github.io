@@ -485,293 +485,101 @@
 ## 结束标记
 - 文章页极简风首版完成。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 结构化快速扫描 - 文章页 title 与评论脚本修复
+时间：2026-03-25
+
+### 已检查文件
+- `themes/hexo-theme-coder 2/layout/_partial/head.ejs`：确认页面标题仍固定输出站点名，description/keywords 也固定读取主题配置。
+- `themes/hexo-theme-coder 2/layout/_partial/footer.ejs`：确认当前无条件注入 Valine CDN、隐藏字段和站点脚本。
+- `themes/hexo-theme-coder 2/source/js/js.js`：确认脚本启动时无条件执行 `new Valine(...)`。
+- `themes/hexo-theme-coder 2/layout/post.ejs`：确认评论容器仍由 `theme.valine.enable && page.comments` 控制。
+- `source/categories/index.md`：确认存在 `comments: false` 这类页面级开关写法。
+
+### 关键疑问与结论
+1. **文章页 title 最小修法是什么？**
+   - 来源：`layout/_partial/head.ejs`
+   - 结论：只需在 head 中按页面类型判断，文章页优先输出“文章标题 | 站点名”，其他页面保持现有逻辑即可。
+2. **评论脚本应该在哪一层做按需控制？**
+   - 来源：`layout/_partial/footer.ejs`、`source/js/js.js`、`layout/post.ejs`
+   - 结论：footer 层控制是否注入 Valine 资源，js 层再补容器和配置守卫，双层兜底最稳妥。
+3. **这轮是否要改变评论默认策略？**
+   - 来源：用户需求与现有模板行为
+   - 结论：不改默认策略；仅让现有“启用时才加载、显示时才初始化”的行为自洽。
+
+## 编码前检查 - 文章页 title 与评论脚本修复
+时间：2026-03-25 00:07:22
+
+✅ 已查阅上下文摘要文件：`C:\Users\wq\.claude\plans\cheerful-wondering-snail.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/layout/_partial/head.ejs`：复用现有 head 输出结构，只补页面级标题判断
+  - `themes/hexo-theme-coder 2/layout/_partial/footer.ejs`：复用现有脚本注入入口，只补 Valine 的按需加载条件
+  - `themes/hexo-theme-coder 2/source/js/js.js`：复用现有主题切换与高亮逻辑，只补评论初始化守卫
+  - `themes/hexo-theme-coder 2/layout/post.ejs`：继续作为评论容器是否出现的事实来源
+✅ 将遵循命名约定：不新增无必要类名，沿用当前模板变量与已有字段名
+✅ 将遵循代码风格：保持当前 EJS 条件渲染和原生 JS 写法，不引入额外抽象
+✅ 确认不重复造轮子，证明：已检查 head、footer、前端脚本和文章模板，确认仓库中没有现成的页面级 title 或评论按需加载实现
+
+## 编码后声明 - 文章页 title 与评论脚本修复
+时间：2026-03-25 00:10:03
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/layout/_partial/head.ejs`：继续作为全站 head 输出入口，只在原结构上补页面级标题和规范化 meta 输出。
+- `themes/hexo-theme-coder 2/layout/_partial/footer.ejs`：继续作为全站脚本注入入口，只补 Valine 按需加载条件。
+- `themes/hexo-theme-coder 2/source/js/js.js`：继续保留主题切换与代码高亮逻辑，只增加 Valine 初始化守卫。
+- `themes/hexo-theme-coder 2/layout/post.ejs`：继续作为评论容器是否存在的事实来源，没有改变评论显示规则本身。
+
+### 2. 遵循了以下项目约定
+- 命名约定：未新增无必要类名，继续使用现有模板变量与已有字段名。
+- 代码风格：EJS 继续沿用当前主题的局部变量和条件渲染写法；JS 继续使用现有简单原生/ jQuery 风格。
+- 文件组织：只修改现有 head、footer 和前端脚本文件，没有新增无必要文件。
+
+### 3. 对比了以下相似实现
+- 旧版 `themes/hexo-theme-coder 2/layout/_partial/head.ejs`：我的方案与其差异是按页面标题动态生成 `<title>` 并修正 meta/favion 输出格式，理由是文章页需要正确的浏览器标签和规范属性。
+- 旧版 `themes/hexo-theme-coder 2/layout/_partial/footer.ejs`：我的方案与其差异是只在需要评论时注入 Valine 资源，理由是避免无效脚本加载。
+- 旧版 `themes/hexo-theme-coder 2/source/js/js.js`：我的方案与其差异是为 Valine 初始化增加容器、配置和全局对象守卫，理由是让脚本行为和模板条件自洽。
+
+### 4. 未重复造轮子的证明
+- 检查了 head、footer、文章模板、页面 frontmatter 和站点脚本，确认仓库中没有现成的页面级 title 生成逻辑和评论按需加载机制。
+- 本次差异化价值是：在不改变评论默认策略的前提下，把文章页 title 与评论脚本行为修正到一致、可预期的状态。
+
+## 验证补充记录 - 文章页 title 与评论脚本修复
+时间：2026-03-25
+
+- 执行 `npm run build`：成功。
+- 抽查 `public/2025/07/25/我又有自己的个人博客啦/index.html`：文章页 `<title>` 已变为 `文章标题 | 汪钦的博客`，favicon 和 meta 属性已变为规范的带引号输出。
+- 抽查 `public/categories/index.html`：普通页面标题已变为 `分类 | 汪钦的博客`，说明页面级标题逻辑已覆盖非文章页。
+- 抽查文章页和分类页生成结果：未找到 `Valine.min.js`、`valine_appid`、`vcomments`，说明在当前评论关闭配置下已不再注入无效评论资源。
+- 抽查 `public/js/js.js`：已存在 `vcomments` 容器和 `Valine` 对象守卫，说明即使后续打开评论配置也不会在无容器页面上错误初始化。
+
+## 风险补充 - 文章页 title 与评论脚本修复
+时间：2026-03-25
+
+- 本轮 `pageDescription` 与 `pageKeywords` 仍优先读取页面字段，否则回退到主题配置；当前仓库文章并未系统提供这些字段，因此生成值大多仍为站点级默认内容。
+- 评论默认策略仍沿用现有 `theme.valine.enable && page.comments` 逻辑，本轮只修复加载与初始化时机，不改变历史文章行为。
+- 页脚结构里仍保留旧主题的 `p` 包 `h4` 写法，本轮未扩大到页脚语义结构清理。
+
+## 关键风险点补充 - 文章页 title 与评论脚本修复
+时间：2026-03-25
+
+- **并发问题**：无。
+- **边界条件**：若未来 frontmatter 中 `page.keywords` 为数组，当前会按 EJS 默认输出，需要后续根据实际格式再决定是否格式化。
+- **性能瓶颈**：减少了当前评论关闭时的无效脚本注入，性能只会更好，不会更差。
+- **安全考虑**：未引入新的外部输入，只规范化输出现有页面字段和模板条件。
+
+### 懒惰检查结果
+- ✅ 使用了计划中的既有入口：`head.ejs`、`footer.ejs`、`js.js`
+- ✅ 命名与结构保持现有风格，没有额外造新抽象
+- ✅ 实现范围与用户需求一致，没有擅自扩大为全站 SEO 或评论系统重构
+
+结论：未触发懒惰检测。
+
+## 验证结论 - 文章页 title 与评论脚本修复
+时间：2026-03-25
+
+本次文章页标题输出和评论脚本加载逻辑已通过本地构建验证，可以继续微调或提交。
+
+## 后续可选优化 - 文章页 title 与评论脚本修复
+- 若继续打磨，可补文章级 description/keywords 生成策略，并清理 footer 的旧 HTML 结构。
+
+## 结束标记
+- 文章页 title 与评论脚本修复完成。
