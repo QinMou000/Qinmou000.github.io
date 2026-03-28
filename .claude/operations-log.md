@@ -1,5 +1,134 @@
 # 操作记录
 
+## 编码前检查 - 首页左侧分类导航样式适配
+时间：2026-03-28
+
+✅ 已查阅上下文摘要文件：`.claude/context-summary-home-left-category-nav.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用首页 Hero、文章列表与分类页既有色板和边框层级
+  - `themes/hexo-theme-coder 2/source/css/_partial/post.styl`：参考文章页极简风的留白、分隔线与浅色主题兼容写法
+  - `themes/hexo-theme-coder 2/layout/categories.ejs`：参考分类树相关命名与层级语义，保证首页侧栏风格一致
+✅ 将遵循命名约定：新增样式围绕 `home-layout-*`、`home-category-*`、`home-posts-*`、`home-empty` 等首页语义前缀展开
+✅ 将遵循代码风格：仅在现有 `_partial/index.styl` 内补充首页专属样式，继续通过 `.bg_while` 覆盖浅色主题
+✅ 确认不重复造轮子，证明：已检查首页、分类页、文章页样式与模板，确认仓库没有现成的首页双栏分类导航样式
+
+## 编码后声明 - 首页左侧分类导航样式适配
+时间：2026-03-28
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：继续作为首页与分类页共用样式入口，在原有深色极简语言上补双栏和侧栏规则。
+- `themes/hexo-theme-coder 2/source/css/_partial/post.styl`：参考文章页分隔线、卡片边框和浅色主题对照关系，保持全站一致。
+- `themes/hexo-theme-coder 2/layout/categories.ejs`：参考分类页的层级语义与计数展示方式，让首页左栏命名能自然对齐。
+
+### 2. 遵循了以下项目约定
+- 命名约定：新增选择器统一采用 `home-layout-*`、`home-category-*`、`home-posts-*`、`home-empty` 这类首页语义前缀。
+- 代码风格：仅补充 `_partial/index.styl`，没有改全局容器宽度，也没有把首页规则泄漏到文章页和分类页。
+- 文件组织：只修改现有样式分片，未新增无必要文件。
+
+### 3. 对比了以下相似实现
+- 旧版首页样式：我的方案与其差异是补了双栏容器、侧栏卡片和空状态，而不再依赖 Hero 按钮承接首页入口，理由是模板将切到左侧分类导航。
+- 分类页树状样式：我的方案与其差异是借用同一色板和边框层级，但首页侧栏更偏筛选控件而非树结构，理由是交互语义不同。
+- 文章页极简样式：我的方案与其差异是复用相同留白与边框语言，但保持首页列表的轻量感，理由是首页仍应以浏览效率优先。
+
+### 4. 未重复造轮子的证明
+- 检查了首页、分类页、文章页样式文件与首页模板，确认没有现成的首页双栏分类导航样式可直接复用。
+- 本次差异化价值是：在不改模板之外文件的前提下，补齐首页新增分类导航结构需要的视觉壳层、激活态和响应式降级。
+
+## 结构化快速扫描 - 首页左侧分类导航
+时间：2026-03-28
+
+### 已检查文件
+- `themes/hexo-theme-coder 2/layout/index.ejs`：确认首页 Hero、旧按钮、文章列表与可改造区域。
+- `themes/hexo-theme-coder 2/layout/categories.ejs`：确认分类聚合逻辑与 `post.categories.toArray()` 的可复用写法。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：确认首页与分类页共享样式落点。
+- `themes/hexo-theme-coder 2/source/css/style.styl`：确认全局容器宽度与明暗主题基础行为。
+- `_config.yml`：确认 `category_dir`、`default_category` 与分类映射。
+- `source/_posts/2026.3.16随笔：爽的前提是你得足够痛苦.md`：确认单级分类样例。
+- `source/_posts/Linux：ELF文件.md`：确认多级分类样例。
+
+### 关键疑问与结论
+1. **首页最适合在哪一层增加左侧分类导航？**
+   - 来源：`themes/hexo-theme-coder 2/layout/index.ejs`
+   - 结论：直接在首页模板里，把旧的单列文章区改成双栏布局即可。
+2. **分类数据能否复用现有实现？**
+   - 来源：`themes/hexo-theme-coder 2/layout/categories.ejs`
+   - 结论：可以，沿用 `post.categories.toArray()` 的聚合方式即可拿到一级分类。
+3. **点击分类后如何只展示对应文章更稳妥？**
+   - 来源：Hexo 静态站点渲染约束与首页模板现状
+   - 结论：优先考虑前端同页筛选或锚点/参数驱动的轻量筛选，避免依赖构建期无法确定的运行时查询参数。
+
+## 编码前检查 - 首页左侧分类导航
+时间：2026-03-28
+
+✅ 已查阅上下文摘要文件：`.claude/context-summary-home-left-category-nav.md`
+✅ 将使用以下可复用组件：
+  - `themes/hexo-theme-coder 2/layout/index.ejs`：复用首页 Hero 和文章列表结构
+  - `themes/hexo-theme-coder 2/layout/categories.ejs`：复用分类聚合思路
+  - `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：复用文章列表和分类页的视觉风格
+✅ 将遵循命名约定：首页新增类名围绕 `home-category-*` 与 `home-layout-*`，保持现有 `home-*`/`category-*` 风格
+✅ 将遵循代码风格：模板内先做数据整理再输出结构；样式继续集中写入 `_partial/index.styl`
+✅ 确认不重复造轮子，证明：已检查首页模板、分类页模板和现有样式，确认仓库没有现成的首页左侧分类筛选实现
+
+## 编码后声明 - 首页左侧分类导航
+时间：2026-03-28
+
+### 1. 复用了以下既有组件
+- `themes/hexo-theme-coder 2/layout/index.ejs`：保留首页 Hero、导航和按年份分组的主体结构，在原模板内扩展分类筛选。
+- `themes/hexo-theme-coder 2/layout/categories.ejs`：复用 `post.categories.toArray()` 的一级分类聚合方式，避免重新摸索 Hexo 分类数据结构。
+- `themes/hexo-theme-coder 2/source/css/_partial/index.styl`：继续作为首页与分类页共用样式入口，补齐双栏布局、按钮激活态与响应式规则。
+
+### 2. 遵循了以下项目约定
+- 命名约定：新增类名统一使用 `home-category-*`、`home-index-layout`、`home-posts-panel`、`home-year-group` 等首页语义前缀。
+- 代码风格：模板内先整理分类数据再输出结构，前端筛选脚本内联在首页模板底部，保持当前主题的 EJS 书写方式。
+- 文件组织：仅修改现有首页模板与现有首页样式文件，没有新增不必要模板或脚本文件。
+
+### 3. 对比了以下相似实现
+- 旧版首页模板：我的方案与其差异是移除 Hero 按钮，改为左侧分类按钮 + 右侧文章列表，理由是用户要求在首页原地完成分类筛选。
+- 分类总览页模板：我的方案与其差异是只按一级分类筛选，并保留首页按年份分组，理由是首页更偏快速浏览而不是完整分类树导航。
+- 旧版首页样式：我的方案与其差异是新增双栏栅格、侧栏按钮和移动端折叠规则，理由是需要承载新的首页布局与交互。
+
+### 4. 未重复造轮子的证明
+- 检查了 `themes/hexo-theme-coder 2/layout/index.ejs`、`themes/hexo-theme-coder 2/layout/categories.ejs`、`themes/hexo-theme-coder 2/source/css/_partial/index.styl`，确认不存在现成的首页左侧分类筛选实现。
+- 本次差异化价值是：在不新增页面的前提下，让首页直接支持按一级分类筛选文章，同时继续保持年份浏览结构。
+
+## 验证补充记录 - 首页左侧分类导航
+时间：2026-03-28
+
+- 预期最小验证：执行 `npm run build`，确认 Hexo 能正常生成首页。
+- 抽查重点：`public/index.html` 中首页 Hero 按钮应消失；左侧应出现分类按钮；文章项应带一级分类标签；内联脚本应能根据 `data-category-filter` 控制文章显示。
+- 当前状态：本次子任务只负责补齐记录，未执行构建；实际验证需由主执行智能体在合并最终改动后完成并补记结果。
+- 风险记录：筛选逻辑依赖前端内联脚本按 `style.display` 控制显隐，若后续主题脚本统一改写行内样式选择器，需要同步回归首页筛选行为。
+
+## 记录补齐说明 - 首页左侧分类导航
+时间：2026-03-28
+
+- 本次补记依据：`.claude/context-summary-home-left-category-nav.md` 中已确认首页模板、分类聚合方式、样式落点和方案选择。
+- 调研结论：分类数据来源于文章 `post.categories.toArray()`，首页只取一级分类做左侧导航；无分类文章需要单独兜底到“未分类”。
+- 实施结论：首页入口职责已从 Hero 按钮切换为左侧分类导航，模板内直接输出分类按钮、文章分组和筛选所需数据属性。
+- 验证边界：由于当前子任务是补档，不重复执行构建；最终以主执行智能体补充的 `npm run build` 与 `public/index.html` 抽查结果为准。
+
+## 编码后声明 - 补齐首页分类导航任务记录
+时间：2026-03-28
+
+### 1. 复用了以下既有组件
+- `.claude/context-summary-home-left-category-nav.md`：作为首页左侧分类导航任务的上下文摘要来源，补齐依赖、成功标准和风险约束。
+- `.claude/operations-log.md`：沿用仓库既有的结构化记录格式，补充本次记录完善动作。
+- `.claude/verification-report.md`：沿用既有验证报告格式，新增首页分类导航任务的验证条目。
+
+### 2. 遵循了以下项目约定
+- 命名约定：继续使用“结构化快速扫描 / 编码前检查 / 编码后声明 / 验证补充记录”这一现有记录标题体系。
+- 代码风格：只更新项目本地 `.claude/` 工作文件，不改业务模板与样式文件。
+- 文件组织：所有新增记录均落在仓库本地 `.claude/`，未写入全局目录。
+
+### 3. 对比了以下相似实现
+- 文章页标题与评论脚本任务记录：我的方案与其差异是仅补齐记录，不新增代码验证结论，理由是本次子任务范围就是追记首页分类导航的任务档案。
+- 分类总览页任务记录：我的方案与其差异是聚焦首页左侧筛选场景，理由是其依赖与成功标准不同于分类总览页。
+- 仓库初始化任务记录：我的方案与其差异是只补任务级上下文与验证条目，不重复仓库级背景信息，理由是避免日志冗余。
+
+### 4. 未重复造轮子的证明
+- 检查了 `.claude/context-summary-home-left-category-nav.md`、`.claude/operations-log.md`、`.claude/verification-report.md`，确认缺口主要是首页分类导航任务的依赖与验证条目尚未完整收束。
+- 本次差异化价值是：把已完成的调研、实施结论和验证要求整理进仓库规定的三个工作文件，便于后续审计与交接。
+
 ## 结构化快速扫描 - 生成仓库 CLAUDE.md
 时间：2026-03-24
 

@@ -10,34 +10,131 @@
         <p class="words home-hero-subtitle">
             <%= theme.words %>
         </p>
-        <div class="home-hero-actions">
-            <a class="home-hero-action" href="<%- url_for('/categories/') %>">分类导航</a>
-            <a class="home-hero-action" href="<%- url_for('/archives/') %>">文章归档</a>
-        </div>
     </div>
 </div>
 
 <%- partial('_partial/nav') %>
-<div class="hd home-index">
-    <% var last; %>
-    <% page.posts.each(function (post) { %>
-        <% var year = post.date.year(); %>
-        <% if (last != year){ %>
-            <div class="titlex home-year-title">
-                <p><span class="home-year-line"></span><span><%= year %></span></p>
-            </div>
-            <% last = year; %>
-        <% } %>
-        <a class="flink home-post-link" href="<%- url_for(post.path) %>">
-            <div class="list home-post-item">
-                <div class="postname home-post-name">
-                    <%= post.title %>
+
+<%
+    var homeCategories = [];
+    var homeCategoryMap = {};
+    var uncategorizedKey = '未分类';
+
+    page.posts.each(function (post) {
+        var categories = post.categories && typeof post.categories.toArray === 'function'
+            ? post.categories.toArray()
+            : [];
+        var topCategory = categories.length ? categories[0].name : uncategorizedKey;
+
+        if (!homeCategoryMap[topCategory]) {
+            homeCategoryMap[topCategory] = {
+                key: topCategory,
+                title: topCategory,
+                count: 0
+            };
+            homeCategories.push(homeCategoryMap[topCategory]);
+        }
+
+        homeCategoryMap[topCategory].count += 1;
+    });
+%>
+
+<div class="hd home-index home-index-layout">
+    <aside class="home-category-sidebar">
+        <div class="titlex home-category-title">
+            <p><span class="home-year-line"></span><span>分类</span></p>
+        </div>
+        <div class="home-category-nav" data-home-category-nav>
+            <button class="home-category-link is-active" type="button" data-category-filter="all">
+                全部
+                <span class="home-category-count">（<%= page.posts.length %>）</span>
+            </button>
+            <% homeCategories.forEach(function (category) { %>
+                <button class="home-category-link" type="button" data-category-filter="<%= category.key %>">
+                    <%= category.title %>
+                    <span class="home-category-count">（<%= category.count %>）</span>
+                </button>
+            <% }) %>
+        </div>
+    </aside>
+
+    <div class="home-posts-panel">
+        <% var last; %>
+        <% var hasOpenYearSection = false; %>
+        <% page.posts.each(function (post, index) { %>
+            <%
+                var categories = post.categories && typeof post.categories.toArray === 'function'
+                    ? post.categories.toArray()
+                    : [];
+                var topCategory = categories.length ? categories[0].name : uncategorizedKey;
+                var year = post.date.year();
+            %>
+            <% if (last != year) { %>
+                <% if (hasOpenYearSection) { %>
+                    </div>
+                <% } %>
+                <section class="home-year-group" data-home-year-group data-year="<%= year %>">
+                    <div class="titlex home-year-title">
+                        <p><span class="home-year-line"></span><span><%= year %></span></p>
+                    </div>
+                    <div class="home-year-posts">
+                <% last = year; %>
+                <% hasOpenYearSection = true; %>
+            <% } %>
+            <a class="flink home-post-link" href="<%- url_for(post.path) %>" data-home-post data-category="<%= topCategory %>">
+                <div class="list home-post-item" data-category-label="<%= topCategory %>">
+                    <div class="postname home-post-name">
+                        <%= post.title %>
+                    </div>
+                    <div class="posttime home-post-time">
+                        <span class="home-post-category"><%= topCategory %></span>
+                        <span class="home-post-time-separator">·</span>
+                        <%- full_date(post.date, 'MMM DD') %>
+                    </div>
+                    <div class="clear"></div>
                 </div>
-                <div class="posttime home-post-time">
-                    <%- full_date(post.date, 'MMM DD') %>
-                </div>
-                <div class="clear"></div>
-            </div>
-        </a>
-    <% }) %>
+            </a>
+            <% if (index === page.posts.length - 1 && hasOpenYearSection) { %>
+                    </div>
+                </section>
+            <% } %>
+        <% }) %>
+    </div>
 </div>
+
+<script>
+    (function () {
+        var nav = document.querySelector('[data-home-category-nav]');
+        if (!nav) {
+            return;
+        }
+
+        var buttons = Array.prototype.slice.call(nav.querySelectorAll('[data-category-filter]'));
+        var posts = Array.prototype.slice.call(document.querySelectorAll('[data-home-post]'));
+        var groups = Array.prototype.slice.call(document.querySelectorAll('[data-home-year-group]'));
+
+        function applyFilter(category) {
+            buttons.forEach(function (button) {
+                button.classList.toggle('is-active', button.getAttribute('data-category-filter') === category);
+            });
+
+            posts.forEach(function (post) {
+                var matched = category === 'all' || post.getAttribute('data-category') === category;
+                post.style.display = matched ? '' : 'none';
+            });
+
+            groups.forEach(function (group) {
+                var visiblePosts = group.querySelectorAll('[data-home-post]:not([style*="display: none"])');
+                group.style.display = visiblePosts.length ? '' : 'none';
+            });
+        }
+
+        buttons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                applyFilter(button.getAttribute('data-category-filter'));
+            });
+        });
+
+        applyFilter('all');
+    })();
+</script>
