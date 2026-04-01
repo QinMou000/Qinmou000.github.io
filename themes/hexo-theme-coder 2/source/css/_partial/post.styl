@@ -2,6 +2,7 @@
     display: flex;
     gap: 40px;
     padding-top: 28px;
+    justify-content: center;
 }
 
 .post-toc {
@@ -12,6 +13,12 @@
     align-self: flex-start;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.post-toc:hover {
+    opacity: 1;
 }
 
 .post-toc-title {
