@@ -65,3 +65,63 @@ $("#update_style").change(function() {
         updateStyle();
     }
 });
+
+// 目录生成与交互
+function generateToc() {
+    var content = document.querySelector('.post-content');
+    var tocNav = document.getElementById('post-toc-nav');
+    if (!content || !tocNav) return;
+
+    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    if (headings.length === 0) {
+        document.querySelector('.post-toc').style.display = 'none';
+        return;
+    }
+
+    var tocHtml = '';
+    headings.forEach(function(heading, index) {
+        var id = 'toc-' + index;
+        heading.id = id;
+        var level = heading.tagName.toLowerCase();
+        tocHtml += '<a href="#' + id + '" class="toc-' + level + '">' + heading.textContent + '</a>';
+    });
+    tocNav.innerHTML = tocHtml;
+
+    // 点击目录跳转
+    tocNav.addEventListener('click', function(e) {
+        var target = e.target;
+        if (target.tagName === 'A') {
+            e.preventDefault();
+            var href = target.getAttribute('href');
+            var targetEl = document.querySelector(href);
+            if (targetEl) {
+                var offset = 60;
+                var top = targetEl.getBoundingClientRect().top + window.pageYOffset - offset;
+                window.scrollTo({ top: top, behavior: 'smooth' });
+            }
+        }
+    });
+
+    // 滚动监听高亮
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var id = entry.target.id;
+                tocNav.querySelectorAll('a').forEach(function(a) {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === '#' + id) {
+                        a.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+
+    headings.forEach(function(heading) {
+        observer.observe(heading);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    generateToc();
+});

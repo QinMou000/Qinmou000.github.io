@@ -23,11 +23,18 @@
         <hr class="post-hero-divider">
     </div>
 
-    <article class="post-article">
-        <div class="post-content post-article-body">
-            <%- page.content %>
-        </div>
-    </article>
+    <div class="post-container">
+        <aside class="post-toc">
+            <div class="post-toc-title">目录</div>
+            <nav class="post-toc-nav" id="post-toc-nav"></nav>
+        </aside>
+
+        <article class="post-article">
+            <div class="post-content post-article-body">
+                <%- page.content %>
+            </div>
+        </article>
+    </div>
 
     <% if (theme.valine.enable && page.comments) { %>
         <hr class="fhr post-comments-divider">
