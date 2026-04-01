@@ -214,3 +214,43 @@
 .bg_while .post-comments {
     color: #111;
 }
+
+// 手机端适配
+@media screen and (max-width: 768px) {
+    .post-container {
+        flex-direction: column;
+        padding-top: 20px;
+        gap: 0;
+    }
+
+    // 手机端隐藏目录
+    .post-toc {
+        display: none;
+    }
+
+    .post-article {
+        width: 100%;
+    }
+
+    .post-hero-title p {
+        font-size: 26px;
+    }
+
+    .post-meta {
+        font-size: 12px;
+        gap: 8px;
+    }
+
+    .post-content p {
+        font-size: 16px;
+    }
+
+    .post-content li {
+        font-size: 15px;
+    }
+
+    .post-comments-divider {
+        margin-top: 28px;
+        margin-bottom: 20px;
+    }
+}
