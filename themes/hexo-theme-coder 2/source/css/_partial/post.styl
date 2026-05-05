@@ -1,23 +1,33 @@
 .post-container {
-    display: flex;
-    gap: 40px;
     padding-top: 28px;
-    justify-content: center;
 }
 
+// 目录脱离正常文档流，悬浮在视口右侧空白区，不挤占文章宽度
 .post-toc {
-    flex-shrink: 0;
-    width: 200px;
-    position: sticky;
+    position: fixed;
     top: 80px;
-    align-self: flex-start;
+    right: 24px;
+    width: 200px;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
     opacity: 0;
     transition: opacity 0.25s ease;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .post-toc:hover {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+// 鼠标移到右侧边缘也能唤出目录，避免完全透明时无法触发 hover
+.post-page:hover .post-toc {
+    opacity: 0.35;
+    pointer-events: auto;
+}
+
+.post-page:hover .post-toc:hover {
     opacity: 1;
 }
 
@@ -75,7 +85,7 @@
 }
 
 .post-article {
-    flex: 1;
+    width: 100%;
     min-width: 0;
 }
 
@@ -218,9 +228,7 @@
 // 手机端适配
 @media screen and (max-width: 768px) {
     .post-container {
-        flex-direction: column;
         padding-top: 20px;
-        gap: 0;
     }
 
     // 手机端隐藏目录
