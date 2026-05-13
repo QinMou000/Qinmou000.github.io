@@ -1,16 +1,29 @@
 // 保护数学公式不被 markdown 渲染器破坏
-// 在 markdown 渲染前替换为占位符，渲染后恢复
+// 先替换为占位符 → markdown 渲染 → 再恢复
+// 需要保护四种分隔符：\[...\] \(...\) $$...$$ $...$
 
 function escapeMath(content) {
   var mathBlocks = [];
 
-  // 先保护 $$...$$ 块级公式（多行）
+  // 1. \[...\] 块级公式（先于其他，避免内部被误匹配）
+  content = content.replace(/\\\[([\s\S]*?)\\\]/g, function (match) {
+    mathBlocks.push(match);
+    return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
+  });
+
+  // 2. $$...$$ 块级公式
   content = content.replace(/\$\$([\s\S]*?)\$\$/g, function (match) {
     mathBlocks.push(match);
     return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
   });
 
-  // 再保护 $...$ 行内公式
+  // 3. \(...\) 行内公式
+  content = content.replace(/\\\(([^\n]+?)\\\)/g, function (match) {
+    mathBlocks.push(match);
+    return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
+  });
+
+  // 4. $...$ 行内公式（不跨行）
   content = content.replace(/\$([^\$\n]+?)\$/g, function (match) {
     mathBlocks.push(match);
     return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
