@@ -10,24 +10,13 @@
     width: 200px;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
-    opacity: 0;
+    opacity: 0.85;
     transition: opacity 0.25s ease;
     z-index: 10;
-    pointer-events: none;
+    pointer-events: auto;
 }
 
 .post-toc:hover {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-// 鼠标移到右侧边缘也能唤出目录，避免完全透明时无法触发 hover
-.post-page:hover .post-toc {
-    opacity: 0.35;
-    pointer-events: auto;
-}
-
-.post-page:hover .post-toc:hover {
     opacity: 1;
 }
 
