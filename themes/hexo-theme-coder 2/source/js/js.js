@@ -15,6 +15,8 @@ if (valineContainer && typeof Valine !== 'undefined' && valine_appid && valine_a
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelectorAll('pre').forEach((block) => {
+        // 跳过已被 Hexo 服务端高亮的代码块，避免客户端重复高亮覆盖服务端结果
+        if (block.closest('figure.highlight')) return;
         hljs.highlightBlock(block);
     });
 });

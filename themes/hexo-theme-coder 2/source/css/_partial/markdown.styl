@@ -204,7 +204,7 @@
 .post-content code,
 .post-content kbd,
 .post-content pre {
-    font-family: monospace, monospace;
+    font-family: Consolas, 'Courier New', monospace;
     font-size: 1em;
 }
 
@@ -368,8 +368,8 @@
 
 .post-content code,
 .post-content pre {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
-    font-size: 12px;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 13px;
 }
 
 .post-content pre {
@@ -905,6 +905,96 @@
 .highlight{
     width: 100%;
     margin-left: 0px;
+}
+
+// 代码块镂空效果 —— 暗色主题
+.post-content figure.highlight {
+    background: transparent;
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 22px 0;
+
+    table {
+        margin: 0;
+        background: transparent;
+    }
+
+    .gutter {
+        background: rgba(255, 255, 255, 0.025);
+        border-right: 1px solid #222;
+
+        pre {
+            background: transparent;
+            margin: 0;
+        }
+    }
+
+    .code {
+        background: transparent;
+
+        pre {
+            background: transparent;
+            margin: 0;
+        }
+    }
+}
+
+// 覆写 highlight.js 的实色背景
+.post-content pre.hljs,
+.post-content .hljs {
+    background: transparent;
+}
+
+.post-content pre {
+    background: transparent;
+}
+
+// 浅色主题镂空
+.bg_while .post-content figure.highlight {
+    border-color: #e0e0e0;
+
+    .gutter {
+        background: rgba(0, 0, 0, 0.025);
+        border-right-color: #e0e0e0;
+    }
+}
+
+.bg_while .post-content pre.hljs,
+.bg_while .post-content .hljs {
+    background: transparent;
+}
+
+// 代码语法高亮 —— 暗色主题（适配 Hexo 无 hljs- 前缀的类名）
+.post-content figure.highlight {
+    .code .keyword  { color: #f92672; }
+    .code .comment  { color: #75715e; font-style: italic; }
+    .code .type     { color: #e6db74; }
+    .code .function { color: #a6e22e; }
+    .code .title    { color: #a6e22e; }
+    .code .params   { color: #f8f8f2; }
+    .code .number   { color: #ae81ff; }
+    .code .built_in { color: #e6db74; }
+    .code .string   { color: #e6db74; }
+    .code .literal  { color: #ae81ff; }
+    .code .symbol   { color: #66d9ef; }
+    .code .meta     { color: #75715e; }
+}
+
+// 代码语法高亮 —— 浅色主题
+.bg_while .post-content figure.highlight {
+    .code .keyword  { color: #d73a49; }
+    .code .comment  { color: #6a737d; font-style: italic; }
+    .code .type     { color: #6f42c1; }
+    .code .function { color: #6f42c1; }
+    .code .title    { color: #6f42c1; }
+    .code .params   { color: #24292e; }
+    .code .number   { color: #005cc5; }
+    .code .built_in { color: #e36209; }
+    .code .string   { color: #032f62; }
+    .code .literal  { color: #005cc5; }
+    .code .symbol   { color: #005cc5; }
+    .code .meta     { color: #6a737d; }
 }
 
 .post-content {
