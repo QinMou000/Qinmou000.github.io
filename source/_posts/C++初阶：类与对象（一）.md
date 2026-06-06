@@ -1,0 +1,262 @@
+---
+title: C++初阶：类与对象（一）
+date: 2024-07-10
+categories:
+  - C++
+---
+
+> ![图片](https://i-blog.csdnimg.cn/direct/a1e2fd8531ae4fbab004f1ecd1a2c8b1.jpeg)
+>
+> ✨✨所属专栏：[C++](https://blog.csdn.net/2301_80194476/category_12723828.html?spm=1001.2014.3001.5482)✨✨
+>
+> ✨✨作者主页：[嶔某](https://blog.csdn.net/2301_80194476?spm=1000.2115.3001.5343)✨✨
+
+## 类的定义
+
+### 定义格式
+
+> • class为定义类的关键字，后面跟类的名字，{}中为类的主体，注意类定义结束时后⾯**分号**不能省略。类体中内容称为类的成员；类中的变量称为类的属性或成员变量；类中的函数称为类的⽅法或者成员函数。
+>  • 为了区分成员变量，⼀般习惯上成员变量会加⼀个特殊标识，如成员变量前⾯或者后⾯加_或者m开头，注意C++中这个并不是强制的，只是⼀些惯例。
+>  • C++中struct也可以定义类，**C++兼容C中struct的所有⽤法**，同时struct升级成了类，明显的变化是struct中可以定义函数，⼀般情况下我们还是推荐⽤class定义类。
+>  • **定义在类⾯的成员函数默认为inline。**
+
+```cpp
+class Date
+{
+	//成员变量……
+
+	//成员函数……
+};
+```
+
+### 访问限定符
+
+> • C++⼀种实现封装的⽅式，⽤类将对象的属性与⽅法结合在⼀块，让对象更加完善，通过访问权限选择性的将其接⼝提供给外部的用户使⽤。
+>  • public修饰的成员在类外可以直接被访问；protected和private修饰的成员在类外不能直接被访问。
+>  • 访问权限作⽤域从该访问限定符出现的位置开始直到下⼀个访问限定符出现时为⽌，如果后⾯没有访问限定符，作⽤域就到}即类结束。
+>  • c**lass定义成员没有被访问限定符修饰时默认为private，struct默认为public。**
+>
+> • class定义成员可以写多个public、private
+>  • ⼀般成员变量都会被限制为private/protected，需要给别⼈使⽤的成员函数会放为public。
+
+```cpp
+class Date
+{
+public:
+	void Init(int year, int month, int day)
+	{
+		_year = year;
+		_month = month;
+		_day = day;
+	}
+	void Print()
+	{
+		cout << _year << "/" << _month << "/"<< _day << endl;
+	}
+private:
+	int _year;
+	int _month;
+	int _day;
+};
+```
+
+### 类域
+
+• 类定义了⼀个新的作⽤域，类的所有成员都在类的作⽤域中，**在类体外定义成员时，需要使⽤::作⽤域操作符指明成员属于哪个类域。**
+ • 类域影响的是编译的查找规则，下⾯程序中Init如果不指定类域Date，那么编译器就把Init当成全
+ 局函数，那么编译时，找不到year、month等成员的声明/定义在哪⾥，就会报错。指定类Date，就是知道Init是成员函数，当前域找不到的year、month等成员，就会到类域中去查找。
+
+```cpp
+class Date
+{
+public:
+	void Init(int year, int month, int day);
+
+	void Print()
+		cout << _year << "/" << _month << "/"<< _day << endl;
+
+private:
+	int _year;
+	int _month;
+	int _day;
+};
+
+void Date::Init(int year, int month, int day)
+{
+	_year = year;
+	_month = month;
+	_day = day;
+}
+```
+
+## 实例化
+
+### 概念
+
+> • ⽤类类型在物理内存中创建对象的过程，称为类实例化出对象。
+>  • 类是对象进⾏⼀种抽象描述，是⼀个模型⼀样的东西，限定了类有哪些成员变量，**这些成员变量只是声明，没有分配空间，⽤类实例化出对象时，才会分配空间。**
+>  •**⼀个类可以实例化出多个对象**，实例化出的对象占⽤实际的物理空间，存储类成员变量。
+
+打个⽐⽅：类实例化出对象就像现实中使⽤建筑设计图建造出房⼦，类就像是设计图，设计图规划了有多少个房间，房间⼤⼩功能等，但是并没有实体的建筑存在，也不能住⼈，⽤设计图修建出房⼦，房⼦才能住⼈。同样类就像设计图⼀样，不能存储数据，实例化出的对象分配物理内存存储数据。
+
+```cpp
+int main()
+{
+	Date d1;
+	Date d2;//Date类实例化两个对象，为这两个对象分别开空间
+
+	d1.Init(2024, 7, 10);
+	d1.Print();
+	d2.Init(2024, 7, 11);
+	d2.Print();
+
+	return 0;
+}
+```
+
+### 对象大小
+
+分析⼀下类对象中哪些成员呢？类实例化出的每个对象，都有独⽴的数据空间，**所以对象中肯定包含成员变量。**
+
+那么成员函数是否包含呢？⾸先函数被编译后是⼀段指令，对象中没办法存储，这些指令**存储在⼀个单独的区域(代码段)**，对象要存储也只能存储指针。
+
+再分析⼀下，对象中是否有存储指针的必要呢，Date实例化d1和d2两个对象，d1和d2都有各⾃独⽴的成员变量_year/_month/_day存储各⾃的数据，但是d1和d2的成员函数Init/Print指针却是⼀样的，存储在对象中就浪费了。
+
+如果⽤Date实例化100个对象，那么成员函数指针就重复存储100次，太浪费了。**其实函数指针是不需要存储的**，函数指针是⼀个地址，调⽤函数被编译成汇编指令[call地址]，**其实编译器在编译链接时，就要找到函数的地址，不是在运⾏时找。**
+
+![图片](https://i-blog.csdnimg.cn/direct/664f2c53afab446d83e364f4d6cd2bb2.png)
+
+#### 内存对齐规则
+
+这里C++的内存对齐规则和C语言是一样的
+
+> • 第⼀个成员在与结构体偏移量为0的地址处。
+>  • 其他成员变量要对⻬到某个数字（对⻬数）的整数倍的地址处。
+>  • 注意：对⻬数 = 编译器默认的⼀个对⻬与该成员⼤⼩的**较⼩值**。
+>  • **VS中默认的对⻬数为8**，Linux中gcc没有默认对⻬数，对⻬数就是成员⾃⾝的⼤⼩
+>  • 结构体总⼤⼩为：最⼤对⻬数（所有变量类型最⼤者与默认对⻬参数取最⼩）的整数倍。
+>  • 如果嵌套了结构体的情况，嵌套的结构体对⻬到⾃⼰的最⼤对⻬数的整数倍处，结构体的整体⼤⼩就是所有最⼤对⻬数（含嵌套结构体的对⻬数）的整数倍。
+
+```cpp
+class A
+{
+
+};
+
+class B
+{
+public:
+	void print()
+	{
+
+	}
+};
+```
+
+**注意：当一个类里面没有成员变量时，这个类的对象大小为1，这里给一个字节就是为了占位表示对象存在。**
+
+## this指针
+
+• Date类中有Init与Print两个成员函数，函数体中没有关于不同对象的区分，那当d1调⽤Init和
+ Print函数时，该函数是如何知道应该访问的是d1对象还是d2对象呢？那么这⾥就要看到C++给了
+ ⼀个隐含的this指针解决这⾥的问题
+ • 编译器编译后，类的成员函数默认都会在形参第⼀个位置，增加⼀个当前类类型的指针，叫做this指针。⽐如Date类的Init的真实原型为：
+
+```cpp
+void Init(Date* const this, int year,int month, int day)
+```
+
+**this指针变量的内容不能修改，但是指针指向的内容，可以通过指针改变。**
+
+> 常量指针和指针常量搞不清楚的看这里： [C语言指针从入门到基础详解（非常详细）](https://blog.csdn.net/2301_80194476/article/details/136586054?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172061627616800182186500%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=172061627616800182186500&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-2-136586054-null-null.nonecase&utm_term=%E6%8C%87%E9%92%88%E5%B8%B8%E9%87%8F&spm=1018.2226.3001.4450)
+
+•**类的成员函数中访问成员变量，本质都是通过this指针访问的**，如Init函数中给_year赋值，原型是：
+
+```cpp
+this->_year = year;
+```
+
+• C++规定不能在实参和形参的位置显⽰的写this指针(编译时编译器会处理)，但是**可以在函数体内显示使⽤this指针。**
+
+## C++和C语言实现Stack对比
+
+**⾯向对象三⼤特性：封装、继承、多态**
+
+下⾯的对⽐我们可以初步了解⼀下封装。
+
+**C语言：**[数据结构_栈和队列(Stack & Queue)](https://blog.csdn.net/2301_80194476/article/details/138316164?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522172061685316800227497456%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=172061685316800227497456&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-2-138316164-null-null.nonecase&utm_term=%E6%A0%88&spm=1018.2226.3001.4450)
+
+**C++：**
+
+```cpp
+#include<iostream>
+#include<cassert>
+using namespace std;
+typedef int STDataType;
+class Stack
+{
+public :
+	// 成员函数
+	void Init(int n = 4)
+	{
+		_a = (STDataType*)malloc(sizeof(STDataType) * n);
+		if (nullptr == _a)
+		{
+			perror("malloc申请空间失败");
+			return;
+		}
+		_capacity = n;
+		_top = 0;
+	}
+	void Push(STDataType x)
+	{
+		if (_top == _capacity)
+		{
+			int newcapacity = _capacity * 2;
+			STDataType* tmp = (STDataType*)realloc(_a, newcapacity *
+				sizeof(STDataType));
+			if (tmp == NULL)
+			{
+				perror("realloc fail");
+				return;
+			}
+			_a = tmp;
+			_capacity = newcapacity;
+		}
+			_a[_top++] = x;
+	}
+	void Pop()
+	{
+		assert(_top > 0);
+		--_top;
+	}
+	bool Empty()
+	{
+		return _top == 0;
+	}
+	int Top()
+	{
+		assert(_top > 0);
+		return _a[_top - 1];
+	}
+	void Destroy()
+	{
+		free(_a);
+		_a = nullptr;
+		_top = _capacity = 0;
+	}
+private:
+	// 成员变量
+	STDataType* _a;
+	size_t _capacity;
+	size_t _top;
+};
+```
+
+通过上⾯两份代码对⽐，我们发现C++实现Stack形态上还是发⽣了挺多的变化，但是底层和逻辑上没啥变化。
+
+> • C++中数据和函数都放到了类⾥⾯，通过访问限定符进⾏了限制，不能再随意通过对象直接修改数据，这是C++封装的⼀种体现，这个是最重要的变化。这⾥的封装的本质是⼀种更严格规范的管理，避免出现乱访问修改的问题。当然封装不仅仅是这样的，后⾯还需要不断的去学习。
+>  • C++中有⼀些相对⽅便的语法，⽐如Init给的缺省参数会⽅便很多，成员函数每次不需要传对象地址，因为this指针隐含的传递了，⽅便了很多，使⽤类型不再需要typedef⽤类名就很⽅便
+>  • 在我们这个C++⼊⻔阶段实现的Stack看起来变了很多，但是实质上变化不⼤。等着后⾯学习到STL中的⽤适配器实现的Stack，就可以感受C++真正的魅⼒。
+
+**本期博客到这里就结束了，如果有什么错误，欢迎指出，如果对你有帮助，请点个赞，谢谢！**
