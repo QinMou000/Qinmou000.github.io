@@ -31,18 +31,31 @@ function getCookie(key) {
 }
 
 function updateStyle() {
+    var themeToggle = document.getElementById('theme-toggle');
+    var themeToggleIcon = themeToggle ? themeToggle.querySelector('.theme-toggle-icon') : null;
+
     if (getCookie("style") == "white") {
         $("#footer").attr("style", "color: #969696;");
         $(".flink").attr("style", "color: #969696;");
         $(".ba").attr("style", "color: #969696;");
         $("#bodyx").attr("class", "bg_while");
-        $("#update_style").attr('checked', false);
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', '切换为深色主题');
+        }
+        if (themeToggleIcon) {
+            themeToggleIcon.textContent = '☀';
+        }
     } else {
         $("#footer").attr("style", "");
         $(".flink").attr("style", "");
         $("#bodyx").attr("class", "");
         $(".ba").attr("style", "");
-        $("#update_style").attr('checked', true);
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', '切换为浅色主题');
+        }
+        if (themeToggleIcon) {
+            themeToggleIcon.textContent = '☾';
+        }
     }
 }
 
@@ -57,15 +70,9 @@ if (getCookie("style") == null) {
     updateStyle();
 }
 
-$("#update_style").change(function() {
-    var style = $("#update_style").is(':checked');
-    if (style) {
-        setCookie("style", "black")
-        updateStyle();
-    } else {
-        setCookie("style", "white")
-        updateStyle();
-    }
+$("#theme-toggle").click(function() {
+    setCookie("style", getCookie("style") === "black" ? "white" : "black");
+    updateStyle();
 });
 
 // 目录生成与交互
@@ -73,6 +80,12 @@ function generateToc() {
     var content = document.querySelector('.post-content');
     var tocNav = document.getElementById('post-toc-nav');
     if (!content || !tocNav) return;
+
+    var heroTitle = document.querySelector('.post-hero-title');
+    var firstHeading = content.querySelector('h1');
+    if (heroTitle && firstHeading && firstHeading.textContent.trim() === heroTitle.textContent.trim()) {
+        firstHeading.remove();
+    }
 
     var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
     if (headings.length === 0) {

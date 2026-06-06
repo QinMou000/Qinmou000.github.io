@@ -1,8 +1,14 @@
 <div class="hd nav-shell">
     <ol class="breadcrumb nav-menu">
+        <li class="nav-menu-item"><a class="ba nav-menu-link" href="<%- url_for('/') %>">首页</a></li>
         <% for (name in theme.menu) { %>
             <li class="nav-menu-item"><a class="ba nav-menu-link" href="<%- url_for(theme.menu[name]) %>"><%= name %></a></li>
         <% } %>
+        <li class="nav-menu-item">
+            <button class="theme-toggle" type="button" id="theme-toggle" aria-label="切换为浅色主题" title="切换明暗主题">
+                <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+            </button>
+        </li>
     </ol>
     <hr class="breadcrumbhr nav-divider">
 </div>

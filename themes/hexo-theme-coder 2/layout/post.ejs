@@ -6,6 +6,16 @@
             return category.name;
         }).join(' / ')
         : '';
+    var articleContent = page.content;
+    var firstHeadingMatch = articleContent.match(/^\s*<h1[^>]*>([\s\S]*?)<\/h1>/i);
+
+    if (firstHeadingMatch) {
+        var firstHeadingText = firstHeadingMatch[1].replace(/<[^>]+>/g, '').trim();
+
+        if (firstHeadingText === page.title.trim()) {
+            articleContent = articleContent.slice(firstHeadingMatch[0].length);
+        }
+    }
 %>
 
 <div class="hd post-page posts">
@@ -26,7 +36,7 @@
     <div class="post-container">
         <article class="post-article">
             <div class="post-content post-article-body">
-                <%- page.content %>
+                <%- articleContent %>
             </div>
         </article>
 

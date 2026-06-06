@@ -58,7 +58,7 @@
         </div>
     </aside>
 
-    <div class="home-posts-panel">
+    <div class="home-posts-panel" data-home-posts-panel data-page-size="24">
         <% var last; %>
         <% var hasOpenYearSection = false; %>
         <% page.posts.each(function (post, index) { %>
@@ -100,6 +100,13 @@
             <% } %>
         <% }) %>
     </div>
+
+    <div class="home-load-more-shell">
+        <button class="home-load-more" type="button" data-home-load-more>
+            加载更多
+        </button>
+        <p class="home-result-summary" data-home-result-summary></p>
+    </div>
 </div>
 
 <script>
@@ -112,27 +119,69 @@
         var buttons = Array.prototype.slice.call(nav.querySelectorAll('[data-category-filter]'));
         var posts = Array.prototype.slice.call(document.querySelectorAll('[data-home-post]'));
         var groups = Array.prototype.slice.call(document.querySelectorAll('[data-home-year-group]'));
+        var panel = document.querySelector('[data-home-posts-panel]');
+        var loadMoreButton = document.querySelector('[data-home-load-more]');
+        var resultSummary = document.querySelector('[data-home-result-summary]');
+        var pageSize = Number(panel.getAttribute('data-page-size')) || 24;
+        var activeCategory = 'all';
+        var visibleLimit = pageSize;
+
+        function updateGroups() {
+            groups.forEach(function (group) {
+                var hasVisiblePost = Array.prototype.some.call(
+                    group.querySelectorAll('[data-home-post]'),
+                    function (post) {
+                        return !post.hidden;
+                    }
+                );
+                group.hidden = !hasVisiblePost;
+            });
+        }
 
         function applyFilter(category) {
+            activeCategory = category;
+            visibleLimit = pageSize;
+
             buttons.forEach(function (button) {
                 button.classList.toggle('is-active', button.getAttribute('data-category-filter') === category);
             });
 
+            renderPosts();
+        }
+
+        function renderPosts() {
+            var matchedCount = 0;
+            var shownCount = 0;
+
             posts.forEach(function (post) {
-                var matched = category === 'all' || post.getAttribute('data-category') === category;
-                post.style.display = matched ? '' : 'none';
+                var matched = activeCategory === 'all' || post.getAttribute('data-category') === activeCategory;
+
+                if (matched) {
+                    matchedCount += 1;
+                }
+
+                var shouldShow = matched && shownCount < visibleLimit;
+                post.hidden = !shouldShow;
+
+                if (shouldShow) {
+                    shownCount += 1;
+                }
             });
 
-            groups.forEach(function (group) {
-                var visiblePosts = group.querySelectorAll('[data-home-post]:not([style*="display: none"])');
-                group.style.display = visiblePosts.length ? '' : 'none';
-            });
+            updateGroups();
+            loadMoreButton.hidden = shownCount >= matchedCount;
+            resultSummary.textContent = '已显示 ' + shownCount + ' / ' + matchedCount + ' 篇';
         }
 
         buttons.forEach(function (button) {
             button.addEventListener('click', function () {
                 applyFilter(button.getAttribute('data-category-filter'));
             });
+        });
+
+        loadMoreButton.addEventListener('click', function () {
+            visibleLimit += pageSize;
+            renderPosts();
         });
 
         applyFilter('all');
