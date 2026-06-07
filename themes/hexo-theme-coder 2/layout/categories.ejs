@@ -37,7 +37,7 @@
                 title: topCategory.name,
                 path: topPath,
                 count: 0,
-                directPosts: [],
+                posts: [],
                 children: [],
                 childMap: {}
             };
@@ -46,9 +46,9 @@
 
         var group = topCategoryMap[topKey];
         group.count += 1;
+        group.posts.push(post);
 
         if (categories.length === 1) {
-            group.directPosts.push(post);
             return;
         }
 
@@ -63,86 +63,66 @@
             group.childMap[childKey] = {
                 title: childTitle,
                 path: childPath,
-                count: 0,
-                posts: []
+                count: 0
             };
             group.children.push(group.childMap[childKey]);
         }
 
         group.childMap[childKey].count += 1;
-        group.childMap[childKey].posts.push(post);
+    });
+
+    topCategories.sort(function (left, right) {
+        return right.count - left.count;
     });
 %>
 
 <div class="hd categories-page">
-    <% topCategories.forEach(function (category) { %>
-        <div class="category-group">
-            <div class="titlex">
-                <p>
-                    <a class="category-group-link" href="<%- category.path %>">
-                        <span class="jing"># </span><%= category.title %>
-                        <span class="category-group-count">（<%= category.count %> 篇）</span>
-                    </a>
-                </p>
-            </div>
+    <header class="categories-header">
+        <p class="categories-eyebrow">CATEGORY INDEX</p>
+        <h1 class="categories-title">按主题浏览</h1>
+        <p class="categories-description">
+            共 <%= topCategories.length %> 个分类，选择一个方向继续阅读。
+        </p>
+    </header>
 
-            <div class="category-tree">
-                <% if (category.directPosts.length) { %>
-                    <div class="category-branch">
-                        <div class="category-branch-title">
-                            <span class="category-branch-node">└─</span>
-                            <a class="category-branch-link" href="<%- category.path %>">
-                                <span><%= category.title %></span>
-                                <span class="category-branch-separator">&gt;</span>
-                                <span>未细分</span>
-                                <span class="category-branch-count">（<%= category.directPosts.length %> 篇）</span>
+    <div class="categories-grid">
+        <% topCategories.forEach(function (category) { %>
+            <article class="category-card">
+                <header class="category-card-header">
+                    <a class="category-card-title" href="<%- category.path %>">
+                        <span class="category-card-mark">#</span>
+                        <span><%= category.title %></span>
+                    </a>
+                    <span class="category-card-count"><%= category.count %> 篇</span>
+                </header>
+
+                <% if (category.children.length) { %>
+                    <div class="category-card-children" aria-label="<%= category.title %> 的子分类">
+                        <% category.children.forEach(function (child) { %>
+                            <a class="category-card-child" href="<%- child.path %>">
+                                <%= child.title %>
+                                <span><%= child.count %></span>
                             </a>
-                        </div>
-                        <div class="category-branch-posts">
-                            <% category.directPosts.forEach(function (post) { %>
-                                <a class="flink" href="<%- url_for(post.path) %>">
-                                    <div class="list category-post-list">
-                                        <div class="postname">
-                                            <%= post.title %>
-                                        </div>
-                                        <div class="posttime">
-                                            <%- full_date(post.date, 'MMMM Do') %>
-                                        </div>
-                                    </div>
-                                </a>
-                            <% }) %>
-                        </div>
+                        <% }) %>
                     </div>
                 <% } %>
 
-                <% category.children.forEach(function (child) { %>
-                    <div class="category-branch">
-                        <div class="category-branch-title">
-                            <span class="category-branch-node">└─</span>
-                            <a class="category-branch-link" href="<%- child.path %>">
-                                <span><%= category.title %></span>
-                                <span class="category-branch-separator">&gt;</span>
-                                <span><%= child.title %></span>
-                                <span class="category-branch-count">（<%= child.count %> 篇）</span>
-                            </a>
-                        </div>
-                        <div class="category-branch-posts">
-                            <% child.posts.forEach(function (post) { %>
-                                <a class="flink" href="<%- url_for(post.path) %>">
-                                    <div class="list category-post-list">
-                                        <div class="postname">
-                                            <%= post.title %>
-                                        </div>
-                                        <div class="posttime">
-                                            <%- full_date(post.date, 'MMMM Do') %>
-                                        </div>
-                                    </div>
-                                </a>
-                            <% }) %>
-                        </div>
-                    </div>
-                <% }) %>
-            </div>
-        </div>
-    <% }) %>
+                <div class="category-card-posts">
+                    <% category.posts.slice(0, 5).forEach(function (post) { %>
+                        <a class="category-card-post" href="<%- url_for(post.path) %>">
+                            <span class="category-card-post-title"><%= post.title %></span>
+                            <time class="category-card-post-date" datetime="<%= full_date(post.date, 'YYYY-MM-DD') %>">
+                                <%- full_date(post.date, 'MM-DD') %>
+                            </time>
+                        </a>
+                    <% }) %>
+                </div>
+
+                <a class="category-card-more" href="<%- category.path %>">
+                    查看全部 <%= category.count %> 篇
+                    <span aria-hidden="true">→</span>
+                </a>
+            </article>
+        <% }) %>
+    </div>
 </div>

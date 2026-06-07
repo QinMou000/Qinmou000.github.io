@@ -15,50 +15,9 @@
 
 <%- partial('_partial/nav') %>
 
-<%
-    var homeCategories = [];
-    var homeCategoryMap = {};
-    var uncategorizedKey = '未分类';
-
-    page.posts.each(function (post) {
-        var categories = post.categories && typeof post.categories.toArray === 'function'
-            ? post.categories.toArray()
-            : [];
-        var topCategory = categories.length ? categories[0].name : uncategorizedKey;
-
-        if (!homeCategoryMap[topCategory]) {
-            homeCategoryMap[topCategory] = {
-                key: topCategory,
-                title: topCategory,
-                count: 0
-            };
-            homeCategories.push(homeCategoryMap[topCategory]);
-        }
-
-        homeCategoryMap[topCategory].count += 1;
-    });
-%>
-
-<div class="hd home-index home-index-layout">
-    <aside class="home-category-sidebar">
-        <div class="titlex home-category-title">
-            <p><span class="home-year-line"></span><span>分类</span></p>
-        </div>
-        <div class="home-category-nav" data-home-category-nav>
-            <button class="home-category-link is-active" type="button" data-category-filter="all">
-                全部
-                <span class="home-category-count">（<%= page.posts.length %>）</span>
-            </button>
-            <% homeCategories.forEach(function (category) { %>
-                <button class="home-category-link" type="button" data-category-filter="<%= category.key %>">
-                    <%= category.title %>
-                    <span class="home-category-count">（<%= category.count %>）</span>
-                </button>
-            <% }) %>
-        </div>
-    </aside>
-
+<div class="hd home-index">
     <div class="home-posts-panel" data-home-posts-panel data-page-size="24">
+        <% var uncategorizedKey = '未分类'; %>
         <% var last; %>
         <% var hasOpenYearSection = false; %>
         <% page.posts.each(function (post, index) { %>
@@ -81,8 +40,8 @@
                 <% last = year; %>
                 <% hasOpenYearSection = true; %>
             <% } %>
-            <a class="flink home-post-link" href="<%- url_for(post.path) %>" data-home-post data-category="<%= topCategory %>">
-                <div class="list home-post-item" data-category-label="<%= topCategory %>">
+            <a class="flink home-post-link" href="<%- url_for(post.path) %>" data-home-post>
+                <div class="list home-post-item">
                     <div class="postname home-post-name">
                         <%= post.title %>
                     </div>
@@ -111,19 +70,17 @@
 
 <script>
     (function () {
-        var nav = document.querySelector('[data-home-category-nav]');
-        if (!nav) {
-            return;
-        }
-
-        var buttons = Array.prototype.slice.call(nav.querySelectorAll('[data-category-filter]'));
-        var posts = Array.prototype.slice.call(document.querySelectorAll('[data-home-post]'));
-        var groups = Array.prototype.slice.call(document.querySelectorAll('[data-home-year-group]'));
         var panel = document.querySelector('[data-home-posts-panel]');
         var loadMoreButton = document.querySelector('[data-home-load-more]');
         var resultSummary = document.querySelector('[data-home-result-summary]');
+
+        if (!panel || !loadMoreButton || !resultSummary) {
+            return;
+        }
+
+        var posts = Array.prototype.slice.call(document.querySelectorAll('[data-home-post]'));
+        var groups = Array.prototype.slice.call(document.querySelectorAll('[data-home-year-group]'));
         var pageSize = Number(panel.getAttribute('data-page-size')) || 24;
-        var activeCategory = 'all';
         var visibleLimit = pageSize;
 
         function updateGroups() {
@@ -138,29 +95,11 @@
             });
         }
 
-        function applyFilter(category) {
-            activeCategory = category;
-            visibleLimit = pageSize;
-
-            buttons.forEach(function (button) {
-                button.classList.toggle('is-active', button.getAttribute('data-category-filter') === category);
-            });
-
-            renderPosts();
-        }
-
         function renderPosts() {
-            var matchedCount = 0;
             var shownCount = 0;
 
             posts.forEach(function (post) {
-                var matched = activeCategory === 'all' || post.getAttribute('data-category') === activeCategory;
-
-                if (matched) {
-                    matchedCount += 1;
-                }
-
-                var shouldShow = matched && shownCount < visibleLimit;
+                var shouldShow = shownCount < visibleLimit;
                 post.hidden = !shouldShow;
 
                 if (shouldShow) {
@@ -169,21 +108,15 @@
             });
 
             updateGroups();
-            loadMoreButton.hidden = shownCount >= matchedCount;
-            resultSummary.textContent = '已显示 ' + shownCount + ' / ' + matchedCount + ' 篇';
+            loadMoreButton.hidden = shownCount >= posts.length;
+            resultSummary.textContent = '已显示 ' + shownCount + ' / ' + posts.length + ' 篇';
         }
-
-        buttons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                applyFilter(button.getAttribute('data-category-filter'));
-            });
-        });
 
         loadMoreButton.addEventListener('click', function () {
             visibleLimit += pageSize;
             renderPosts();
         });
 
-        applyFilter('all');
+        renderPosts();
     })();
 </script>

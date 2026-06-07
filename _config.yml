@@ -68,6 +68,10 @@ index_generator:
 pagination_dir: page       # 分页路径后缀（比如/page/2）
 
 # Category & Tag
+category_generator:
+  per_page: 0
+  order_by: -date
+
 default_category: uncategorized
 category_map:
   随笔: essay
