@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>进程、线程、协程与 IO 多路复用学习总结</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --accent: #111827;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --code-bg: #111827;
+      --code-text: #e5e7eb;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34rem),
+        radial-gradient(circle at top right, rgba(22, 163, 74, 0.10), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 20px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(18px);
+      border-right: 1px solid var(--line);
+      overflow: auto;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #111827);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1 {
+      font-size: 17px;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    nav a {
+      padding: 11px 12px;
+      border-radius: 14px;
+      color: #374151;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .side-tip {
+      margin-top: 28px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main {
+      padding: 34px;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #111827, #1d4ed8);
+      color: white;
+      border-radius: 30px;
+      padding: 46px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 999px;
+      right: -80px;
+      top: -120px;
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .hero h2 {
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: 1.08;
+      margin: 0 0 18px;
+      letter-spacing: -0.04em;
+      max-width: 840px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.86);
+      margin: 0 0 26px;
+      font-size: 17px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 13px;
+    }
+
+    section {
+      margin-top: 34px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 640px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.045);
+    }
+
+    .card h4 {
+      margin: 0 0 10px;
+      font-size: 19px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .card .tag {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .big-number {
+      font-size: 44px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 15px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    .compare-table th {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.blue { background: #dbeafe; color: #1d4ed8; }
+    .pill.green { background: #dcfce7; color: #15803d; }
+    .pill.orange { background: #ffedd5; color: #c2410c; }
+    .pill.red { background: #fee2e2; color: #b91c1c; }
+    .pill.gray { background: #f3f4f6; color: #374151; }
+
+    .layer-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .layer:hover {
+      transform: translateY(-2px);
+      border-color: #bfdbfe;
+      background: #f8fbff;
+    }
+
+    .layer strong {
+      font-size: 17px;
+    }
+
+    .layer small {
+      color: var(--muted);
+    }
+
+    .details {
+      display: none;
+      margin-top: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #f9fafb;
+      color: #4b5563;
+      border: 1px dashed #d1d5db;
+    }
+
+    .details.open {
+      display: block;
+      animation: fadeIn .2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 999px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #374151;
+      transition: .2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+      animation: fadeIn .2s ease;
+    }
+
+    pre {
+      margin: 0;
+      overflow: auto;
+      border-radius: 18px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 18px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow-item {
+      background: white;
+      border: 1px solid var(--line);
+      padding: 16px;
+      border-radius: 18px;
+      text-align: center;
+      position: relative;
+    }
+
+    .flow-item:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .flow-item strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .flow-item span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .accordion {
+      display: grid;
+      gap: 12px;
+    }
+
+    .qa {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .qa button {
+      width: 100%;
+      border: none;
+      background: white;
+      text-align: left;
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #111827;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .qa-content {
+      display: none;
+      padding: 0 18px 18px;
+      color: var(--muted);
+    }
+
+    .qa.open .qa-content {
+      display: block;
+    }
+
+    .qa.open button {
+      color: var(--primary);
+    }
+
+    .diagram {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .cpu {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .core {
+      border-radius: 20px;
+      padding: 16px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .core-title {
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: #111827;
+    }
+
+    .hw-thread {
+      padding: 10px;
+      border-radius: 12px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .software-threads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .sw-thread {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #111827;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .sw-thread:hover {
+      transform: translateY(-2px);
+      background: var(--primary);
+    }
+
+    .note {
+      padding: 16px;
+      border-radius: 18px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      margin-top: 16px;
+    }
+
+    .toggle-area {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .toggle-card {
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      flex: 1;
+      min-width: 240px;
+      background: white;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .toggle-card.active {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .toggle-card h4 {
+      margin: 0 0 6px;
+    }
+
+    .toggle-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .quiz {
+      display: grid;
+      gap: 12px;
+    }
+
+    .quiz-option {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary);
+    }
+
+    .quiz-option.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+    }
+
+    .quiz-option.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    .answer {
+      display: none;
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .answer.show {
+      display: block;
+    }
+
+    footer {
+      margin: 40px 0 10px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: relative;
+        height: auto;
+      }
+
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      main {
+        padding: 20px;
+      }
+
+      .hero {
+        padding: 30px;
+      }
+
+      .grid.cols-3,
+      .grid.cols-2,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-item:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+        transform: translateX(50%);
+      }
+
+      .cpu {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="brand-logo">OS</div>
+        <div>
+          <h1>并发模型学习总结</h1>
+          <p>Process · Thread · Coroutine · IO</p>
+        </div>
+      </div>
+      <nav id="toc">
+        <a href="#overview">总览</a>
+        <a href="#three">进程 / 线程 / 协程</a>
+        <a href="#reason">为什么出现协程</a>
+        <a href="#race">竞争问题</a>
+        <a href="#cpp-python">C++ 与 Python</a>
+        <a href="#io">select / poll / epoll</a>
+        <a href="#kernel">用户态 / 内核态</a>
+        <a href="#cpu">CPU 核心与线程</a>
+        <a href="#questions">代表性问题</a>
+        <a href="#quiz">小测验</a>
+      </nav>
+      <div class="side-tip">
+        点击页面里的卡片、标签、问题和测验选项，可以展开细节。这个页面是纯 HTML/CSS/JS 单文件，可直接放进博客。
+      </div>
+    </aside>
+
+    <main>
+      <header class="hero" id="overview">
+        <h2>从 CPU 到 FastAPI：一次讲清进程、线程、协程和 IO 多路复用</h2>
+        <p>
+          今天讨论的核心不是背概念，而是建立一条完整链路：
+          硬件并行能力 → 操作系统调度 → 用户态运行时 → 语言里的 async/await → 后端工程选型。
+        </p>
+        <div class="chips">
+          <span class="chip">进程是资源单位</span>
+          <span class="chip">线程是执行单位</span>
+          <span class="chip">协程是用户态轻量任务</span>
+          <span class="chip">epoll 是底层 IO 多路复用</span>
+          <span class="chip">GIL 限制 Python 字节码并行</span>
+        </div>
+      </header>
+
+      <section id="three">
+        <div class="section-title">
+          <h3>1. 进程、线程、协程分别是什么？</h3>
+          <p>它们不是同一层的东西。进程和线程更多属于操作系统层，协程更多属于语言运行时 / 框架层。</p>
+        </div>
+
+        <div class="grid cols-3">
+          <article class="card">
+            <span class="tag">Process</span>
+            <h4>进程：资源分配单位</h4>
+            <p>
+              一个正在运行的程序实例。拥有独立内存空间、文件句柄、堆、栈、权限等资源。
+              隔离性强，创建和切换成本高。
+            </p>
+          </article>
+
+          <article class="card">
+            <span class="tag">Thread</span>
+            <h4>线程：CPU 调度单位</h4>
+            <p>
+              线程存在于进程内部，是实际执行代码的单位。线程共享同一个进程的内存和资源，
+              因此需要考虑锁、竞态、死锁。
+            </p>
+          </article>
+
+          <article class="card">
+            <span class="tag">Coroutine</span>
+            <h4>协程：用户态轻量任务</h4>
+            <p>
+              协程是可以暂停和恢复的函数。一般由事件循环调度，遇到 await 主动让出执行权。
+              特别适合高并发 IO。
+            </p>
+          </article>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>维度</th>
+                <th>进程</th>
+                <th>线程</th>
+                <th>协程</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>调度者</td>
+                <td>操作系统</td>
+                <td>操作系统</td>
+                <td>事件循环 / 运行时</td>
+              </tr>
+              <tr>
+                <td>切换成本</td>
+                <td><span class="pill red">高</span></td>
+                <td><span class="pill orange">中</span></td>
+                <td><span class="pill green">低</span></td>
+              </tr>
+              <tr>
+                <td>内存关系</td>
+                <td>默认隔离</td>
+                <td>同进程内共享</td>
+                <td>同线程内共享</td>
+              </tr>
+              <tr>
+                <td>适合场景</td>
+                <td>CPU 密集、模型推理、任务隔离</td>
+                <td>阻塞 IO、调用同步 SDK、后台任务</td>
+                <td>高并发 IO、HTTP、数据库、WebSocket</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="reason">
+        <div class="section-title">
+          <h3>2. 为什么会出现协程？</h3>
+          <p>协程的出现不是为了取代线程，而是为了解决“线程太重、回调太乱”的问题。</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-item">
+            <strong>多进程</strong>
+            <span>隔离强，但太重</span>
+          </div>
+          <div class="flow-item">
+            <strong>多线程</strong>
+            <span>轻一些，但锁复杂</span>
+          </div>
+          <div class="flow-item">
+            <strong>事件驱动</strong>
+            <span>高效，但回调乱</span>
+          </div>
+          <div class="flow-item">
+            <strong>协程</strong>
+            <span>轻量 + 顺序代码</span>
+          </div>
+          <div class="flow-item">
+            <strong>async/await</strong>
+            <span>异步写得像同步</span>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="margin-top:18px;">
+          <div class="card">
+            <h4>没有协程时</h4>
+            <pre><code>socket 可读时：
+    读取请求
+    发起数据库查询
+    注册数据库回调
+
+数据库返回时：
+    处理数据
+    注册 socket 可写事件
+
+socket 可写时：
+    发送响应</code></pre>
+          </div>
+          <div class="card">
+            <h4>有协程后</h4>
+            <pre><code>async def handle_request():
+    request = await read_request()
+    data = await query_database(request)
+    await send_response(data)</code></pre>
+          </div>
+        </div>
+
+        <div class="note">
+          协程的核心价值：等待 IO 时主动让出执行权，让一个线程可以管理大量等待中的任务，同时保持代码结构清晰。
+        </div>
+      </section>
+
+      <section id="race">
+        <div class="section-title">
+          <h3>3. 线程有竞争，协程也会有吗？</h3>
+          <p>会。但线程是抢占式调度，协程通常是协作式调度，所以竞争出现的位置不同。</p>
+        </div>
+
+        <div class="toggle-area">
+          <div class="toggle-card active" data-target="thread-race">
+            <h4>线程竞争</h4>
+            <p>可能在几乎任何时刻被操作系统切走。</p>
+          </div>
+          <div class="toggle-card" data-target="coroutine-race">
+            <h4>协程竞争</h4>
+            <p>通常发生在 await / yield 这种让出点附近。</p>
+          </div>
+        </div>
+
+        <div id="thread-race" class="tab-panel active">
+          <div class="card">
+            <h4>线程竞争示意</h4>
+            <pre><code>counter = 0
+
+线程 A：读取 counter = 0
+线程 B：读取 counter = 0
+线程 A：写回 counter = 1
+线程 B：写回 counter = 1
+
+本来加了两次，结果还是 1。</code></pre>
+            <p style="margin-top:12px;">
+              线程共享内存，且可能被操作系统在任意指令附近抢占，所以需要 mutex、atomic、condition_variable 等机制。
+            </p>
+          </div>
+        </div>
+
+        <div id="coroutine-race" class="tab-panel">
+          <div class="card">
+            <h4>协程竞争示意</h4>
+            <pre><code>counter = 0
+
+async def add():
+    global counter
+    temp = counter
+    await asyncio.sleep(0)
+    counter = temp + 1</code></pre>
+            <p style="margin-top:12px;">
+              如果两个协程都在 await 前读到 counter = 0，await 后再写回，就会丢失更新。
+              所以协程也要避免在修改共享状态中间 await，必要时使用 asyncio.Lock。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="cpp-python">
+        <div class="section-title">
+          <h3>4. C++ 和 Python 创建进程、线程、协程有什么不同？</h3>
+          <p>C++ 更接近底层，控制力强；Python 封装更高，易用但受解释器和 GIL 影响。</p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="python-code">Python</button>
+          <button class="tab-btn" data-tab="cpp-code">C++</button>
+          <button class="tab-btn" data-tab="compare-code">核心差异</button>
+        </div>
+
+        <div id="python-code" class="tab-panel active">
+          <div class="grid cols-3">
+            <div class="card">
+              <h4>Python 进程</h4>
+              <pre><code>from multiprocessing import Process
+
+def worker():
+    print("子进程运行")
+
+if __name__ == "__main__":
+    p = Process(target=worker)
+    p.start()
+    p.join()</code></pre>
+            </div>
+            <div class="card">
+              <h4>Python 线程</h4>
+              <pre><code>import threading
+
+def worker():
+    print("线程运行")
+
+t = threading.Thread(target=worker)
+t.start()
+t.join()</code></pre>
+            </div>
+            <div class="card">
+              <h4>Python 协程</h4>
+              <pre><code>import asyncio
+
+async def worker():
+    await asyncio.sleep(1)
+    print("协程运行")
+
+asyncio.run(worker())</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="cpp-code" class="tab-panel">
+          <div class="grid cols-3">
+            <div class="card">
+              <h4>C++ 进程</h4>
+              <pre><code>// Linux / Unix
+#include &lt;unistd.h&gt;
+
+int main() {
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // 子进程
+    } else {
+        // 父进程
+    }
+}</code></pre>
+            </div>
+            <div class="card">
+              <h4>C++ 线程</h4>
+              <pre><code>#include &lt;thread&gt;
+
+void worker() {
+    // do something
+}
+
+int main() {
+    std::thread t(worker);
+    t.join();
+}</code></pre>
+            </div>
+            <div class="card">
+              <h4>C++20 协程</h4>
+              <pre><code>// 伪代码，依赖库封装 task
+task&lt;int&gt; foo() {
+    int value = co_await async_read();
+    co_return value;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div id="compare-code" class="tab-panel">
+          <div class="card">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>项目</th>
+                  <th>Python</th>
+                  <th>C++</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>进程</td>
+                  <td>multiprocessing 封装较高，数据常需 pickle 序列化</td>
+                  <td>fork/exec 或 CreateProcess，更底层、更灵活</td>
+                </tr>
+                <tr>
+                  <td>线程</td>
+                  <td>threading 是 OS 线程，但 CPython 受 GIL 影响</td>
+                  <td>std::thread/std::jthread 可真正多核并行</td>
+                </tr>
+                <tr>
+                  <td>协程</td>
+                  <td>asyncio 提供事件循环和高层 API</td>
+                  <td>C++20 提供语言机制，但调度通常依赖库</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="io">
+        <div class="section-title">
+          <h3>5. select、poll、epoll 和协程有什么关系？</h3>
+          <p>它们不是协程，但经常作为异步 IO 的底层基础。</p>
+        </div>
+
+        <div class="layer-box">
+          <div class="layer" data-detail="detail-async">
+            <div>
+              <strong>async / await</strong><br />
+              <small>程序员看到的语言语法</small>
+            </div>
+            <span class="pill blue">上层抽象</span>
+          </div>
+          <div id="detail-async" class="details">
+            把异步流程写成接近同步的样子。例如：先 await 读取请求，再 await 查询数据库，再 await 返回响应。
+          </div>
+
+          <div class="layer" data-detail="detail-coroutine">
+            <div>
+              <strong>协程 Coroutine</strong><br />
+              <small>可以暂停和恢复的任务</small>
+            </div>
+            <span class="pill green">用户态任务</span>
+          </div>
+          <div id="detail-coroutine" class="details">
+            协程执行到 await 时暂停，把控制权交还给事件循环，等 IO 就绪后再恢复。
+          </div>
+
+          <div class="layer" data-detail="detail-loop">
+            <div>
+              <strong>事件循环 Event Loop</strong><br />
+              <small>调度协程和 IO 事件</small>
+            </div>
+            <span class="pill orange">运行时调度</span>
+          </div>
+          <div id="detail-loop" class="details">
+            事件循环负责管理哪些协程等待哪些 IO，哪个 IO 准备好了，就恢复对应协程。
+          </div>
+
+          <div class="layer" data-detail="detail-epoll">
+            <div>
+              <strong>select / poll / epoll / kqueue / IOCP</strong><br />
+              <small>操作系统层面的 IO 多路复用机制</small>
+            </div>
+            <span class="pill red">内核能力</span>
+          </div>
+          <div id="detail-epoll" class="details">
+            它们帮助一个线程同时监听多个文件描述符或 socket。Linux 下高并发网络服务常用 epoll。
+          </div>
+        </div>
+
+        <div class="grid cols-3" style="margin-top:18px;">
+          <div class="card">
+            <h4>select</h4>
+            <p>比较老，每次需要扫描一批 fd，数量和效率都有局限。像老师每次点完整个班名。</p>
+          </div>
+          <div class="card">
+            <h4>poll</h4>
+            <p>相比 select 没有固定 fd 数量限制，但仍然需要线性扫描。名单变长了，但还是要扫。</p>
+          </div>
+          <div class="card">
+            <h4>epoll</h4>
+            <p>Linux 高性能 IO 多路复用机制。谁准备好了就通知谁，适合大量连接。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="kernel">
+        <div class="section-title">
+          <h3>6. 用户态和内核态</h3>
+          <p>理解用户态/内核态，可以解释为什么线程切换比协程切换更重。</p>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <span class="tag">User Mode</span>
+            <h4>用户态</h4>
+            <p>
+              普通应用程序运行的低权限区域。Python、C++ 程序、浏览器、VSCode 平时都在用户态。
+              不能直接操作硬件、物理内存、磁盘、网卡。
+            </p>
+          </div>
+          <div class="card">
+            <span class="tag">Kernel Mode</span>
+            <h4>内核态</h4>
+            <p>
+              操作系统内核运行的高权限区域。负责进程调度、线程调度、内存管理、文件系统、网络协议栈和硬件访问。
+            </p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <h4>系统调用链路</h4>
+          <div class="flow">
+            <div class="flow-item">
+              <strong>用户代码</strong>
+              <span>read / write / socket</span>
+            </div>
+            <div class="flow-item">
+              <strong>系统调用</strong>
+              <span>syscall</span>
+            </div>
+            <div class="flow-item">
+              <strong>进入内核态</strong>
+              <span>OS 执行高权限操作</span>
+            </div>
+            <div class="flow-item">
+              <strong>返回结果</strong>
+              <span>文件 / 网络 / 进程</span>
+            </div>
+            <div class="flow-item">
+              <strong>回到用户态</strong>
+              <span>程序继续执行</span>
+            </div>
+          </div>
+          <div class="note">
+            协程切换通常发生在用户态，所以很轻；线程切换由操作系统调度，往往涉及内核调度和上下文切换，所以更重。
+          </div>
+        </div>
+      </section>
+
+      <section id="cpu">
+        <div class="section-title">
+          <h3>7. CPU 的 x 核 x 线程和软件线程是什么关系？</h3>
+          <p>CPU 核心/线程是硬件概念，进程/线程是软件概念。</p>
+        </div>
+
+        <div class="diagram">
+          <h4>示例：4 核 8 线程 CPU</h4>
+          <p style="color:var(--muted); margin-top:0;">
+            下面每个物理核心有两个硬件线程。操作系统会把大量软件线程调度到这些硬件线程上运行。
+          </p>
+
+          <div class="cpu">
+            <div class="core">
+              <div class="core-title">核心 1</div>
+              <div class="hw-thread">硬件线程 1</div>
+              <div class="hw-thread">硬件线程 2</div>
+            </div>
+            <div class="core">
+              <div class="core-title">核心 2</div>
+              <div class="hw-thread">硬件线程 3</div>
+              <div class="hw-thread">硬件线程 4</div>
+            </div>
+            <div class="core">
+              <div class="core-title">核心 3</div>
+              <div class="hw-thread">硬件线程 5</div>
+              <div class="hw-thread">硬件线程 6</div>
+            </div>
+            <div class="core">
+              <div class="core-title">核心 4</div>
+              <div class="hw-thread">硬件线程 7</div>
+              <div class="hw-thread">硬件线程 8</div>
+            </div>
+          </div>
+
+          <div class="software-threads" id="thread-list">
+            <span class="sw-thread">软件线程 A</span>
+            <span class="sw-thread">软件线程 B</span>
+            <span class="sw-thread">软件线程 C</span>
+            <span class="sw-thread">软件线程 D</span>
+            <span class="sw-thread">软件线程 E</span>
+            <span class="sw-thread">软件线程 F</span>
+            <span class="sw-thread">软件线程 G</span>
+            <span class="sw-thread">软件线程 H</span>
+            <span class="sw-thread">软件线程 I</span>
+            <span class="sw-thread">软件线程 J</span>
+          </div>
+
+          <div class="note" id="cpu-note">
+            点击上面的软件线程：它们不是固定绑定某个 CPU 线程，而是由操作系统调度到有限的硬件线程上运行。
+          </div>
+        </div>
+      </section>
+
+      <section id="questions">
+        <div class="section-title">
+          <h3>8. 今天有代表性的问题</h3>
+          <p>这些问题背后，正好串起了并发、调度、语言实现和底层 IO。</p>
+        </div>
+
+        <div class="accordion">
+          <div class="qa">
+            <button>Q1：Python 有 GIL，线程不就相当于进程了吗？<span>＋</span></button>
+            <div class="qa-content">
+              不是。Python 线程仍然是线程，因为它们共享同一个进程的内存和资源。
+              GIL 限制的是同一进程内多个线程执行 Python 字节码的并行能力，而不是把线程变成进程。
+              CPU 密集任务推荐多进程；IO 密集任务线程仍然有价值。
+            </div>
+          </div>
+
+          <div class="qa">
+            <button>Q2：协程和 select、poll、epoll 有相同点吗？<span>＋</span></button>
+            <div class="qa-content">
+              思想上相同，都是为了避免一个线程傻等一个 IO；层级不同。
+              协程是语言层的任务抽象，select/poll/epoll 是操作系统层的 IO 多路复用机制。
+              协程通常通过事件循环间接使用这些机制。
+            </div>
+          </div>
+
+          <div class="qa">
+            <button>Q3：线程之间有竞争，协程之间也有吗？<span>＋</span></button>
+            <div class="qa-content">
+              会。线程可能在任意位置被操作系统抢占；协程通常在 await/yield 处主动让出。
+              所以协程竞争更可控，但如果在修改共享状态中间 await，也可能出现数据不一致。
+            </div>
+          </div>
+
+          <div class="qa">
+            <button>Q4：CPU 的 8 核 16 线程和程序里的线程是什么关系？<span>＋</span></button>
+            <div class="qa-content">
+              CPU 的线程是硬件线程，也叫逻辑处理器。程序里的线程是软件线程。
+              操作系统负责把软件线程调度到 CPU 的硬件线程上执行。软件线程数量可以远大于硬件线程数量。
+            </div>
+          </div>
+
+          <div class="qa">
+            <button>Q5：FastAPI 里什么时候用 async def？<span>＋</span></button>
+            <div class="qa-content">
+              当接口内部要 await 异步数据库、异步 HTTP、WebSocket、异步文件或其他 IO 操作时，用 async def。
+              如果里面是 CPU 密集计算或同步阻塞库，不能直接塞进 async def，否则会阻塞事件循环。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz">
+        <div class="section-title">
+          <h3>9. 小测验</h3>
+          <p>点一下选项，看看今天的核心概念有没有串起来。</p>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card quiz" data-answer="b">
+            <h4>1. 协程最适合哪类任务？</h4>
+            <div class="quiz-option" data-value="a">A. 纯 Python 大量 for 循环计算</div>
+            <div class="quiz-option" data-value="b">B. 高并发网络 IO 等待</div>
+            <div class="quiz-option" data-value="c">C. GPU 矩阵计算</div>
+            <div class="answer">正确答案：B。协程适合等待型任务，比如网络、数据库、WebSocket、HTTP 请求。</div>
+          </div>
+
+          <div class="card quiz" data-answer="c">
+            <h4>2. epoll 主要解决什么问题？</h4>
+            <div class="quiz-option" data-value="a">A. 自动让 Python 多线程绕过 GIL</div>
+            <div class="quiz-option" data-value="b">B. 让 CPU 核心数量翻倍</div>
+            <div class="quiz-option" data-value="c">C. 一个线程高效监听大量 IO 事件</div>
+            <div class="answer">正确答案：C。epoll 是 Linux 上高效的 IO 多路复用机制。</div>
+          </div>
+
+          <div class="card quiz" data-answer="a">
+            <h4>3. 进程和线程最大的资源区别是什么？</h4>
+            <div class="quiz-option" data-value="a">A. 进程默认内存隔离，线程共享进程内存</div>
+            <div class="quiz-option" data-value="b">B. 线程一定比进程更安全</div>
+            <div class="quiz-option" data-value="c">C. 进程不能被操作系统调度</div>
+            <div class="answer">正确答案：A。进程是资源分配单位，线程共享所在进程的资源。</div>
+          </div>
+
+          <div class="card quiz" data-answer="b">
+            <h4>4. Python GIL 主要限制什么？</h4>
+            <div class="quiz-option" data-value="a">A. 所有进程不能并行</div>
+            <div class="quiz-option" data-value="b">B. 同一 CPython 进程内多个线程执行 Python 字节码</div>
+            <div class="quiz-option" data-value="c">C. C++ 线程不能并行</div>
+            <div class="answer">正确答案：B。GIL 不会把线程变成进程，也不影响多个 Python 进程各自运行。</div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        学习路线建议：下一步可以继续学 asyncio 任务取消、线程池/进程池、FastAPI 后台任务与任务队列。
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Sidebar active state
+    const navLinks = document.querySelectorAll("#toc a");
+    const sections = [...document.querySelectorAll("main section, header.hero")];
+
+    function updateActiveLink() {
+      let current = "overview";
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= 120) {
+          current = section.id;
+        }
+      }
+      navLinks.forEach(link => {
+        link.classList.toggle("active", link.getAttribute("href") === "#" + current);
+      });
+    }
+    window.addEventListener("scroll", updateActiveLink);
+    updateActiveLink();
+
+    // Layer details
+    document.querySelectorAll(".layer").forEach(layer => {
+      layer.addEventListener("click", () => {
+        const id = layer.dataset.detail;
+        const detail = document.getElementById(id);
+        detail.classList.toggle("open");
+      });
+    });
+
+    // Race toggle cards
+    document.querySelectorAll(".toggle-card").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".toggle-card").forEach(c => c.classList.remove("active"));
+        document.querySelectorAll("#race .tab-panel").forEach(p => p.classList.remove("active"));
+        card.classList.add("active");
+        document.getElementById(card.dataset.target).classList.add("active");
+      });
+    });
+
+    // Tabs
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.tab;
+        const parentSection = btn.closest("section");
+        parentSection.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        parentSection.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(target).classList.add("active");
+      });
+    });
+
+    // Accordion
+    document.querySelectorAll(".qa button").forEach(button => {
+      button.addEventListener("click", () => {
+        const qa = button.parentElement;
+        qa.classList.toggle("open");
+        button.querySelector("span").textContent = qa.classList.contains("open") ? "－" : "＋";
+      });
+    });
+
+    // CPU software thread click note
+    document.querySelectorAll(".sw-thread").forEach((thread, index) => {
+      thread.addEventListener("click", () => {
+        const slot = (index % 8) + 1;
+        document.getElementById("cpu-note").textContent =
+          `${thread.textContent} 可以被操作系统调度到某个硬件线程上运行，比如当前示意为硬件线程 ${slot}。但这种绑定不是永久的，下一次时间片可能被调度到别处。`;
+      });
+    });
+
+    // Quiz
+    document.querySelectorAll(".quiz").forEach(quiz => {
+      const answer = quiz.dataset.answer;
+      const options = quiz.querySelectorAll(".quiz-option");
+      const answerBox = quiz.querySelector(".answer");
+
+      options.forEach(option => {
+        option.addEventListener("click", () => {
+          options.forEach(o => {
+            o.classList.remove("correct", "wrong");
+          });
+          if (option.dataset.value === answer) {
+            option.classList.add("correct");
+          } else {
+            option.classList.add("wrong");
+            options.forEach(o => {
+              if (o.dataset.value === answer) {
+                o.classList.add("correct");
+              }
+            });
+          }
+          answerBox.classList.add("show");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
