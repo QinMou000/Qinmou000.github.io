@@ -1227,3 +1227,459 @@
 .bg_while .post-content .katex .minner {
     color: #111;
 }
+
+// 动态照片样式约定：脚本只负责识别资源、切换状态和控制播放。
+// 样式层不推断文件名，也不发起媒体请求，避免展示逻辑绑定数据来源。
+// 图片是唯一的尺寸基准，视频、角标均依附于图片建立的矩形。
+// 播放器状态集中在容器上，子元素不维护互相冲突的独立状态。
+// 所有组件选择器均从文章正文进入，首页和独立页面不会被意外匹配。
+// 动态照片容器只作用于文章正文，避免影响首页缩略图与其他主题组件。
+.post-content .post-motion-photo {
+    // 收缩到图片的自然宽度，同时不突破正文可用空间。
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    // 使用与普通正文图片一致的垂直节奏。
+    margin: 22px auto;
+    padding: 0;
+    // 状态文本需要继承正文排版，不使用浏览器的 figure 默认缩进。
+    color: #aab4c7;
+    text-align: center;
+}
+
+// 交互约定：主触发器负责画面控制，图片和视频本身不进入焦点顺序。
+// 声音按钮仅在播放态进入焦点顺序，并与主触发器保持同级。
+// 播放、暂停和重试共用主入口，键盘与指针获得相同状态反馈。
+// 原生按钮可能带有平台相关外观，因此在此统一边框、背景和字体。
+// 焦点轮廓绘制在裁切边界之外，不会被媒体覆盖层遮挡。
+// 触发器同时承担媒体裁切边界和键盘交互入口。
+.post-content .post-motion-photo-trigger {
+    // 相对定位为视频、角标等覆盖层提供统一坐标系。
+    position: relative;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    // 清除按钮默认外观，保持与正文图片的视觉语言一致。
+    margin: 0;
+    padding: 6px;
+    border: 1px solid #444;
+    border-radius: 7px;
+    // 深色背景在图片尚未完成解码时避免出现亮色闪烁。
+    background-color: #111;
+    color: #fff;
+    font: inherit;
+    line-height: 0;
+    // 裁切视频边缘，但不裁切由外层承载的状态提示。
+    overflow: hidden;
+    cursor: pointer;
+    // 仅过渡交互反馈属性，避免改变媒体几何尺寸。
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+// 指针反馈仅增强边界，不使用位移以免正文发生视觉抖动。
+.post-content .post-motion-photo-trigger:hover {
+    border-color: #7d89a0;
+    box-shadow: 0 0 0 1px rgba(125, 137, 160, 0.28);
+}
+
+// 默认焦点样式为不支持 focus-visible 的浏览器提供键盘可见性兜底。
+.post-content .post-motion-photo-trigger:focus {
+    outline: 3px solid #67d4ff;
+    outline-offset: 3px;
+}
+
+// 支持 focus-visible 时，不为纯指针点击保留高亮轮廓。
+.post-content .post-motion-photo-trigger:focus:not(:focus-visible) {
+    outline: none;
+}
+
+// 键盘焦点使用高对比轮廓，且不依赖颜色变化表达状态。
+.post-content .post-motion-photo-trigger:focus-visible {
+    outline: 3px solid #67d4ff;
+    outline-offset: 3px;
+}
+
+// 尺寸约定：封面参与常规文档流，并保留原始宽高比。
+// 视频脱离文档流，加载或卸载均不会改变播放器占位。
+// 外层内边距属于媒体画框，图片和视频共享同一内容盒。
+// 小图保持自然尺寸，大图只在超出正文时等比缩小。
+// 图片负责建立播放器的自然宽高，视频只覆盖该矩形。
+.post-content .post-motion-photo-image {
+    // 覆写正文图片的通用边框、内边距和外边距，避免尺寸重复计算。
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    // 透明背景让触发器承担统一的加载底色。
+    background-color: transparent;
+    box-sizing: border-box;
+    // 图片保留布局尺寸，只通过透明度交接给视频。
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+// 性能约定：视频覆盖层不参与布局计算，降低状态切换时的重排范围。
+// 透明度只作用于两个媒体节点，不对整篇文章建立合成动画。
+// 播放器不使用大面积模糊或滤镜，移动端合成成本保持可控。
+// 媒体背景使用纯色，资源解码前无需绘制额外占位图。
+// 视频覆盖图片的内容盒，确保播放前后不发生尺寸跳变。
+.post-content .post-motion-photo-video {
+    // 四边贴合由图片撑开的触发器内容区域。
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    left: 6px;
+    // 宽高由定位边界决定，避免媒体固有尺寸撑开容器。
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    margin: 0;
+    border: 0;
+    border-radius: 2px;
+    // 内嵌视频完整显示，尺寸差异使用黑边吸收，避免裁掉画面内容。
+    object-fit: contain;
+    object-position: center;
+    background-color: #000;
+    // 默认不参与指针命中，由外层触发器统一处理播放操作。
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+// 状态约定：默认态始终可退化为普通静态图片。
+// 加载态不隐藏封面，网络延迟期间仍保留可理解的内容。
+// 播放态保留图片占位，只交换视觉可见性。
+.post-content .post-motion-photo.is-playing .post-motion-photo-image {
+    opacity: 0;
+}
+
+// 视频进入播放态后覆盖同一媒体矩形。
+.post-content .post-motion-photo.is-playing .post-motion-photo-video {
+    visibility: visible;
+    opacity: 1;
+}
+
+// 角标约定：文字由脚本根据状态更新，样式不写死提示内容。
+// 半透明底色同时适配高亮天空、暗部阴影等不可预测的照片背景。
+// 角标不接收输入，完整点击区域仍由触发器提供。
+// 加载圆环仅作为补充线索，状态文本仍承担完整语义。
+// 角标始终位于媒体内容区内，避免遮挡焦点轮廓。
+.post-content .post-motion-photo-badge {
+    // 位置避开边框内边距，并随播放器缩放保持稳定间距。
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    // 紧凑尺寸为手机端保留更多画面空间。
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+    padding: 4px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    // 半透明深色底在明暗照片上都能维持文字对比度。
+    background-color: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    // 角标只传达状态，不抢占触发器的指针事件。
+    pointer-events: none;
+    user-select: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+// 加载指示器使用当前文字颜色，保证主题切换后仍清晰可见。
+.post-content .post-motion-photo.is-loading .post-motion-photo-badge::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    // 缺口圆环用极小绘制成本表达异步加载状态。
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    animation: post-motion-photo-spin 0.8s linear infinite;
+}
+
+// 加载期间用等待光标明确表示操作尚未完成。
+.post-content .post-motion-photo.is-loading .post-motion-photo-trigger {
+    cursor: progress;
+    border-color: #67d4ff;
+}
+
+// 播放态提高角标底色，避免运动画面降低文字可读性。
+.post-content .post-motion-photo.is-playing .post-motion-photo-badge {
+    background-color: rgba(0, 0, 0, 0.82);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+// 声音控制与主播放按钮保持同级，并只在视频真正播放后出现。
+// 绝对定位避免控件出现时推动后续正文，左上角也不会与实况角标重叠。
+// 可见中文文字描述当前状态，辅助名称描述下一次点击将执行的动作。
+// 控件覆盖在不可预测的画面上，因此使用高对比半透明胶囊背景。
+// 声音状态不改变视频尺寸、图片占位或播放器状态文本的排版。
+// 默认静音由脚本负责，样式不得通过隐藏视频模拟声音关闭。
+// 播放停止后控件立即退出交互树，防止对静态图片产生误导。
+// 控件位置以播放器容器为基准，不依赖视频自身分辨率。
+// 左右角标各自占据一侧，常规手机宽度下仍保留足够画面空间。
+// 按钮保留原生语义，不使用伪元素代替可聚焦的交互节点。
+.post-content .post-motion-photo-sound {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 3;
+    // 默认不进入布局和焦点顺序，播放状态由容器统一开放。
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    min-height: 32px;
+    // 按钮尺寸包含边框和内边距，窄屏时不会意外超出媒体区域。
+    box-sizing: border-box;
+    margin: 0;
+    padding: 6px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    // 深色半透明底在运动画面的亮部和暗部都能维持文字对比度。
+    background-color: rgba(0, 0, 0, 0.78);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    // 只过渡颜色反馈，声音切换不触发布局变化。
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+// 播放状态和 hidden 属性必须同时满足，避免不可见按钮抢占键盘焦点。
+.post-content .post-motion-photo.is-playing .post-motion-photo-sound:not([hidden]) {
+    display: inline-flex;
+}
+
+// 显式隐藏规则覆盖主题中的通用按钮样式。
+.post-content .post-motion-photo-sound[hidden] {
+    display: none;
+}
+
+// 悬停反馈提高边界亮度，不依赖位移或缩放打断视频观看。
+.post-content .post-motion-photo-sound:hover {
+    border-color: rgba(255, 255, 255, 0.76);
+    background-color: rgba(18, 27, 43, 0.92);
+}
+
+// 默认焦点规则为不支持 focus-visible 的浏览器提供清晰兜底。
+.post-content .post-motion-photo-sound:focus {
+    outline: 3px solid #67d4ff;
+    outline-offset: 3px;
+}
+
+// 支持 focus-visible 时不为纯指针点击持续显示轮廓。
+.post-content .post-motion-photo-sound:focus:not(:focus-visible) {
+    outline: none;
+}
+
+// 键盘焦点沿用主播放按钮的高对比蓝色约定。
+.post-content .post-motion-photo-sound:focus-visible {
+    outline: 3px solid #67d4ff;
+    outline-offset: 3px;
+}
+
+// 开启声音后同时改变文字、边框和底色，避免只用单一颜色表达状态。
+.post-content .post-motion-photo-sound[aria-pressed="true"] {
+    border-color: #67d4ff;
+    background-color: rgba(0, 63, 86, 0.92);
+    color: #dff8ff;
+}
+
+// 状态区承载加载、失败和回退信息，并允许长地址安全换行。
+.post-content .post-motion-photo-status {
+    display: block;
+    max-width: 100%;
+    min-height: 0;
+    margin: 8px auto 0;
+    // 较小字号降低辅助信息对正文阅读节奏的干扰。
+    color: #aab4c7;
+    font-size: 12px;
+    line-height: 1.55;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+// 空状态不占据额外间距，正文在尚未交互时保持原有节奏。
+.post-content .post-motion-photo-status:empty {
+    display: none;
+}
+
+// 错误回退约定：失败时封面继续留在文档流中，不出现空白媒体框。
+// 状态文字承载具体原因，边框只用于快速定位发生问题的照片。
+// 错误态不禁用触发器，为脚本提供原位重试的交互空间。
+// 样式不隐藏损坏资源提示，便于读者和维护者识别数据问题。
+// 错误态同时调整边框和文本，避免仅依赖一种提示渠道。
+.post-content .post-motion-photo.is-error .post-motion-photo-trigger {
+    border-color: #e06c75;
+}
+
+// 深色主题使用偏亮红色，确保错误文本达到足够对比度。
+.post-content .post-motion-photo.is-error .post-motion-photo-status {
+    color: #ff9a9f;
+}
+
+// 主题约定：深色规则作为基础，浅色模式仅覆写需要变化的颜色。
+// 角标位于照片之上而非页面背景之上，因此两种主题共用深色底。
+// 焦点色分别校准，确保在黑色和白色页面背景上都清晰可见。
+// 错误色同时作用于边框和文字，不要求用户仅凭颜色判断失败原因。
+// 浅色主题沿用主题现有的白底与灰色边界。
+.bg_while .post-content .post-motion-photo {
+    color: #657084;
+}
+
+// 浅色触发器在图片加载前保持与正文背景一致。
+.bg_while .post-content .post-motion-photo-trigger {
+    border-color: #cbd3df;
+    background-color: #fff;
+    color: #111;
+}
+
+// 浅色悬停态适度加深边界，不引入额外位移。
+.bg_while .post-content .post-motion-photo-trigger:hover {
+    border-color: #8d9cb2;
+    box-shadow: 0 0 0 1px rgba(141, 156, 178, 0.24);
+}
+
+// 浅色背景需要更深的焦点色来维持可辨识度。
+.bg_while .post-content .post-motion-photo-trigger:focus,
+.bg_while .post-content .post-motion-photo-trigger:focus-visible {
+    outline-color: #0076a8;
+}
+
+// 浅色主题使用高不透明白底，确保控件仍能从照片内容中分离。
+// 颜色覆写不改变按钮尺寸，切换主题时媒体布局保持稳定。
+// 有声状态继续同时使用文字和边框，不依赖主题色单独传达。
+.bg_while .post-content .post-motion-photo-sound {
+    border-color: rgba(40, 51, 69, 0.38);
+    background-color: rgba(255, 255, 255, 0.92);
+    color: #283345;
+}
+
+// 浅色悬停态略微加深边框，并保持文字对比度。
+.bg_while .post-content .post-motion-photo-sound:hover {
+    border-color: #8d9cb2;
+    background-color: rgba(244, 246, 250, 0.97);
+}
+
+// 浅色主题复用主按钮的深蓝焦点颜色。
+.bg_while .post-content .post-motion-photo-sound:focus,
+.bg_while .post-content .post-motion-photo-sound:focus-visible {
+    outline-color: #0076a8;
+}
+
+// 浅色主题下的有声态使用蓝色边框和浅蓝底共同表达。
+.bg_while .post-content .post-motion-photo-sound[aria-pressed="true"] {
+    border-color: #0076a8;
+    background-color: rgba(225, 246, 253, 0.97);
+    color: #005c83;
+}
+
+// 保持图片透明，避免通用浅色图片底色覆盖触发器状态。
+.bg_while .post-content .post-motion-photo-image {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+// 浅色主题的状态说明使用中性深灰，兼顾可读性与层级。
+.bg_while .post-content .post-motion-photo-status {
+    color: #657084;
+}
+
+// 浅色错误文本采用更深红色，防止白底上对比度不足。
+.bg_while .post-content .post-motion-photo.is-error .post-motion-photo-status {
+    color: #b42318;
+}
+
+// 浅色错误边框与文本保持同一语义色系。
+.bg_while .post-content .post-motion-photo.is-error .post-motion-photo-trigger {
+    border-color: #b42318;
+}
+
+// 加载动画只改变旋转角度，不触发布局或重绘媒体内容。
+@keyframes post-motion-photo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// 响应式约定：桌面端保留照片自然宽度，手机端优先利用完整正文宽度。
+// 断点沿用主题现有的六百四十像素规则，避免产生新的布局区间。
+// 媒体宽度变化时高度由封面比例决定，不设置固定高度或固定宽高比。
+// 状态文本允许任意位置换行，异常地址不会撑宽页面。
+// 窄屏播放器占满正文宽度，消除自然宽度和按钮内边距造成的溢出风险。
+@media screen and (max-width: 640px) {
+    .post-content .post-motion-photo,
+    .post-content .post-motion-photo-trigger {
+        width: 100%;
+    }
+
+    // 图片按正文宽度等比缩放，视频继续复用同一占位矩形。
+    .post-content .post-motion-photo-image {
+        width: 100%;
+        height: auto;
+    }
+
+    // 缩小角标间距，避免在窄幅竖图上占用过多画面。
+    .post-content .post-motion-photo-badge {
+        top: 12px;
+        right: 12px;
+        min-height: 24px;
+        padding: 3px 8px;
+    }
+
+    // 移动端声音按钮保留四十四像素触控高度，并与角标使用相同边距。
+    // 触控区域扩展只发生在播放期间，不会增加文章初始页面高度。
+    // 文字保持单行，避免按钮增高后遮挡过多动态画面。
+    .post-content .post-motion-photo-sound {
+        top: 12px;
+        left: 12px;
+        min-height: 44px;
+        padding: 8px 12px;
+    }
+}
+
+// 动效约定：常规模式仅使用短时透明度过渡和轻量圆环旋转。
+// 减少动态效果偏好不改变功能状态，只关闭非必要视觉运动。
+// 静态加载圆环和中文状态文本仍可共同表达当前进度。
+// 视频仍由用户主动点击触发，样式不额外隐藏其核心内容。
+// 减少动态效果偏好下关闭装饰动画与过渡，保留清晰的静态状态反馈。
+@media (prefers-reduced-motion: reduce) {
+    // 声音开关只停用颜色过渡，不改变静音切换的即时反馈。
+    .post-content .post-motion-photo-trigger,
+    .post-content .post-motion-photo-image,
+    .post-content .post-motion-photo-video,
+    .post-content .post-motion-photo-badge,
+    .post-content .post-motion-photo-sound {
+        transition: none;
+    }
+
+    // 静止圆环仍表示加载中，同时避免持续旋转引发不适。
+    .post-content .post-motion-photo.is-loading .post-motion-photo-badge::before {
+        animation: none;
+        border-right-color: currentColor;
+        opacity: 0.62;
+    }
+}

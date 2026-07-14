@@ -1,5 +1,17 @@
-This is a personal blog website 😝
-[Original Repository](https://github.com/QinMou000/Qinmou000.github.io)
+# 汪钦的个人博客
 
-[Wang Qin's Personal Blog](https://qinmou000.github.io)
-Welcome to visit
+这是一个个人博客网站 😝
+
+- [原始仓库](https://github.com/QinMou000/Qinmou000.github.io)
+- [在线访问](https://qinmou000.github.io)
+
+欢迎访问。
+
+## 动态照片
+
+- 全站自动识别文章中的 `MVIMG_*.jpg` 动态照片。
+- 页面默认展示静态图，用户点击后才会懒加载图片内嵌的视频；播放后可用“声音：关／开”按钮切换声音，选择会在当前标签页会话内保持，关闭标签页后自动恢复默认静音。若浏览器拦截异步有声播放，当前一次会静音播放并提示再次点击声音按钮，声音偏好仍会保留。
+- 上传未经压缩或转码的完整 `MVIMG_*.jpg` 原文件会保留内嵌音轨；会重编码图片或删除尾部附加数据的图床将同时破坏动态画面和声音。
+- 媒体服务器需要允许跨域资源共享，并支持字节范围请求。
+- 视频解析或加载失败时会退化为静态图片，不影响文章阅读。
+- 本地验证使用 `npm run build`；需要检查交互时运行 `npm run server` 并在浏览器中点击动态照片。
