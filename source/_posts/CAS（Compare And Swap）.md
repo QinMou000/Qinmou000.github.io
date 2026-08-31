@@ -43,7 +43,7 @@ InterlockedCompareExchange ( __inout LONG volatile *Target,__in LONG Exchange,__
 
 C++11的CAS操作支持，atomic对象跟expected按位比较相等，则用val更新atomic对象并返回值true；若atomic对象跟expected按位比较不相等，则更新expected为当前的atomic对象并返回值false，例如atomic的operator++操作就类似于：
 
-`````C++
+```C++
 void operator++(std::atomic<int> cnt){
     int oldval = cnt.load();
 	// 如果cnt与old相等，把cnt赋值为old + 1，返回true
@@ -53,11 +53,54 @@ void operator++(std::atomic<int> cnt){
     while(!compare_exchange_weak(&cnt,&oldval,oldval + 1));
     // while(!cnt.compare_exchange_weak(oldval,oldval + 1));
 }
-`````
+```
 
 ## compare_exchange_weak&&compare_exchange_strong
 
 compare_exchange_weak在某些平台上，即使原子变量的值等于 expected，也可能“虚假地”失败（即返回 false）。这种失败是由于底层硬件或编译器优化导致的，但不会改变原子变量的。compare_exchange_strong保证在原子变量的值等于 expected 时不会虚假地失败。只要原子变量的值等于 expected，操作就会成功。compare_exchange_weak在某些平台上可能比compare_exchange_strong 更快。compare_exchange_weak可能会虚假的失败主要是由于硬件层间的缓存一致性和编译器优化等等，compare_exchange_strong 要避免这些原因就要付出一定的代价，比如要使用硬件的缓存一致性协议（如 MESI 协议）。
+
+## ABA问题
+
+### 场景 1：无锁链表（最经典，工业真实 BUG）
+
+无锁队列，用 CAS 做节点入队出队。
+
+1. 线程 A 准备删除节点 N，读取 N->next = nullptr
+2. 时间片切给线程 B：把节点 N 从链表摘除，**free 回收，又新建一个节点恰好复用到同一块内存地址**（对象复用！），再插回链表。
+3. 线程 A 恢复执行 CAS：对比指针地址，地址还是 N，CAS 判定成功，执行修改。
+
+👉 **后果**：操作已经被销毁、复用的旧节点，链表结构彻底错乱，内存踩坏，出现野指针、死循环、内存泄露，随机崩溃。
+
+> 指针的 ABA：指针值（地址）回到原来的值，但节点已经不是原来那个节点。这是无锁数据结构最头疼的坑。
+
+### 场景 2：账户余额，简单 CAS 转账（数值 ABA）
+
+账户余额：100
+
+1. 线程 1：准备 CAS 把 100 改成 0，读取`expect=100`，还没执行 CAS。
+2. 线程 2：取走 100，余额变成 0；再存入 100，余额回到 100。
+3. 线程 1 执行 CAS：当前等于 expect (100)，执行成功，余额置 0。
+
+👉 **业务后果**：用户明明又存回 100，结果被错误清零，钱凭空消失。
+
+> 现实数据库不会这么写，数据库会带版本号规避；裸写 CAS 原子变量才会踩。
+
+### 场景 3：状态机，任务状态
+
+任务状态：`READY(0)`
+
+1. 线程 1 读到状态 = READY，准备 CAS 改成 RUNNING。
+2. 线程 2：状态改成 PROCESSING (1)，处理完成又改回 READY (0)。
+3. 线程 1CAS 成功，把状态置 RUNNING。
+
+### 解决方案
+
+1. **版本号（最常用）** 每次修改顺带递增版本号，CAS 同时比较【值 + 版本号】。 A (ver=1) → B (ver=2) → A (ver=3)，虽然数值一样，但版本不同，CAS 失败。
+
+> C++ `std::atomic` 的 `compare_exchange` 本身只看值，需要自己维护版本。
+
+1. **标记指针 Hazard Pointer（风险指针）** 无锁链表场景，标记节点是否被回收，防止节点复用导致 ABA。
+2. **不复用对象**：对象用完直接销毁，不要回收重用。
 
 ## 内存序模型
 
