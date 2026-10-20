@@ -13,12 +13,144 @@ if (valineContainer && typeof Valine !== 'undefined' && valine_appid && valine_a
     })
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('pre').forEach((block) => {
-        // 跳过已被 Hexo 服务端高亮的代码块，避免客户端重复高亮覆盖服务端结果
-        if (block.closest('figure.highlight')) return;
-        hljs.highlightBlock(block);
+// Hexo 用独立行节点和 br 表示换行，不能直接读取整张表的文本。
+// 复制只读取代码列，保留空行、缩进以及原文中的特殊字符。
+// 直接子节点限定可以避开高亮标记中可能出现的同名嵌套类。
+// 不使用 innerText，防止折行、隐藏行号等视觉状态改变复制内容。
+function readCodeBlockText(pre) {
+    var lines = pre.querySelectorAll(':scope > .line');
+    if (lines.length) {
+        return Array.from(lines, function(line) {
+            return line.textContent;
+        }).join('\n');
+    }
+    // 普通 pre 的换行由文本节点承担，不进行裁剪或重新排版。
+    return pre.textContent;
+}
+
+// 语言来自作者标注，不猜测未标注代码的语言，避免误导读者。
+// 未列入别名表的语言按原始标识展示，不限制 Hexo 可支持的语言。
+function getCodeBlockLanguage(block, pre) {
+    var code = pre.querySelector('code');
+    var classes = block.className + ' ' + pre.className + ' ' + (code ? code.className : '');
+    // 显式语言前缀优先于布局类，普通 pre 可以同时携带其他样式类。
+    var declared = classes.match(/(?:^|\s)(?:language|lang)-([^\s]+)/);
+    var language = declared ? declared[1] : classes.split(/\s+/).filter(function(name) {
+        return name && name !== 'highlight' && name !== 'hljs';
+    })[0] || 'plaintext';
+    // 两种渲染路径分别使用裸语言类和 language-/lang- 前缀。
+    language = language.replace(/^(language|lang)-/, '').toLowerCase();
+    var names = { cpp: 'C++', 'c++': 'C++', cs: 'C#', csharp: 'C#',
+        javascript: 'JavaScript', js: 'JavaScript', typescript: 'TypeScript',
+        ts: 'TypeScript', python: 'Python', py: 'Python',
+        plaintext: '纯文本', plain: '纯文本', text: '纯文本', 'no-highlight': '纯文本' };
+    // 未列出的语言仍展示原标注；通过 textContent 写入，不解释为 HTML。
+    // 只读取自有别名，防止 constructor 等标识命中对象原型。
+    return Object.prototype.hasOwnProperty.call(names, language) ? names[language] : language.toUpperCase();
+}
+
+// 异步复制期间锁住当前按钮，防止重复点击产生乱序反馈。
+async function copyCodeBlock(pre, button) {
+    // 此入口也用于本地冒烟验证，保护逻辑不能只依赖浏览器禁用态。
+    if (button.disabled) return;
+    button.disabled = true;
+    clearTimeout(button.copyResetTimer);
+    button.textContent = '复制中…';
+    try {
+        // HTTPS 与本地预览使用浏览器原生剪贴板，不引入额外依赖。
+        if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            throw new Error('当前环境不支持自动复制');
+        }
+        // 点击时才提取文本，避免为文章全部代码块预先保存文本副本。
+        await navigator.clipboard.writeText(readCodeBlockText(pre));
+        // 只有剪贴板写入成功后才反馈成功，权限拒绝不会误报。
+        button.textContent = '已复制';
+        button.dataset.copyState = 'success';
+        button.title = '代码已复制，保留原始缩进和换行';
+    } catch (error) {
+        // 保持原文可选择，失败后允许重试，不调用过时的复制接口。
+        button.textContent = '请手动复制';
+        button.dataset.copyState = 'error';
+        button.title = '自动复制不可用，请选择代码后手动复制，也可以再次点击重试';
+    } finally {
+        // 失败与成功都解锁，权限调整后无需刷新文章即可重试。
+        button.disabled = false;
+        // 每个代码块独立恢复，连续操作不会相互覆盖状态。
+        button.copyResetTimer = setTimeout(function() {
+            button.textContent = '复制代码';
+            button.removeAttribute('data-copy-state');
+            button.title = '复制代码';
+        }, 2500);
+    }
+}
+
+// 在现有文章 DOM 上增强交互，不改变 Markdown 或服务端高亮结果。
+function initializeCodeBlocks() {
+    // 一次遍历文章中的候选节点，不扫描导航、评论或其他页面区域。
+    document.querySelectorAll('.post-content figure.highlight, .post-content pre').forEach(function(block) {
+        // 表格中的 pre 由所在 figure 统一处理；重复初始化不会增加工具栏。
+        if (block.closest('.code-block') || (block.tagName === 'PRE' && block.closest('figure.highlight'))) return;
+        var isFigure = block.tagName === 'FIGURE';
+        var pre = isFigure ? block.querySelector('.code pre') : block;
+        var content = isFigure ? block.querySelector('table') : pre;
+        // 不完整的手写结构保持原样，不让单个坏块中断整篇文章。
+        if (!pre || !content) return;
+        var language = getCodeBlockLanguage(block, pre);
+
+        // 普通 pre 沿用本地高亮库，缺失高亮资源时仍能阅读和复制。
+        // 已经服务端高亮的 figure 始终跳过，保护语言标注与行号。
+        if (!isFigure && typeof hljs !== 'undefined') {
+            hljs.highlightBlock(pre.querySelector('code') || pre);
+        }
+        var container = block;
+        if (!isFigure) {
+            // 普通 pre 使用独立外框，工具栏不混入可复制的代码文本。
+            container = document.createElement('div');
+            pre.parentNode.insertBefore(container, pre);
+        }
+        // 外框类同时作为幂等标记，避免后续调用重复绑定点击事件。
+        container.classList.add('code-block');
+
+        // 滚动范围只包含代码；语言与复制按钮保持在可见的顶部。
+        var scroll = document.createElement('div');
+        scroll.className = 'code-scroll';
+        scroll.tabIndex = 0;
+        scroll.setAttribute('role', 'region');
+        scroll.setAttribute('aria-label', language + '代码，可滚动查看');
+        content.parentNode.insertBefore(scroll, content);
+        scroll.appendChild(content);
+        // 移动原节点而非重写 HTML，保留语法标记与原有标题链接。
+        container.appendChild(scroll);
+
+        var toolbar = document.createElement('div');
+        toolbar.className = 'code-toolbar';
+        var label = document.createElement('span');
+        label.className = 'code-language';
+        label.textContent = language;
+        // 原生按钮自带键盘激活语义，不添加重复的按键监听。
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'code-copy';
+        button.textContent = '复制代码';
+        button.title = '复制代码';
+        // 固定操作名称，状态文字通过礼貌播报传达，键盘可直接触发。
+        button.setAttribute('aria-label', '复制代码');
+        button.setAttribute('aria-live', 'polite');
+        button.addEventListener('click', function() {
+            copyCodeBlock(pre, button);
+        });
+        toolbar.appendChild(label);
+        toolbar.appendChild(button);
+        container.insertBefore(toolbar, container.firstChild);
+        // 行号仅用于视觉定位，不参与选择或辅助技术的代码朗读。
+        var gutter = container.querySelector('.gutter');
+        if (gutter) gutter.setAttribute('aria-hidden', 'true');
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 等待正文和本地高亮资源准备完成，再建立代码块交互。
+    initializeCodeBlocks();
 });
 
 function setCookie(key, value) {

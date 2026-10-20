@@ -1,0 +1,341 @@
+// 颜色集中在正文作用域，切换主题时无需重新执行高亮。
+// 服务端裸类名与客户端 hljs- 类名共用同一套语义色。
+// 暗色面板与纯黑页面分离，边界不依赖投影才能识别。
+.post-content {
+    --code-bg: #14171c;
+    --code-bar: #1b1f26;
+    --code-border: #303640;
+    --code-text: #e0e6ef;
+    --code-muted: #9aa6b7;
+    --code-keyword: #e9a0e3;
+    --code-string: #b5d79a;
+    --code-number: #eabd8b;
+    --code-title: #90c9f9;
+    --code-meta: #aebcf0;
+    --code-removed: #ffa3a3;
+}
+
+// 浅色主题使用独立的深色语法色，保持文字与底色的对比。
+// 变量继承到每个代码块，不需要复制整套布局规则。
+// 注释与语言标签共用次级文字色，避免不同区域的明暗层级漂移。
+.bg_while .post-content {
+    --code-bg: #f8fafc;
+    --code-bar: #eef2f6;
+    --code-border: #d7dfe8;
+    --code-text: #263244;
+    --code-muted: #59677a;
+    --code-keyword: #922b86;
+    --code-string: #326323;
+    --code-number: #985119;
+    --code-title: #145f9c;
+    --code-meta: #6551a4;
+    --code-removed: #b42335;
+}
+
+// 原始 figure 和普通 pre 均有基础样式，关闭脚本仍能滚动阅读。
+// 外框受正文宽度约束，长行不得扩大整页宽度。
+// 不给所有 figure 设定尺寸，文章中的其他图文组件不受影响。
+.post-content figure.highlight,
+.post-content .code-block,
+.post-content pre {
+    max-width: 100%;
+    margin: 24px 0;
+    border: 1px solid var(--code-border);
+    border-radius: 10px;
+    background: var(--code-bg);
+    color: var(--code-text);
+    overflow: auto;
+}
+
+// 增强后的外框只裁切圆角，滚动交给内部区域。
+// 工具栏因此不会随代码向右或向下滚走。
+// 圆角归外框统一控制，内部表格和预格式文本不重复绘制。
+.post-content .code-block {
+    overflow: hidden;
+}
+
+// 工具栏使用正文字体，将元信息与等宽代码区分开。
+// 避免阴影和装饰动画，延续博客现有的简洁风格。
+// 两端布局无需绝对定位，可以自然适配语言名和状态文字的长度。
+.post-content .code-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 44px;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--code-border);
+    background: var(--code-bar);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0;
+}
+
+// 超长语言标注省略显示，给复制按钮保留完整空间。
+// 语言名保持作者标注的大小写展示，不在 CSS 中强制转写。
+// 最小宽度归零，确保 flex 项能够触发省略号。
+.post-content .code-language {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--code-muted);
+    font-weight: 600;
+}
+
+// 按钮始终可见，触屏设备无需模拟悬停才能发现入口。
+// 禁止收缩，避免窄屏下按钮文字被挤到多行。
+// 按钮字体继承工具栏，避免系统控件默认字体造成跳动。
+.post-content .code-copy {
+    flex-shrink: 0;
+    min-height: 32px;
+    padding: 4px 10px;
+    border: 1px solid var(--code-border);
+    border-radius: 6px;
+    background: var(--code-bg);
+    color: var(--code-muted);
+    font: inherit;
+    cursor: pointer;
+}
+
+// 成功反馈同时包含文字与颜色，不依赖单独的颜色变化。
+.post-content .code-copy:hover,
+.post-content .code-copy[data-copy-state="success"] {
+    color: var(--code-title);
+    border-color: var(--code-title);
+}
+
+// 错误仍保留按钮操作能力，读者可在授权后重试。
+.post-content .code-copy[data-copy-state="error"] {
+    color: var(--code-removed);
+}
+
+// 异步写入期间明确显示等待，避免重复请求剪贴板。
+.post-content .code-copy:disabled {
+    cursor: wait;
+}
+
+// 滚动区可通过 Tab 聚焦，通过方向键阅读。
+// 轮廓内收，防止被外层圆角裁切。
+// 使用 focus-visible 只为键盘定位显示轮廓，不影响指针点击阅读。
+.post-content .code-copy:focus-visible,
+.post-content .code-scroll:focus-visible {
+    outline: 2px solid var(--code-title);
+    outline-offset: -2px;
+}
+
+// 限制长代码高度，让后续段落不会被大量代码推得过远。
+// 横纵滚动共用容器，保证行号与代码垂直同步。
+// 高度同时受视口和固定上限约束，短代码仍按内容自然展开。
+.post-content .code-scroll {
+    overflow: auto;
+    max-height: min(36rem, 70vh);
+    scrollbar-width: thin;
+    scrollbar-color: var(--code-muted) var(--code-bg);
+}
+
+// 恢复原生表格布局，隔离正文表格的块级滚动。
+// 内容可超过容器宽度，超出部分由外层滚动区展示。
+// 分离边框模型让固定行号的右边界在横向滚动时保持可见。
+.post-content figure.highlight table {
+    display: table;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: visible;
+}
+
+// 清除正文表格边框、斑马纹和单元格留白。
+// 行号与代码的间距统一由 pre 控制。
+// 规则明确到单元格，覆盖 Markdown 基础样式的高优先级选择器。
+.post-content figure.highlight tr,
+.post-content figure.highlight td {
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+// 代码列填满余下空间，行号只占用自然宽度。
+.post-content figure.highlight .code {
+    width: 100%;
+}
+
+// 横向滚动时固定行号，方便对照代码定位。
+// 实色背景遮住下面滚过的代码，不允许选中行号污染手动复制。
+.post-content figure.highlight .gutter {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    border-right: 1px solid var(--code-border);
+    background: var(--code-bg);
+    color: var(--code-muted);
+    text-align: right;
+    user-select: none;
+}
+
+// 行号与代码共用字号、行高，空行也保持对齐。
+// 关闭字体连字，避免运算符的显示形状发生改变。
+// 正常字距保留中文混排时的缩进关系。
+// 不自动折行，避免代码行与行号失去对应。
+// 字体全部使用本地可用字体，不增加字体文件请求。
+.post-content pre,
+.post-content pre code {
+    font-family: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    font-variant-ligatures: none;
+    letter-spacing: 0;
+    tab-size: 4;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+}
+
+// 未包装的 pre 也保持留白，脚本不可用时仍能阅读。
+.post-content pre {
+    padding: 16px 18px;
+}
+
+// 清除嵌套 pre 的外框和段落间距，避免双边框及多余留白。
+// 允许内容自然展开，滚动职责只属于外层。
+.post-content figure.highlight pre,
+.post-content .code-block pre {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    max-width: none;
+    overflow: visible;
+    background: transparent;
+    color: inherit;
+}
+
+// 数字列收紧，三位及更多行号仍按内容自然扩展。
+// 垂直内边距必须继续与代码一致。
+.post-content figure.highlight .gutter pre {
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+// 行内 code 的背景不得覆盖整块代码的配色。
+// 同时清除高亮库默认的内边距，避免普通 pre 出现双层留白。
+// 浅色主题单独列出选择器，以覆盖正文行内 code 的更高优先级。
+.post-content pre code,
+.bg_while .post-content pre code,
+.post-content pre .hljs {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
+// Hexo 标签代码块可能携带标题与来源链接，保留独立展示位置。
+.post-content figure.highlight figcaption {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--code-border);
+    color: var(--code-muted);
+    font-size: 12px;
+}
+
+// 两条高亮路径共享语义色，深浅主题切换无需改动代码 DOM。
+// 选择器仅限定代码区，不影响文章中的普通 class 属性。
+// 仅设置颜色，不改变服务端标记的排版或复制语义。
+.post-content figure.highlight .keyword,
+.post-content pre .hljs-keyword,
+.post-content figure.highlight .selector-tag,
+.post-content pre .hljs-selector-tag {
+    color: var(--code-keyword);
+}
+
+// 注释提高对比度，教程里的解释文字也需要清晰可读。
+// 斜体只用于注释，不改变代码本身的排列。
+.post-content figure.highlight .comment,
+.post-content pre .hljs-comment,
+.post-content figure.highlight .quote,
+.post-content pre .hljs-quote {
+    color: var(--code-muted);
+    font-style: italic;
+}
+
+// 字符串与正则使用绿色，与变量和关键字区分。
+.post-content figure.highlight .string,
+.post-content pre .hljs-string,
+.post-content figure.highlight .regexp,
+.post-content pre .hljs-regexp {
+    color: var(--code-string);
+}
+
+// 数值与常量共用语义色，不改变原始标记。
+.post-content figure.highlight .number,
+.post-content pre .hljs-number,
+.post-content figure.highlight .literal,
+.post-content pre .hljs-literal {
+    color: var(--code-number);
+}
+
+// 函数名、类型、属性和内建标识符使用蓝色强调。
+// 函数参数继续继承普通文字颜色，避免整行被同色覆盖。
+.post-content figure.highlight .title,
+.post-content pre .hljs-title,
+.post-content figure.highlight .type,
+.post-content pre .hljs-type,
+.post-content figure.highlight .built_in,
+.post-content pre .hljs-built_in,
+.post-content figure.highlight .attr,
+.post-content pre .hljs-attr,
+.post-content figure.highlight .name,
+.post-content pre .hljs-name {
+    color: var(--code-title);
+}
+
+// 预处理指令单独着色，内部字符串仍由字符串规则负责。
+.post-content figure.highlight .meta,
+.post-content pre .hljs-meta,
+.post-content figure.highlight .symbol,
+.post-content pre .hljs-symbol {
+    color: var(--code-meta);
+}
+
+// 差异代码保留原有加减号，新增与删除分别着色。
+// 不增加额外内容，确保复制得到的仍是原文。
+.post-content figure.highlight .addition,
+.post-content pre .hljs-addition {
+    color: var(--code-string);
+}
+
+.post-content figure.highlight .deletion,
+.post-content pre .hljs-deletion {
+    color: var(--code-removed);
+}
+
+// Markdown 等语言的强调标记保留文字语义，不引入另一套配色。
+// 未专门列出的 token 自然继承代码文字色，浅色模式也保持可读。
+.post-content figure.highlight .strong,
+.post-content pre .hljs-strong {
+    font-weight: 700;
+}
+
+// 斜体只影响强调标记本身，避免包裹节点改变整段代码。
+.post-content figure.highlight .emphasis,
+.post-content pre .hljs-emphasis {
+    font-style: italic;
+}
+
+// 小屏只收紧留白，保留字号和换行，避免行号错位。
+// 沿用主题的 768 像素断点，不增加新的布局档位。
+@media screen and (max-width: 768px) {
+    .post-content .code-toolbar {
+        padding: 6px 10px;
+    }
+
+    // 触屏点击区域提升到 44 像素，不依赖精确点击。
+    .post-content .code-copy {
+        min-height: 44px;
+    }
+
+    .post-content pre {
+        padding: 14px 12px;
+    }
+}

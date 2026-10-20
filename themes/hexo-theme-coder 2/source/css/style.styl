@@ -53,15 +53,8 @@ a:hover {
 @import "_partial/index"
 @import "_partial/post"
 @import "_partial/markdown"
-
-.highlight table td, .highlight table th, .highlight table tr {
-    border: 0px;
-    padding: 0px;
-}
-
-.highlight .code {
-    width: 100%;
-}
+// 代码展示集中维护，位于正文基础样式之后以隔离通用表格规则。
+@import "_partial/code"
 
 .bg_while {
     background-color: #f6f7fb;

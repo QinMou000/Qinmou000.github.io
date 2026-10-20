@@ -15,7 +15,7 @@
     <title><%= pageTitle %></title>
     <meta name="description" content="<%- pageDescription %>">
     <meta name="keywords" content="<%- pageKeywords %>">
-    <%- css('libs/highlight/styles/monokai-sublime.css') %>
+    <% // 代码配色由主题样式统一管理，避免旧暗色高亮覆盖浅色主题。 %>
     <%- css('libs/font-awesome/css/font-awesome.min.css') %>
     <%- css('libs/katex/katex.min.css') %>
     <%- css('css/style.css') %>
