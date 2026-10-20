@@ -1,35 +1,43 @@
 // 颜色集中在正文作用域，切换主题时无需重新执行高亮。
 // 服务端裸类名与客户端 hljs- 类名共用同一套语义色。
-// 暗色面板与纯黑页面分离，边界不依赖投影才能识别。
+// 面板沿用页面的黑白灰基调，只用轻微明度差区分代码区域。
 .post-content {
-    --code-bg: #14171c;
-    --code-bar: #1b1f26;
-    --code-border: #303640;
-    --code-text: #e0e6ef;
-    --code-muted: #9aa6b7;
-    --code-keyword: #e9a0e3;
-    --code-string: #b5d79a;
-    --code-number: #eabd8b;
-    --code-title: #90c9f9;
-    --code-meta: #aebcf0;
-    --code-removed: #ffa3a3;
+    // 中性底色贴近纯黑正文，不形成独立的蓝灰色面板。
+    --code-bg: #0b0b0b;
+    --code-bar: #111111;
+    --code-border: #282828;
+    // 正文、行号和注释沿用站点的灰阶文字层次。
+    --code-text: #dddddd;
+    --code-muted: #999999;
+    // 语法色只保留少量色相，降低视觉强调但仍可辨识类型。
+    --code-keyword: #c5b4c5;
+    --code-string: #b6bda6;
+    --code-number: #c8b79e;
+    --code-title: #b3bdc7;
+    // 指令使用灰色，错误用柔和红色并同时提供文字反馈。
+    --code-meta: #aaaaaa;
+    --code-removed: #c18c8c;
 }
 
 // 浅色主题使用独立的深色语法色，保持文字与底色的对比。
 // 变量继承到每个代码块，不需要复制整套布局规则。
 // 注释与语言标签共用次级文字色，避免不同区域的明暗层级漂移。
 .bg_while .post-content {
-    --code-bg: #f8fafc;
-    --code-bar: #eef2f6;
-    --code-border: #d7dfe8;
-    --code-text: #263244;
-    --code-muted: #59677a;
-    --code-keyword: #922b86;
-    --code-string: #326323;
-    --code-number: #985119;
-    --code-title: #145f9c;
-    --code-meta: #6551a4;
-    --code-removed: #b42335;
+    // 与浅色主题的图片画框、表格边线共用白底和中性灰边界。
+    --code-bg: #ffffff;
+    --code-bar: #fafafa;
+    --code-border: #dddddd;
+    // 次级文字仍保持足够明暗对比，不用低透明度削弱可读性。
+    --code-text: #222222;
+    --code-muted: #666666;
+    // 浅底采用偏灰的深色语法色，与暗色模式维持相同语义。
+    --code-keyword: #68566b;
+    --code-string: #536147;
+    --code-number: #766044;
+    --code-title: #4c5c6a;
+    // 状态颜色只承担反馈，不成为工具栏的默认强调色。
+    --code-meta: #666666;
+    --code-removed: #8b4444;
 }
 
 // 原始 figure 和普通 pre 均有基础样式，关闭脚本仍能滚动阅读。
@@ -98,11 +106,11 @@
     cursor: pointer;
 }
 
-// 成功反馈同时包含文字与颜色，不依赖单独的颜色变化。
+// 操作反馈沿用导航的灰白明度变化，成功状态由文字明确表达。
 .post-content .code-copy:hover,
 .post-content .code-copy[data-copy-state="success"] {
-    color: var(--code-title);
-    border-color: var(--code-title);
+    color: var(--code-text);
+    border-color: var(--code-muted);
 }
 
 // 错误仍保留按钮操作能力，读者可在授权后重试。
@@ -118,9 +126,10 @@
 // 滚动区可通过 Tab 聚焦，通过方向键阅读。
 // 轮廓内收，防止被外层圆角裁切。
 // 使用 focus-visible 只为键盘定位显示轮廓，不影响指针点击阅读。
+// 焦点沿用正文高对比文字色，不引入额外的蓝色强调。
 .post-content .code-copy:focus-visible,
 .post-content .code-scroll:focus-visible {
-    outline: 2px solid var(--code-title);
+    outline: 2px solid var(--code-text);
     outline-offset: -2px;
 }
 
