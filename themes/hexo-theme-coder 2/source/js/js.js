@@ -567,7 +567,8 @@ function initializeTocScrollFollow() {
         }
 
         // 每次滚轮只累计很小一段位移，并限制在可感知但不夸张的范围内。
-        targetShift = Math.max(-MAX_SHIFT, Math.min(MAX_SHIFT, targetShift + delta * WHEEL_RATIO));
+        // 方向与页面滚动相反：下滚时目录上浮，上滚时目录下沉。
+        targetShift = Math.max(-MAX_SHIFT, Math.min(MAX_SHIFT, targetShift - delta * WHEEL_RATIO));
         startRendering();
 
         window.clearTimeout(idleTimer);
