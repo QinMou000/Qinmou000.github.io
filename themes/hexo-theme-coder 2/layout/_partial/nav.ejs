@@ -1,8 +1,16 @@
+<%
+    var isHomePage = is_home();
+    var currentPageUrl = page.path ? url_for(page.path) : '';
+%>
 <div class="hd nav-shell">
     <ol class="breadcrumb nav-menu">
-        <li class="nav-menu-item"><a class="ba nav-menu-link" href="<%- url_for('/') %>">首页</a></li>
-        <% for (name in theme.menu) { %>
-            <li class="nav-menu-item"><a class="ba nav-menu-link" href="<%- url_for(theme.menu[name]) %>"><%= name %></a></li>
+        <li class="nav-menu-item"><a class="ba nav-menu-link<%= isHomePage ? ' is-active' : '' %>" href="<%- url_for('/') %>"<%- isHomePage ? ' aria-current="page"' : '' %>>首页</a></li>
+        <% for (name in theme.menu) {
+            var menuUrl = url_for(theme.menu[name]);
+            // 站内菜单用路径前缀匹配，分类首页和子分类页都会保持高亮。
+            var isActiveMenu = menuUrl.charAt(0) === '/' && (currentPageUrl === menuUrl || currentPageUrl.indexOf(menuUrl) === 0);
+        %>
+            <li class="nav-menu-item"><a class="ba nav-menu-link<%= isActiveMenu ? ' is-active' : '' %>" href="<%- menuUrl %>"<%- isActiveMenu ? ' aria-current="page"' : '' %>><%= name %></a></li>
         <% } %>
         <li class="nav-menu-item">
             <button class="theme-toggle" type="button" id="theme-toggle" aria-label="切换为浅色主题" title="切换明暗主题">

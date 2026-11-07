@@ -487,7 +487,8 @@ label.el-checkbox {
     color: #99a3b8;
 }
 
-.nav-menu-link:hover {
+.nav-menu-link:hover,
+.nav-menu-link.is-active {
     color: #d8deea;
 }
 
@@ -504,7 +505,8 @@ label.el-checkbox {
     transition: transform 0.25s ease;
 }
 
-.nav-menu-link:hover:after {
+.nav-menu-link:hover:after,
+.nav-menu-link.is-active:after {
     transform: scaleX(1);
 }
 
@@ -543,8 +545,14 @@ label.el-checkbox {
     color: #687385;
 }
 
-.bg_while .nav-menu-link:hover {
+.bg_while .nav-menu-link:hover,
+.bg_while .nav-menu-link.is-active {
     color: #222b38;
+}
+
+// 浅色主题下悬停与选中态的下划线同样使用深色，避免白线落在白底上。
+.bg_while .nav-menu-link:after {
+    background-color: #222b38;
 }
 
 .bg_while .nav-divider {

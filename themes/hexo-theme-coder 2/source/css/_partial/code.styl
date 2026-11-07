@@ -9,14 +9,14 @@
     // 正文、行号和注释沿用站点的灰阶文字层次。
     --code-text: #dddddd;
     --code-muted: #999999;
-    // 语法色只保留少量色相，降低视觉强调但仍可辨识类型。
-    --code-keyword: #c5b4c5;
-    --code-string: #b6bda6;
-    --code-number: #c8b79e;
-    --code-title: #b3bdc7;
-    // 指令使用灰色，错误用柔和红色并同时提供文字反馈。
-    --code-meta: #aaaaaa;
-    --code-removed: #c18c8c;
+    // 语法色在深色底上提高饱和度，让关键字、字符串、数值和函数名一眼可区分。
+    --code-keyword: #c792ea;
+    --code-string: #c3e88d;
+    --code-number: #f78c6c;
+    --code-title: #82aaff;
+    // 预处理指令使用琥珀色，错误用清晰的红色并同时提供文字反馈。
+    --code-meta: #ffcb6b;
+    --code-removed: #ff8a8a;
 }
 
 // 浅色主题使用独立的深色语法色，保持文字与底色的对比。
@@ -30,14 +30,14 @@
     // 次级文字仍保持足够明暗对比，不用低透明度削弱可读性。
     --code-text: #222222;
     --code-muted: #666666;
-    // 浅底采用偏灰的深色语法色，与暗色模式维持相同语义。
-    --code-keyword: #68566b;
-    --code-string: #536147;
-    --code-number: #766044;
-    --code-title: #4c5c6a;
-    // 状态颜色只承担反馈，不成为工具栏的默认强调色。
-    --code-meta: #666666;
-    --code-removed: #8b4444;
+    // 浅底使用更深的同色系语法色，保持清晰对比和相同语义。
+    --code-keyword: #7b2fbe;
+    --code-string: #3f7d20;
+    --code-number: #b45309;
+    --code-title: #1d5fae;
+    // 预处理指令使用深琥珀色，错误保留清晰的红色反馈。
+    --code-meta: #9a6700;
+    --code-removed: #c62828;
 }
 
 // 原始 figure 和普通 pre 均有基础样式，关闭脚本仍能滚动阅读。

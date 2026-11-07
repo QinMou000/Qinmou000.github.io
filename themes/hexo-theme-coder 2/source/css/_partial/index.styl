@@ -354,88 +354,66 @@ hr{
     color: #4b5565;
 }
 
-.bg_while .home-hero,
-.bg_while .categories-page {
+.bg_while .home-hero {
     color: #4b5565;
 }
 
-.bg_while .categories-eyebrow,
-.bg_while .categories-description,
-.bg_while .category-card-count,
-.bg_while .category-card-post-date {
-    color: #7a8597;
+// 分类页独立使用灰阶文字，避免继承首页的蓝灰色调。
+.bg_while .categories-page {
+    color: #444;
 }
 
-.bg_while .categories-title,
+// 次级文字与子分类计数保持同一灰度层级。
+.bg_while .category-card-count,
+.bg_while .category-card-post-date,
+.bg_while .category-card-mark,
+.bg_while .category-card-child span {
+    color: #666;
+}
+
 .bg_while .category-card-title,
 .bg_while .category-card-post-title {
-    color: #111827;
+    color: #111;
 }
 
+// 浅色主题沿用页面白底和灰边，不使用带蓝色的投影。
 .bg_while .category-card {
-    border-color: #d8dee8;
+    border-color: #ddd;
     background-color: #fff;
-    box-shadow: 0 18px 45px rgba(31, 41, 55, 0.08);
 }
 
 .bg_while .category-card:hover {
-    border-color: #aeb9cb;
+    border-color: #999;
 }
 
+// 标签在浅色模式下只通过灰度区分常态与悬停态。
 .bg_while .category-card-child {
-    border-color: #d8dee8;
-    background-color: #f5f7fb;
-    color: #526078;
+    border-color: #ddd;
+    background-color: #f5f5f5;
+    color: #555;
 }
 
 .bg_while .category-card-child:hover {
-    border-color: #aeb9cb;
-    background-color: #edf1f7;
-    color: #111827;
+    border-color: #999;
+    background-color: #eee;
+    color: #111;
 }
 
 .bg_while .category-card-post {
-    border-bottom-color: #e6e9ef;
+    border-bottom-color: #eee;
 }
 
 .bg_while .category-card-post:hover .category-card-post-title,
 .bg_while .category-card-more {
-    color: #111827;
+    color: #111;
 }
 
 .bg_while .category-card-more {
-    border-top-color: #d8dee8;
+    border-top-color: #ddd;
 }
 
 .categories-page {
     padding-bottom: 36px;
-}
-
-.categories-header {
-    max-width: 620px;
-    margin-bottom: 32px;
-}
-
-.categories-eyebrow {
-    margin: 0 0 10px;
-    color: #8f9bb3;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-}
-
-.categories-title {
-    margin: 0;
-    color: #fff;
-    font-size: 34px;
-    line-height: 1.25;
-}
-
-.categories-description {
-    margin: 12px 0 0;
-    color: #8f9bb3;
-    font-size: 15px;
-    line-height: 1.8;
 }
 
 .categories-grid {
@@ -445,21 +423,22 @@ hr{
     align-items: stretch;
 }
 
+// 卡片与全站深色背景共用纯黑，只用灰色边线区分区域。
+// 不添加阴影或有色底层，避免卡片形成独立的蓝灰面板。
 .category-card {
     display: flex;
     flex-direction: column;
     min-width: 0;
     padding: 22px;
-    border: 1px solid #333a49;
+    border: 1px solid #333;
     border-radius: 18px;
-    background-color: #10131a;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
-    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    background-color: #000;
+    transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
+// 悬停只提亮边框并沿用原有位移，纯黑底色始终不变。
 .category-card:hover {
-    border-color: #58657a;
-    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.3);
+    border-color: #666;
     transform: translateY(-3px);
 }
 
@@ -481,13 +460,14 @@ hr{
     line-height: 1.35;
 }
 
+// 分类标记服从文字层次，不再成为彩色强调元素。
 .category-card-mark {
-    color: #8aa4ff;
+    color: #aaa;
 }
 
 .category-card-count {
     flex-shrink: 0;
-    color: #8f9bb3;
+    color: #999;
     font-size: 12px;
     letter-spacing: 0.06em;
 }
@@ -499,26 +479,28 @@ hr{
     margin-top: 16px;
 }
 
+// 子分类标签同样使用纯黑，通过轮廓保持可点击性。
 .category-card-child {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     padding: 6px 10px;
-    border: 1px solid #343c4b;
+    border: 1px solid #333;
     border-radius: 999px;
-    background-color: #171c26;
-    color: #aeb8ca;
+    background-color: #000;
+    color: #ccc;
     font-size: 12px;
 }
 
+// 悬停标签仍为纯黑，靠文字与边框明度提供反馈。
 .category-card-child:hover {
-    border-color: #58657a;
-    background-color: #1d2431;
+    border-color: #666;
+    background-color: #000;
     color: #fff;
 }
 
 .category-card-child span {
-    color: #7f8ba1;
+    color: #999;
     font-size: 11px;
 }
 
@@ -533,13 +515,14 @@ hr{
     justify-content: space-between;
     gap: 14px;
     padding: 10px 0;
-    border-bottom: 1px solid #282f3b;
+    // 分隔线保持低明度，避免与分类卡片外框争夺注意力。
+    border-bottom: 1px solid #222;
 }
 
 .category-card-post-title {
     min-width: 0;
     overflow: hidden;
-    color: #d8deea;
+    color: #ddd;
     font-size: 14px;
     line-height: 1.55;
     text-overflow: ellipsis;
@@ -548,7 +531,8 @@ hr{
 
 .category-card-post-date {
     flex-shrink: 0;
-    color: #77839a;
+    // 小字号日期使用清晰灰色，不能只降低透明度。
+    color: #999;
     font-size: 11px;
     letter-spacing: 0.05em;
 }
@@ -563,14 +547,20 @@ hr{
     justify-content: space-between;
     margin-top: 18px;
     padding-top: 16px;
-    border-top: 1px solid #343c4b;
-    color: #d8deea;
+    border-top: 1px solid #333;
+    color: #ddd;
     font-size: 13px;
     font-weight: 600;
 }
 
 .category-card-more:hover {
     color: #fff;
+}
+
+// 键盘焦点使用链接自身的灰阶色，在两种主题下均保持清晰。
+.category-card a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
 }
 
 .category-card-more span {
@@ -649,14 +639,6 @@ hr{
     .home-post-time {
         float: none;
         display: block;
-    }
-
-    .categories-header {
-        margin-bottom: 24px;
-    }
-
-    .categories-title {
-        font-size: 28px;
     }
 
     .categories-grid {

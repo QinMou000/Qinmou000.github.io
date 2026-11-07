@@ -169,7 +169,6 @@ function updateStyle() {
     if (getCookie("style") == "white") {
         $("#footer").attr("style", "color: #969696;");
         $(".flink").attr("style", "color: #969696;");
-        $(".ba").attr("style", "color: #969696;");
         $("#bodyx").attr("class", "bg_while");
         if (themeToggle) {
             themeToggle.setAttribute('aria-label', '切换为深色主题');
@@ -181,7 +180,6 @@ function updateStyle() {
         $("#footer").attr("style", "");
         $(".flink").attr("style", "");
         $("#bodyx").attr("class", "");
-        $(".ba").attr("style", "");
         if (themeToggle) {
             themeToggle.setAttribute('aria-label', '切换为浅色主题');
         }
@@ -269,8 +267,107 @@ function generateToc() {
     });
 }
 
+// 目录随滚轮轻微上下跟随：停下后先短暂停留，再用轻微过冲的弹簧回到视口中央。
+// 代码块和目录自身的内部滚动不参与，避免局部滚动带着整块目录移动。
+function initializeTocScrollFollow() {
+    var toc = document.querySelector('.post-toc');
+    if (!toc) return;
+
+    // 纯装饰性位移遵循系统的“减少动态效果”设置。
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    var MAX_SHIFT = 18;
+    var WHEEL_RATIO = 0.05;
+    // 滚轮停下后先停留一会，让位移被感知，再触发果冻式回弹。
+    var IDLE_DELAY = 280;
+    // 欠阻尼弹簧：回到原位时会轻微过冲，形成柔和的回弹。
+    var STIFFNESS = 150;
+    var DAMPING = 9.8;
+    var REST_DISTANCE = 0.5;
+    var REST_VELOCITY = 1.5;
+    var targetShift = 0;
+    var currentShift = 0;
+    var velocity = 0;
+    var frameId = null;
+    var idleTimer = null;
+    var lastFrameTime = 0;
+
+    function isNestedScroller(target) {
+        return target && typeof target.closest === 'function'
+            && target.closest('.code-scroll, .post-toc') !== null;
+    }
+
+    function renderShift(timestamp) {
+        var deltaTime = Math.min(Math.max((timestamp - lastFrameTime) / 1000, 0), 0.05);
+        lastFrameTime = timestamp;
+
+        // 固定小步长积分，掉帧时弹簧也不会发散。
+        var steps = Math.max(1, Math.ceil(deltaTime / (1 / 120)));
+        var stepTime = deltaTime / steps;
+
+        for (var index = 0; index < steps; index++) {
+            var acceleration = STIFFNESS * (targetShift - currentShift) - DAMPING * velocity;
+            velocity += acceleration * stepTime;
+            currentShift += velocity * stepTime;
+        }
+
+        toc.style.setProperty('--toc-shift', currentShift.toFixed(2) + 'px');
+
+        if (Math.abs(targetShift - currentShift) < REST_DISTANCE && Math.abs(velocity) < REST_VELOCITY) {
+            currentShift = targetShift;
+            velocity = 0;
+            toc.style.setProperty('--toc-shift', currentShift.toFixed(2) + 'px');
+            frameId = null;
+            return;
+        }
+
+        frameId = window.requestAnimationFrame(renderShift);
+    }
+
+    function startRendering() {
+        if (frameId === null) {
+            lastFrameTime = window.performance.now();
+            frameId = window.requestAnimationFrame(renderShift);
+        }
+    }
+
+    window.addEventListener('wheel', function(event) {
+        // Ctrl/⌘ + 滚轮用于缩放，不改变目录位置。
+        if (event.defaultPrevented || event.ctrlKey || event.metaKey) return;
+        // 代码块横向/纵向滚动、目录自身滚动都不算页面滚动。
+        if (isNestedScroller(event.target)) return;
+
+        var delta = event.deltaY;
+        if (!delta) return;
+
+        // 页面已经到顶或到底时滚轮不会移动正文，目录也不应单独漂移。
+        var atTop = window.pageYOffset <= 0;
+        var atBottom = window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 2;
+        if ((delta < 0 && atTop) || (delta > 0 && atBottom)) return;
+
+        if (event.deltaMode === 1) {
+            delta *= 16;
+        } else if (event.deltaMode === 2) {
+            delta *= window.innerHeight;
+        }
+
+        // 每次滚轮只累计很小一段位移，并限制在可感知但不夸张的范围内。
+        targetShift = Math.max(-MAX_SHIFT, Math.min(MAX_SHIFT, targetShift + delta * WHEEL_RATIO));
+        startRendering();
+
+        window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(function() {
+            targetShift = 0;
+            startRendering();
+        }, IDLE_DELAY);
+    }, { passive: true });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     generateToc();
+    initializeTocScrollFollow();
 });
 
 // 动态照片模块的输入协议如下。

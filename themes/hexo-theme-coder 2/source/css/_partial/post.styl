@@ -2,15 +2,24 @@
     padding-top: 28px;
 }
 
-// 目录脱离正常文档流，悬浮在视口右侧空白区，不挤占文章宽度
+// 目录脱离正常文档流，悬浮在视口右侧空白区，不挤占文章宽度。
+// 文章栏宽 55% 且居中，右边界位于视口 77.5% 处；目录左缘贴着文章留出 24px。
+// 目录纵向居中，随内容高度自动调整，长目录只在内部滚动。
+// --toc-shift 由滚轮监听脚本写入，目录在居中的基础上做轻微跟随位移。
 .post-toc {
+    --toc-shift: 0px;
     position: fixed;
-    top: 80px;
-    right: 24px;
-    width: 200px;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-    opacity: 0.85;
+    top: 50%;
+    left: calc(77.5% + 24px);
+    right: auto;
+    width: calc(22.5% - 48px);
+    max-width: 340px;
+    max-height: calc(100vh - 112px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transform: translateY(calc(-50% + var(--toc-shift)));
+    opacity: 0.9;
     transition: opacity 0.25s ease;
     z-index: 10;
     pointer-events: auto;
@@ -21,27 +30,48 @@
 }
 
 .post-toc-title {
-    font-size: 14px;
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
-    margin-bottom: 12px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
 .post-toc-nav {
-    border-left: 2px solid #444;
-    padding-left: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a3a transparent;
+    border-left: 2px solid #3a3a3a;
+    padding-left: 16px;
+}
+
+.post-toc-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+.post-toc-nav::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.post-toc-nav::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: #3a3a3a;
 }
 
 .post-toc-nav a {
     display: block;
-    font-size: 13px;
-    color: #aaa;
+    font-size: 14.5px;
+    color: #a9a9a9;
     text-decoration: none;
-    padding: 5px 0;
+    padding: 6px 0;
     transition: color 0.2s;
-    line-height: 1.4;
+    line-height: 1.55;
+    overflow-wrap: break-word;
 }
 
 .post-toc-nav a:hover {
@@ -53,24 +83,29 @@
     font-weight: 500;
 }
 
+.post-toc-nav a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
 .post-toc-nav .toc-h2 {
     padding-left: 0;
 }
 
 .post-toc-nav .toc-h3 {
-    padding-left: 12px;
+    padding-left: 14px;
 }
 
 .post-toc-nav .toc-h4 {
-    padding-left: 24px;
+    padding-left: 28px;
 }
 
 .post-toc-nav .toc-h5 {
-    padding-left: 36px;
+    padding-left: 42px;
 }
 
 .post-toc-nav .toc-h6 {
-    padding-left: 48px;
+    padding-left: 56px;
 }
 
 .post-article {
@@ -84,6 +119,11 @@
 
 .bg_while .post-toc-nav {
     border-left-color: #ddd;
+    scrollbar-color: #c4c4c4 transparent;
+}
+
+.bg_while .post-toc-nav::-webkit-scrollbar-thumb {
+    background-color: #c4c4c4;
 }
 
 .bg_while .post-toc-nav a {
@@ -209,15 +249,17 @@
     color: #111;
 }
 
+// 右侧留白不足以放下可读的目录时隐藏，避免目录被压缩成细条。
+@media screen and (max-width: 1100px) {
+    .post-toc {
+        display: none;
+    }
+}
+
 // 手机端适配
 @media screen and (max-width: 768px) {
     .post-container {
         padding-top: 20px;
-    }
-
-    // 手机端隐藏目录
-    .post-toc {
-        display: none;
     }
 
     .post-article {
