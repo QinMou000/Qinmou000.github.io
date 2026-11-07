@@ -217,54 +217,216 @@ function generateToc() {
         firstHeading.remove();
     }
 
-    var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    // 目录从 H2 开始；H3 及更深层级默认收起。
+    var headings = Array.prototype.slice.call(content.querySelectorAll('h2, h3, h4, h5, h6'));
     if (headings.length === 0) {
-        document.querySelector('.post-toc').style.display = 'none';
+        var emptyToc = document.querySelector('.post-toc');
+        if (emptyToc) emptyToc.style.display = 'none';
         return;
     }
 
-    var tocHtml = '';
-    headings.forEach(function(heading, index) {
-        var id = 'toc-' + index;
-        heading.id = id;
-        var level = heading.tagName.toLowerCase();
-        tocHtml += '<a href="#' + id + '" class="toc-' + level + '">' + heading.textContent + '</a>';
-    });
-    tocNav.innerHTML = tocHtml;
+    // 按标题级别构造树，同级或更深的标题挂到最近的上级标题下。
+    // depth 决定视觉层级：如果文章从 H2 直接跳到 H4，H4 仍按下一级展示。
+    var root = { level: 1, depth: -1, children: [], parent: null };
+    var stack = [root];
+    var nodes = [];
 
-    // 点击目录跳转
-    tocNav.addEventListener('click', function(e) {
-        var target = e.target;
-        if (target.tagName === 'A') {
-            e.preventDefault();
-            var href = target.getAttribute('href');
-            var targetEl = document.querySelector(href);
-            if (targetEl) {
-                var offset = 60;
-                var top = targetEl.getBoundingClientRect().top + window.pageYOffset - offset;
-                window.scrollTo({ top: top, behavior: 'smooth' });
+    headings.forEach(function(heading, index) {
+        var level = Number(heading.tagName.charAt(1));
+        while (stack.length > 1 && stack[stack.length - 1].level >= level) {
+            stack.pop();
+        }
+
+        var parent = stack[stack.length - 1];
+        var node = {
+            heading: heading,
+            level: level,
+            depth: parent.depth + 1,
+            index: index,
+            parent: parent === root ? null : parent,
+            children: [],
+            link: null,
+            list: null
+        };
+
+        // 保留文章标题已有的锚点 id，避免正文里的 headerlink 失效。
+        if (!heading.id) {
+            heading.id = 'toc-' + index;
+        }
+        parent.children.push(node);
+        nodes.push(node);
+        stack.push(node);
+    });
+
+    var rootList = document.createElement('ul');
+    rootList.className = 'post-toc-list';
+
+    function renderNodes(children, list) {
+        children.forEach(function(node) {
+            var item = document.createElement('li');
+            item.className = 'post-toc-item';
+
+            var link = document.createElement('a');
+            var visualLevel = Math.min(node.depth + 2, 6);
+            link.className = 'toc-link toc-h' + visualLevel;
+            link.href = '#' + node.heading.id;
+            link.setAttribute('data-toc-index', String(node.index));
+
+            var caret = document.createElement('span');
+            caret.className = 'toc-caret';
+            caret.setAttribute('aria-hidden', 'true');
+
+            var text = document.createElement('span');
+            text.className = 'toc-text';
+            text.textContent = node.heading.textContent;
+
+            link.appendChild(caret);
+            link.appendChild(text);
+
+            item.appendChild(link);
+
+            if (node.children.length) {
+                link.classList.add('has-children');
+                link.setAttribute('aria-expanded', 'false');
+
+                var childList = document.createElement('ul');
+                childList.className = 'post-toc-children';
+                childList.id = 'toc-children-' + node.index;
+                childList.hidden = true;
+                link.setAttribute('aria-controls', childList.id);
+
+                node.list = childList;
+                renderNodes(node.children, childList);
+                item.appendChild(childList);
+            }
+
+            node.link = link;
+            list.appendChild(item);
+        });
+    }
+
+    renderNodes(root.children, rootList);
+    tocNav.textContent = '';
+    tocNav.appendChild(rootList);
+
+    var activeLink = null;
+    var ticking = false;
+
+    // 收起节点时同步复位更深层，重新打开始终只露出一级。
+    function collapseNode(node) {
+        if (!node.list) return;
+        node.list.hidden = true;
+        node.link.setAttribute('aria-expanded', 'false');
+        node.children.forEach(collapseNode);
+    }
+
+    function toggleNode(node) {
+        if (!node.list) return;
+        var willOpen = node.list.hidden;
+        node.children.forEach(collapseNode);
+        node.list.hidden = !willOpen;
+        node.link.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    }
+
+    function scrollToHeading(heading) {
+        var offset = 60;
+        var top = heading.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+
+    // 折叠状态下高亮最近的可见上级，避免把高亮放进不可见的子项。
+    function getVisibleNode(node) {
+        var current = node;
+        while (current && current.link && current.link.offsetParent === null) {
+            current = current.parent;
+        }
+        return current && current.link ? current : null;
+    }
+
+    function centerLink(link) {
+        // 用布局偏移计算目标，避免平滑滚动途中读到中间位置。
+        var linkTop = link.offsetTop - tocNav.offsetTop;
+        var target = linkTop - (tocNav.clientHeight - link.offsetHeight) / 2;
+        var maxScroll = tocNav.scrollHeight - tocNav.clientHeight;
+        target = Math.max(0, Math.min(maxScroll, target));
+
+        // 目标位置和当前滚动位置一致时无需再次触发动画。
+        if (Math.abs(target - tocNav.scrollTop) < 1) return;
+
+        tocNav.scrollTo({ top: target, behavior: 'smooth' });
+    }
+
+    function setActiveNode(node) {
+        var visible = getVisibleNode(node);
+        if (!visible || visible.link === activeLink) return;
+
+        if (activeLink) {
+            activeLink.classList.remove('active');
+            activeLink.removeAttribute('aria-current');
+        }
+
+        activeLink = visible.link;
+        activeLink.classList.add('active');
+        activeLink.setAttribute('aria-current', 'location');
+        centerLink(activeLink);
+    }
+
+    function getActiveNode() {
+        var threshold = 90;
+        var active = nodes[0];
+
+        for (var index = 0; index < nodes.length; index++) {
+            if (nodes[index].heading.getBoundingClientRect().top <= threshold) {
+                active = nodes[index];
+            } else {
+                break;
             }
         }
-    });
 
-    // 滚动监听高亮
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                var id = entry.target.id;
-                tocNav.querySelectorAll('a').forEach(function(a) {
-                    a.classList.remove('active');
-                    if (a.getAttribute('href') === '#' + id) {
-                        a.classList.add('active');
-                    }
-                });
-            }
+        return active;
+    }
+
+    function updateActiveFromScroll() {
+        setActiveNode(getActiveNode());
+    }
+
+    function requestUpdate() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function() {
+            updateActiveFromScroll();
+            ticking = false;
         });
-    }, { rootMargin: '-80px 0px -70% 0px' });
+    }
 
-    headings.forEach(function(heading) {
-        observer.observe(heading);
+    tocNav.addEventListener('click', function(event) {
+        var link = event.target && typeof event.target.closest === 'function'
+            ? event.target.closest('a.toc-link')
+            : null;
+        if (!link || !tocNav.contains(link)) return;
+
+        event.preventDefault();
+
+        var node = nodes[Number(link.getAttribute('data-toc-index'))];
+        if (!node) return;
+
+        scrollToHeading(node.heading);
+
+        if (node.list) {
+            toggleNode(node);
+            window.requestAnimationFrame(function() {
+                centerLink(node.link);
+            });
+        }
+
+        setActiveNode(node);
     });
+
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+    window.addEventListener('load', requestUpdate);
+
+    updateActiveFromScroll();
 }
 
 // 目录随滚轮轻微上下跟随：停下后先短暂停留，再用轻微过冲的弹簧回到视口中央。
