@@ -211,6 +211,9 @@ function generateToc() {
     var tocNav = document.getElementById('post-toc-nav');
     if (!content || !tocNav) return;
 
+    var reduceMotion = window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     var heroTitle = document.querySelector('.post-hero-title');
     var firstHeading = content.querySelector('h1');
     if (heroTitle && firstHeading && firstHeading.textContent.trim() === heroTitle.textContent.trim()) {
@@ -311,6 +314,8 @@ function generateToc() {
 
     var activeLink = null;
     var ticking = false;
+    var pinnedTargetY = null;
+    var pinTimer = 0;
 
     // 收起节点时同步复位更深层，重新打开始终只露出一级。
     function collapseNode(node) {
@@ -328,10 +333,24 @@ function generateToc() {
         node.link.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     }
 
-    function scrollToHeading(heading) {
+    function getHeadingScrollTop(heading) {
         var offset = 60;
         var top = heading.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({ top: top, behavior: 'smooth' });
+        var maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        return Math.max(0, Math.min(maxScroll, top));
+    }
+
+    // 点击目录后的程序化滚动期间固定点击项，避免页面经过的中间标题把目录拉走。
+    function releaseScrollPin() {
+        pinnedTargetY = null;
+        window.clearTimeout(pinTimer);
+    }
+
+    function pinScrollTo(targetY) {
+        pinnedTargetY = targetY;
+        window.clearTimeout(pinTimer);
+        // 页面滚动被用户打断或没有到达目标时，超时后恢复滚动监听。
+        pinTimer = window.setTimeout(releaseScrollPin, 2000);
     }
 
     // 折叠状态下高亮最近的可见上级，避免把高亮放进不可见的子项。
@@ -353,7 +372,7 @@ function generateToc() {
         // 目标位置和当前滚动位置一致时无需再次触发动画。
         if (Math.abs(target - tocNav.scrollTop) < 1) return;
 
-        tocNav.scrollTo({ top: target, behavior: 'smooth' });
+        tocNav.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
 
     function setActiveNode(node) {
@@ -394,6 +413,16 @@ function generateToc() {
         if (ticking) return;
         ticking = true;
         window.requestAnimationFrame(function() {
+            // 点击目录跳转期间保持点击项高亮，不跟随途经标题反复滚动目录。
+            if (pinnedTargetY !== null) {
+                if (Math.abs(window.pageYOffset - pinnedTargetY) < 2) {
+                    window.clearTimeout(pinTimer);
+                    pinTimer = window.setTimeout(releaseScrollPin, 80);
+                }
+                ticking = false;
+                return;
+            }
+
             updateActiveFromScroll();
             ticking = false;
         });
@@ -410,7 +439,12 @@ function generateToc() {
         var node = nodes[Number(link.getAttribute('data-toc-index'))];
         if (!node) return;
 
-        scrollToHeading(node.heading);
+        var targetY = getHeadingScrollTop(node.heading);
+        if (!reduceMotion && Math.abs(window.pageYOffset - targetY) >= 2) {
+            pinScrollTo(targetY);
+        }
+
+        window.scrollTo({ top: targetY, behavior: reduceMotion ? 'auto' : 'smooth' });
 
         if (node.list) {
             toggleNode(node);
@@ -420,6 +454,23 @@ function generateToc() {
         }
 
         setActiveNode(node);
+    });
+
+    function releasePinOnUserScroll(event) {
+        if (event.target && typeof event.target.closest === 'function'
+            && event.target.closest('.post-toc')) {
+            return;
+        }
+        releaseScrollPin();
+    }
+
+    window.addEventListener('wheel', releasePinOnUserScroll, { passive: true });
+    window.addEventListener('touchstart', releasePinOnUserScroll, { passive: true });
+    window.addEventListener('keydown', function(event) {
+        var scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
+        if (scrollKeys.indexOf(event.key) !== -1) {
+            releaseScrollPin();
+        }
     });
 
     window.addEventListener('scroll', requestUpdate, { passive: true });
