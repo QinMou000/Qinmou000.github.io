@@ -1,6 +1,8 @@
 <%
     var isHomePage = is_home();
     var currentPageUrl = page.path ? url_for(page.path) : '';
+    // 文章页有目录时，明暗切换按钮由目录标题行承载；导航栏里的按钮只在目录隐藏的窄屏作为回退。
+    var hasThemeToggleInToc = typeof themeToggleInToc !== 'undefined' && themeToggleInToc;
 %>
 <div class="hd nav-shell">
     <ol class="breadcrumb nav-menu">
@@ -12,8 +14,8 @@
         %>
             <li class="nav-menu-item"><a class="ba nav-menu-link<%= isActiveMenu ? ' is-active' : '' %>" href="<%- menuUrl %>"<%- isActiveMenu ? ' aria-current="page"' : '' %>><%= name %></a></li>
         <% } %>
-        <li class="nav-menu-item">
-            <button class="theme-toggle" type="button" id="theme-toggle" aria-label="切换为浅色主题" title="切换明暗主题">
+        <li class="nav-menu-item nav-menu-item-theme<%= hasThemeToggleInToc ? ' nav-menu-item-theme--toc-fallback' : '' %>">
+            <button class="theme-toggle" type="button" aria-label="切换为浅色主题" title="切换明暗主题">
                 <span class="theme-toggle-icon" aria-hidden="true">☾</span>
             </button>
         </li>

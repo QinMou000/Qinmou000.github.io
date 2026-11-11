@@ -464,12 +464,31 @@ label.el-checkbox {
 }
 
 .nav-menu {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 22px;
     margin: 0;
     padding: 0;
+}
+
+// 明暗切换按钮脱离菜单流，菜单仍保持居中，按钮贴住导航栏最右侧。
+// 用 .nav-menu 前缀提高优先级，压过 .breadcrumb>li 的 display 规则。
+.nav-menu .nav-menu-item-theme {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    display: flex;
+    align-items: center;
+    transform: translateY(-50%);
+}
+
+// 文章页目录已带切换按钮；目录在 1100px 以下隐藏，此时才显示导航栏里的回退按钮。
+@media screen and (min-width: 1101px) {
+    .nav-menu .nav-menu-item-theme--toc-fallback {
+        display: none;
+    }
 }
 
 .nav-menu-item + .nav-menu-item:before,

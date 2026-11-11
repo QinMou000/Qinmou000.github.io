@@ -163,30 +163,27 @@ function getCookie(key) {
 }
 
 function updateStyle() {
-    var themeToggle = document.getElementById('theme-toggle');
-    var themeToggleIcon = themeToggle ? themeToggle.querySelector('.theme-toggle-icon') : null;
+    var isWhiteTheme = getCookie("style") == "white";
+    // 文章页可能同时存在导航栏回退按钮和目录标题行按钮，按类统一更新。
+    var themeToggles = document.querySelectorAll('.theme-toggle');
 
-    if (getCookie("style") == "white") {
-        $("#footer").attr("style", "color: #969696;");
-        $(".flink").attr("style", "color: #969696;");
+    if (isWhiteTheme) {
+        $("#footer").css("color", "#969696");
+        $(".flink").css("color", "#969696");
         $("#bodyx").attr("class", "bg_while");
-        if (themeToggle) {
-            themeToggle.setAttribute('aria-label', '切换为深色主题');
-        }
-        if (themeToggleIcon) {
-            themeToggleIcon.textContent = '☀';
-        }
     } else {
-        $("#footer").attr("style", "");
-        $(".flink").attr("style", "");
+        $("#footer").css("color", "");
+        $(".flink").css("color", "");
         $("#bodyx").attr("class", "");
-        if (themeToggle) {
-            themeToggle.setAttribute('aria-label', '切换为浅色主题');
-        }
-        if (themeToggleIcon) {
-            themeToggleIcon.textContent = '☾';
-        }
     }
+
+    Array.prototype.forEach.call(themeToggles, function(toggle) {
+        toggle.setAttribute('aria-label', isWhiteTheme ? '切换为深色主题' : '切换为浅色主题');
+        var icon = toggle.querySelector('.theme-toggle-icon');
+        if (icon) {
+            icon.textContent = isWhiteTheme ? '☀' : '☾';
+        }
+    });
 }
 
 if (getCookie("style") == null) {
@@ -200,7 +197,7 @@ if (getCookie("style") == null) {
     updateStyle();
 }
 
-$("#theme-toggle").click(function() {
+$(".theme-toggle").on("click", function() {
     setCookie("style", getCookie("style") === "black" ? "white" : "black");
     updateStyle();
 });
@@ -480,6 +477,12 @@ function generateToc() {
     updateActiveFromScroll();
 }
 
+// 滚轮落在自带滚动区域的元素（代码块、目录）上时，局部滚动不应带动整页效果。
+function isNestedScrollTarget(target) {
+    return Boolean(target && typeof target.closest === 'function'
+        && target.closest('.code-scroll, .post-toc'));
+}
+
 // 目录随滚轮轻微上下跟随：停下后先短暂停留，再用轻微过冲的弹簧回到视口中央。
 // 代码块和目录自身的内部滚动不参与，避免局部滚动带着整块目录移动。
 function initializeTocScrollFollow() {
@@ -506,11 +509,6 @@ function initializeTocScrollFollow() {
     var frameId = null;
     var idleTimer = null;
     var lastFrameTime = 0;
-
-    function isNestedScroller(target) {
-        return target && typeof target.closest === 'function'
-            && target.closest('.code-scroll, .post-toc') !== null;
-    }
 
     function renderShift(timestamp) {
         var deltaTime = Math.min(Math.max((timestamp - lastFrameTime) / 1000, 0), 0.05);
@@ -548,17 +546,12 @@ function initializeTocScrollFollow() {
 
     window.addEventListener('wheel', function(event) {
         // Ctrl/⌘ + 滚轮用于缩放，不改变目录位置。
-        if (event.defaultPrevented || event.ctrlKey || event.metaKey) return;
+        if (event.ctrlKey || event.metaKey) return;
         // 代码块横向/纵向滚动、目录自身滚动都不算页面滚动。
-        if (isNestedScroller(event.target)) return;
+        if (isNestedScrollTarget(event.target)) return;
 
         var delta = event.deltaY;
         if (!delta) return;
-
-        // 页面已经到顶或到底时滚轮不会移动正文，目录也不应单独漂移。
-        var atTop = window.pageYOffset <= 0;
-        var atBottom = window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 2;
-        if ((delta < 0 && atTop) || (delta > 0 && atBottom)) return;
 
         if (event.deltaMode === 1) {
             delta *= 16;
@@ -579,9 +572,180 @@ function initializeTocScrollFollow() {
     }, { passive: true });
 }
 
+// 页面到顶或到底后，继续向外滚动时把正文再拉出一小段余量：
+// 越接近最大拉伸量越难拉动，松手后用弹簧回到边界，拉得越深回弹越快。
+// 这里用 transform 模拟额外滚动范围，不改变文档高度，
+// 因此滚动条长度、锚点定位和刷新后的滚动位置都不受影响。
+function initializeElasticOverscroll() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    // 正文边界之外最多能拉出的像素数。
+    var MAX_PULL = 96;
+    // 第一格滚轮转成拉伸量的比例，之后随拉伸深度递减。
+    var PULL_RATIO = 0.4;
+    // 松开滚轮后多久开始回弹。
+    var RELEASE_DELAY = 160;
+    var MIN_RESISTANCE = 0.03;
+
+    var pull = 0;
+    var velocity = 0;
+    var frameId = null;
+    var releaseTimer = 0;
+    var pullTargets = null;
+
+    function collectTargets() {
+        // 只平移正常文档流中的页面区块；固定定位的目录、环境光和画布保持不动。
+        pullTargets = Array.prototype.filter.call(document.body.children, function(element) {
+            return element.matches('.hd, .footer');
+        });
+    }
+
+    function applyPull() {
+        if (!pullTargets) collectTargets();
+        var transform = Math.abs(pull) < 0.05
+            ? ''
+            : 'translate3d(0, ' + pull.toFixed(2) + 'px, 0)';
+        pullTargets.forEach(function(element) {
+            element.style.transform = transform;
+        });
+    }
+
+    function cancelAnimation() {
+        if (frameId !== null) {
+            window.cancelAnimationFrame(frameId);
+            frameId = null;
+        }
+        velocity = 0;
+    }
+
+    function settle() {
+        if (pull === 0) return;
+
+        var direction = pull > 0 ? 1 : -1;
+        var depth = Math.min(1, Math.abs(pull) / MAX_PULL);
+        // 拉得越深弹簧越硬，回弹也越快。
+        var stiffness = 150 + 420 * depth;
+        // 临界阻尼：回到边界时不会反向越过，避免露出另一侧的空白。
+        var damping = 2 * Math.sqrt(stiffness);
+        var previousTime = 0;
+
+        function step(timestamp) {
+            if (!previousTime) previousTime = timestamp;
+            var deltaTime = Math.min(Math.max((timestamp - previousTime) / 1000, 0), 0.05);
+            previousTime = timestamp;
+
+            var steps = Math.max(1, Math.ceil(deltaTime / (1 / 120)));
+            var stepTime = deltaTime / steps;
+
+            for (var index = 0; index < steps; index++) {
+                var acceleration = -stiffness * pull - damping * velocity;
+                velocity += acceleration * stepTime;
+                pull += velocity * stepTime;
+            }
+
+            if (pull * direction <= 0
+                || (Math.abs(pull) < 0.4 && Math.abs(velocity) < 4)) {
+                pull = 0;
+                velocity = 0;
+                applyPull();
+                frameId = null;
+                return;
+            }
+
+            applyPull();
+            frameId = window.requestAnimationFrame(step);
+        }
+
+        frameId = window.requestAnimationFrame(step);
+    }
+
+    function scheduleRelease() {
+        window.clearTimeout(releaseTimer);
+        releaseTimer = window.setTimeout(function() {
+            cancelAnimation();
+            settle();
+        }, RELEASE_DELAY);
+    }
+
+    function addPull(amount) {
+        var depth = Math.min(1, Math.abs(pull) / MAX_PULL);
+        // 阻力随拉伸量增大；保留最小响应，避免贴着上限时完全拉不动。
+        var resistance = Math.max(MIN_RESISTANCE, Math.pow(1 - depth, 1.4));
+        var next = pull + amount * resistance;
+        pull = Math.max(-MAX_PULL, Math.min(MAX_PULL, next));
+        applyPull();
+    }
+
+    function handleWheel(event) {
+        if (event.defaultPrevented || event.ctrlKey || event.metaKey) return;
+        if (!event.deltaY) return;
+        if (isNestedScrollTarget(event.target)) return;
+
+        var delta = event.deltaY;
+        if (event.deltaMode === 1) {
+            delta *= 16;
+        } else if (event.deltaMode === 2) {
+            delta *= window.innerHeight;
+        }
+
+        var atTop = window.pageYOffset <= 0;
+        var atBottom = window.pageYOffset + window.innerHeight >= document.documentElement.scrollHeight - 2;
+
+        // 已经拉出余量时，反向滚轮先把正文送回边界，下一次滚轮才真正滚动页面。
+        if (pull !== 0) {
+            var returning = (pull > 0 && delta > 0) || (pull < 0 && delta < 0);
+            if (returning) {
+                event.preventDefault();
+                cancelAnimation();
+                pull = pull > 0
+                    ? Math.max(0, pull - delta)
+                    : Math.min(0, pull - delta);
+                applyPull();
+                if (pull === 0) {
+                    window.clearTimeout(releaseTimer);
+                } else {
+                    scheduleRelease();
+                }
+                return;
+            }
+
+            cancelAnimation();
+            addPull(-delta * PULL_RATIO);
+            scheduleRelease();
+            return;
+        }
+
+        // 到达顶部后继续向上、到达底部后继续向下，才开始拉出余量。
+        if ((atTop && delta < 0) || (atBottom && delta > 0)) {
+            cancelAnimation();
+            addPull(-delta * PULL_RATIO);
+            scheduleRelease();
+        }
+    }
+
+    // 捕获阶段先处理，才能在“回收拉伸”时拦下页面滚动。
+    window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+
+    // 页面被 bfcache 缓存或进入后台时清掉临时位移，避免返回时页面停在偏移状态。
+    function resetPull() {
+        window.clearTimeout(releaseTimer);
+        cancelAnimation();
+        pull = 0;
+        applyPull();
+    }
+
+    window.addEventListener('pagehide', resetPull);
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) resetPull();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     generateToc();
     initializeTocScrollFollow();
+    initializeElasticOverscroll();
 });
 
 // 动态照片模块的输入协议如下。

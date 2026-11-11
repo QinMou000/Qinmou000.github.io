@@ -1,5 +1,3 @@
-<%- partial('_partial/nav') %>
-
 <%
     var categoryPath = page.categories && typeof page.categories.toArray === 'function'
         ? page.categories.toArray().map(function (category) {
@@ -16,7 +14,12 @@
             articleContent = articleContent.slice(firstHeadingMatch[0].length);
         }
     }
+
+    // 与 js.js 生成目录的规则一致：正文含 H2–H6 才会出现目录。
+    var hasPostToc = /<h[2-6][\s>]/i.test(articleContent);
 %>
+
+<%- partial('_partial/nav', { themeToggleInToc: hasPostToc }) %>
 
 <div class="glass-ambient" aria-hidden="true"></div>
 
@@ -54,6 +57,11 @@
 </div>
 
 <aside class="post-toc">
-    <div class="post-toc-title">目录</div>
+    <div class="post-toc-header">
+        <div class="post-toc-title">目录</div>
+        <button class="theme-toggle post-toc-theme-toggle" type="button" aria-label="切换为浅色主题" title="切换明暗主题">
+            <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        </button>
+    </div>
     <nav class="post-toc-nav" id="post-toc-nav"></nav>
 </aside>
