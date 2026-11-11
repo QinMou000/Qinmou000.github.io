@@ -2,7 +2,7 @@
 title: CAS（Compare And Swap）
 date: 2026-08-23
 categories:
-  - C++
+  - C/C++
 ---
 
 # CAS（Compare And Swap）

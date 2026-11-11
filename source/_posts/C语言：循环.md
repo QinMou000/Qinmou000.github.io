@@ -2,7 +2,7 @@
 title: C语言：循环
 date: 2023-12-09
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：循环
 

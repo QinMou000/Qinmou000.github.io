@@ -2,7 +2,7 @@
 title: C语言学习第一课
 date: 2023-11-23
 categories:
-  - C语言
+  - C/C++
 ---
 ![img](https://raw.githubusercontent.com/QinMou000/pic/main/7b31e694283805f986fbda13da407969.png)
 

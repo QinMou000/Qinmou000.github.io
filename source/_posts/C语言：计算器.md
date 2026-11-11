@@ -2,7 +2,7 @@
 title: C语言：计算器
 date: 2024-02-06
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：计算器
 

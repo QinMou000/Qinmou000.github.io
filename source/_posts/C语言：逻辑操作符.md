@@ -2,7 +2,7 @@
 title: C语言：逻辑操作符
 date: 2023-12-16
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：逻辑操作符
 

@@ -2,7 +2,7 @@
 title: C语言：扫雷小游戏 
 date: 2023-12-28
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：扫雷小游戏   
 

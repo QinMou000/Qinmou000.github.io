@@ -2,7 +2,7 @@
 title: strncpy,strncat,strstr,strtok,strerror,memcpy,memove,memset,memcmp详解&&模拟实现
 date: 2024-03-15
 categories:
-  - C语言
+  - C/C++
 ---
 # strncpy,strncat,strstr,strtok,strerror,memcpy,memove,memset,memcmp详解&&模拟实现
 

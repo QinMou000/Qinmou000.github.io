@@ -2,7 +2,7 @@
 title: C语言：指针易错
 date: 2024-02-22
 categories:
-  - C语言
+  - C/C++
 ---
 
 # C语言：指针易错

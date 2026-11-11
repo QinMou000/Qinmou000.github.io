@@ -2,7 +2,7 @@
 title: C++：模板元编程
 date: 2026-11-11
 categories:
-  - C++
+  - C/C++
 ---
 
 # C++：模板元编程

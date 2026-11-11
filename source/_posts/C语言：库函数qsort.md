@@ -2,7 +2,7 @@
 title: C语言：库函数qsort
 date: 2024-03-02
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：库函数qsort
 

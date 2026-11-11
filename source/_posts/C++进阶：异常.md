@@ -2,7 +2,7 @@
 title: C++进阶：异常
 date: 2024-11-02
 categories:
-  - C++
+  - C/C++
 ---
 
 > ![图片](https://i-blog.csdnimg.cn/direct/9e66b67c73ef431f887a88a78f972ea7.png)

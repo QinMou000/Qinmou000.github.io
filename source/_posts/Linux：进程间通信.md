@@ -2,7 +2,6 @@
 title: Linux：进程间通信
 date: 2025-03-21
 categories:
-  - Linux
   - 操作系统
 ---
 > ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg) 

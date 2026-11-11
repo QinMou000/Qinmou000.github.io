@@ -2,7 +2,6 @@
 title: Linux：环境变量与程序地址空间
 date: 2025-05-30
 categories:
-  - Linux
   - 操作系统
 ---
 > ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/a46182e6318c4593a5c674f2bf9439d4.jpeg)

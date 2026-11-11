@@ -2,7 +2,7 @@
 title: C++初阶：string
 date: 2024-07-26
 categories:
-  - C++
+  - C/C++
 ---
 
 > ![图片](https://i-blog.csdnimg.cn/direct/a1e2fd8531ae4fbab004f1ecd1a2c8b1.jpeg)

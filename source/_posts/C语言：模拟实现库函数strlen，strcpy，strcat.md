@@ -2,7 +2,7 @@
 title: C语言：模拟实现库函数strlen，strcpy，strcat
 date: 2024-03-09
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：模拟实现库函数strlen，strcpy，strcat
 

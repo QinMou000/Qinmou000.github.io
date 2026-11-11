@@ -2,7 +2,7 @@
 title: C语言：中动态内存相关的4个函数free、malloc、calloc、realloc,常⻅的动态内存的错误
 date: 2024-03-23
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：中动态内存相关的4个函数free、malloc、calloc、realloc,常⻅的动态内存的错误
 

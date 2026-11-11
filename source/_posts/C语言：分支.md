@@ -2,7 +2,7 @@
 title: C语言：分支
 date: 2023-12-06
 categories:
-  - C语言
+  - C/C++
 ---
 # C语言：分支
 

@@ -2,8 +2,7 @@
 title: 相比于HTTP，HTTPS协议到底安全在哪？
 date: 2025-08-31
 categories:
-  - Linux
-  - 网络
+  - 计算机网络
 ---
 
 > ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/生成博客封面图片.png) 

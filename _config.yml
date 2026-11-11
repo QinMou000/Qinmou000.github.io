@@ -76,12 +76,10 @@ default_category: uncategorized
 category_map:
   随笔: essay
   闲聊: chat
-  C语言: c
-  C++: cpp
+  "C/C++": cpp
   单片机: microcontroller
-  Linux: linux
   操作系统: os
-  网络: network
+  计算机网络: network
   算法: algorithm
   LeetCode: leetcode
   Qt: qt

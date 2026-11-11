@@ -2,8 +2,7 @@
 title: 网络：网络层（IP协议）和数据链路层
 date: 2025-10-27
 categories:
-  - Linux
-  - 网络
+  - 计算机网络
 ---
 > ![博客封面](https://raw.githubusercontent.com/QinMou000/pic/main/生成博客封面图片.png) 
 

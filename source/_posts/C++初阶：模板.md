@@ -2,7 +2,7 @@
 title: C++初阶：模板
 date: 2024-07-22
 categories:
-  - C++
+  - C/C++
 ---
 
 > ![图片](https://i-blog.csdnimg.cn/direct/a1e2fd8531ae4fbab004f1ecd1a2c8b1.jpeg)
