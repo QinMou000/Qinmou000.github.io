@@ -77,6 +77,7 @@
 %>
 
 <div class="hd categories-page">
+    <div class="glass-ambient" aria-hidden="true"></div>
     <div class="categories-grid">
         <% topCategories.forEach(function (category) { %>
             <article class="category-card">
@@ -99,8 +100,12 @@
                     </div>
                 <% } %>
 
+                <%
+                    // 每张卡片最多显示 5 篇；有子分类的卡片多一行标签，减少到 4 篇。
+                    var previewCount = category.children.length ? 4 : 5;
+                %>
                 <div class="category-card-posts">
-                    <% category.posts.slice(0, 5).forEach(function (post) { %>
+                    <% category.posts.slice(0, previewCount).forEach(function (post) { %>
                         <a class="category-card-post" href="<%- url_for(post.path) %>">
                             <span class="category-card-post-title"><%= post.title %></span>
                             <time class="category-card-post-date" datetime="<%= full_date(post.date, 'YYYY-MM-DD') %>">

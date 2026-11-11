@@ -376,31 +376,67 @@ hr{
     color: #111;
 }
 
-// 浅色主题沿用页面白底和灰边，不使用带蓝色的投影。
+// 浅色主题使用半透明白色玻璃，边框与投影保持低对比。
+.bg_while .glass-ambient {
+    background-image:
+        radial-gradient(52% 46% at 18% 10%, rgba(90, 105, 130, 0.12), transparent 72%),
+        radial-gradient(44% 40% at 84% 58%, rgba(120, 110, 95, 0.08), transparent 72%);
+}
+
 .bg_while .category-card {
-    border-color: #ddd;
-    background-color: #fff;
+    border-color: rgba(20, 30, 45, 0.10);
+    background-color: rgba(255, 255, 255, 0.42);
+    background-image:
+        radial-gradient(130% 95% at 4% 0%, rgba(255, 255, 255, 0.92), transparent 60%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0.72), rgba(246, 248, 252, 0.55) 55%, rgba(238, 242, 248, 0.50));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(20, 30, 45, 0.03),
+        0 24px 60px rgba(20, 30, 45, 0.10);
+}
+
+.bg_while .category-card::after {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), transparent 45%);
 }
 
 .bg_while .category-card:hover {
-    border-color: #999;
+    border-color: rgba(20, 30, 45, 0.20);
+    background-color: rgba(255, 255, 255, 0.62);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 0 rgba(20, 30, 45, 0.04),
+        0 30px 70px rgba(20, 30, 45, 0.14);
+}
+
+// 浅色主题悬停时文字保持深色，避免继承深色主题的提亮规则。
+.bg_while .category-card:hover .category-card-mark,
+.bg_while .category-card:hover .category-card-more {
+    color: #111;
+}
+
+.bg_while .category-card:hover .category-card-count {
+    color: #444;
 }
 
 // 标签在浅色模式下只通过灰度区分常态与悬停态。
 .bg_while .category-card-child {
-    border-color: #ddd;
-    background-color: #f5f5f5;
+    border-color: rgba(20, 30, 45, 0.12);
+    background-color: rgba(255, 255, 255, 0.55);
     color: #555;
 }
 
 .bg_while .category-card-child:hover {
-    border-color: #999;
-    background-color: #eee;
+    border-color: rgba(20, 30, 45, 0.24);
+    background-color: rgba(255, 255, 255, 0.85);
     color: #111;
 }
 
 .bg_while .category-card-post {
-    border-bottom-color: #eee;
+    border-bottom-color: rgba(20, 30, 45, 0.07);
+}
+
+.bg_while .category-card:hover .category-card-post {
+    border-bottom-color: rgba(20, 30, 45, 0.12);
 }
 
 .bg_while .category-card-post:hover .category-card-post-title,
@@ -409,11 +445,22 @@ hr{
 }
 
 .bg_while .category-card-more {
-    border-top-color: #ddd;
+    border-top-color: rgba(20, 30, 45, 0.10);
 }
 
 .categories-page {
     padding-bottom: 36px;
+}
+
+// 覆盖全屏的环境光层，为毛玻璃卡片提供可感知的背景明暗。
+.glass-ambient {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        radial-gradient(52% 46% at 18% 10%, rgba(112, 130, 158, 0.16), transparent 72%),
+        radial-gradient(44% 40% at 84% 58%, rgba(140, 130, 114, 0.09), transparent 72%);
 }
 
 .categories-grid {
@@ -423,23 +470,79 @@ hr{
     align-items: stretch;
 }
 
-// 卡片与全站深色背景共用纯黑，只用灰色边线区分区域。
-// 不添加阴影或有色底层，避免卡片形成独立的蓝灰面板。
+// 毛玻璃卡片：半透明表面 + 背景模糊，保留纯黑页面的层次。
 .category-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
     padding: 22px;
-    border: 1px solid #333;
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 18px;
-    background-color: #000;
-    transition: border-color 0.25s ease, transform 0.25s ease;
+    background-color: rgba(255, 255, 255, 0.02);
+    background-image:
+        radial-gradient(130% 95% at 4% 0%, rgba(255, 255, 255, 0.085), transparent 58%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.028) 55%, rgba(255, 255, 255, 0.014));
+    -webkit-backdrop-filter: blur(26px) saturate(125%);
+    backdrop-filter: blur(26px) saturate(125%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.30),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+        0 24px 60px rgba(0, 0, 0, 0.50);
+    transition: border-color 0.22s cubic-bezier(0.2, 0.7, 0.3, 1), background-color 0.22s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-// 悬停只提亮边框并沿用原有位移，纯黑底色始终不变。
+// 玻璃表面的斜向高光；内容需要盖在伪元素之上。
+.category-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 42%);
+    opacity: 0.85;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+.category-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+// 悬停时边框、表面与底部入口一起提亮。
 .category-card:hover {
-    border-color: #666;
-    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.34);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+        0 30px 70px rgba(0, 0, 0, 0.55);
+    transform: translateY(-5px);
+}
+
+.category-card:hover::after {
+    opacity: 1;
+}
+
+.category-card:hover .category-card-mark,
+.category-card:hover .category-card-more {
+    color: #fff;
+}
+
+.category-card:hover .category-card-count {
+    color: #ccc;
+}
+
+.category-card:hover .category-card-post {
+    border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+
+.category-card:hover .category-card-more span {
+    transform: translateX(4px);
+}
+
+.category-card:focus-within {
+    border-color: rgba(255, 255, 255, 0.28);
 }
 
 .category-card-header {
@@ -479,23 +582,23 @@ hr{
     margin-top: 16px;
 }
 
-// 子分类标签同样使用纯黑，通过轮廓保持可点击性。
+// 子分类标签使用低透明度玻璃底，避免在卡片上形成黑洞。
 .category-card-child {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     padding: 6px 10px;
-    border: 1px solid #333;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 999px;
-    background-color: #000;
+    background-color: rgba(255, 255, 255, 0.04);
     color: #ccc;
     font-size: 12px;
 }
 
-// 悬停标签仍为纯黑，靠文字与边框明度提供反馈。
+// 悬停标签靠文字与边框明度提供反馈。
 .category-card-child:hover {
-    border-color: #666;
-    background-color: #000;
+    border-color: rgba(255, 255, 255, 0.30);
+    background-color: rgba(255, 255, 255, 0.08);
     color: #fff;
 }
 
@@ -516,7 +619,7 @@ hr{
     gap: 14px;
     padding: 10px 0;
     // 分隔线保持低明度，避免与分类卡片外框争夺注意力。
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .category-card-post-title {
@@ -547,7 +650,7 @@ hr{
     justify-content: space-between;
     margin-top: 18px;
     padding-top: 16px;
-    border-top: 1px solid #333;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     color: #ddd;
     font-size: 13px;
     font-weight: 600;
@@ -569,6 +672,57 @@ hr{
 
 .category-card-more:hover span {
     transform: translateX(4px);
+}
+
+// 不支持背景模糊时回退为不透明度更高的纯色面板。
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .category-card,
+    .category-card:hover {
+        background-image: none;
+        background-color: #0d0d0d;
+        border-color: #3a3a3a;
+    }
+
+    .category-card:hover {
+        border-color: #5a5a5a;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .bg_while .category-card,
+    .bg_while .category-card:hover {
+        background-image: none;
+        background-color: #fafbfd;
+        border-color: #d8deea;
+    }
+
+    .bg_while .category-card:hover {
+        border-color: #b8c4db;
+    }
+}
+
+// 尊重系统的减少动态效果偏好。
+@media (prefers-reduced-motion: reduce) {
+    .category-card,
+    .category-card::after,
+    .category-card-more span {
+        transition: none;
+    }
+
+    .category-card:hover {
+        transform: none;
+    }
+
+    .category-card:hover .category-card-more span {
+        transform: none;
+    }
+}
+
+// 移动端减少模糊半径，降低大面积 backdrop-filter 的渲染成本。
+@media (max-width: 640px) {
+    .category-card {
+        -webkit-backdrop-filter: blur(16px) saturate(120%);
+        backdrop-filter: blur(16px) saturate(120%);
+    }
 }
 
 .home-layout .home-year-title,
