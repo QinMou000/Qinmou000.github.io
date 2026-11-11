@@ -51,7 +51,7 @@ template <typename T> auto sum(const T *b, const T *e) {
 
 ---
 
-## 一、模板特化
+## 模板特化
 
 ### 底层原理
 
@@ -156,7 +156,7 @@ template <typename T> void f(T*) { }         // 用重载代替，这才是正�
 
 ---
 
-## 二、萃取（Type Traits）
+## 萃取（Type Traits）
 
 ### 1. 核心思想
 
