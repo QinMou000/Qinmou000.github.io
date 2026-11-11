@@ -16,7 +16,7 @@
 <%- partial('_partial/nav') %>
 
 <div class="hd home-index">
-    <div class="home-posts-panel" data-home-posts-panel data-page-size="24">
+    <div class="home-posts-panel" data-home-posts-panel data-page-size="18">
         <% var uncategorizedKey = '未分类'; %>
         <% var last; %>
         <% var hasOpenYearSection = false; %>
@@ -80,7 +80,7 @@
 
         var posts = Array.prototype.slice.call(document.querySelectorAll('[data-home-post]'));
         var groups = Array.prototype.slice.call(document.querySelectorAll('[data-home-year-group]'));
-        var pageSize = Number(panel.getAttribute('data-page-size')) || 24;
+        var pageSize = Number(panel.getAttribute('data-page-size')) || 18;
         var visibleLimit = pageSize;
 
         function updateGroups() {

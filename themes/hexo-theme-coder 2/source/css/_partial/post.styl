@@ -3,16 +3,16 @@
 }
 
 // 目录脱离正常文档流，悬浮在视口右侧空白区，不挤占文章宽度。
-// 文章栏宽 55% 且居中，右边界位于视口 77.5% 处；目录左缘贴着文章留出 24px。
+// 文章栏宽 58% 且居中，右边界位于视口 79% 处；目录左缘贴着文章留出 24px。
 // 目录纵向居中，随内容高度自动调整，长目录只在内部滚动。
 // --toc-shift 由滚轮监听脚本写入，目录在居中的基础上做轻微跟随位移。
 .post-toc {
     --toc-shift: 0px;
     position: fixed;
     top: 50%;
-    left: calc(77.5% + 24px);
+    left: calc(79% + 24px);
     right: auto;
-    width: calc(22.5% - 48px);
+    width: calc(21% - 48px);
     max-width: 340px;
     max-height: calc(100vh - 112px);
     display: flex;
@@ -214,8 +214,16 @@
     padding-bottom: 30px;
 }
 
+// 文章面板保持 58%，共享的 .hd 已扣掉毛玻璃内边距，用来和正文实际宽度对齐。
+@media screen and (min-width: 801px) {
+    .post-page {
+        width: 58%;
+    }
+}
+
+
 .post-hero {
-    padding: 16px 0 12px;
+    padding: 0 0 14px;
 }
 
 .post-meta {
@@ -252,8 +260,22 @@
     border-color: #444;
 }
 
-.post-article {
-    padding-top: 28px;
+// 标题区与正文共用的毛玻璃外壳；目录保持原有样式并移出外壳，避免 fixed 定位失效。
+.post-shell {
+    box-sizing: border-box;
+    padding: 34px 40px 42px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 22px;
+    background-color: rgba(255, 255, 255, 0.02);
+    background-image:
+        radial-gradient(130% 95% at 4% 0%, rgba(255, 255, 255, 0.085), transparent 58%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.026) 55%, rgba(255, 255, 255, 0.014));
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    backdrop-filter: blur(24px) saturate(125%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+        0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 .post-article-body,
@@ -330,6 +352,34 @@
     color: #111;
 }
 
+// 浅色主题正文毛玻璃，沿用分类卡的浅色玻璃参数。
+.bg_while .post-shell {
+    border-color: rgba(20, 30, 45, 0.10);
+    background-color: rgba(255, 255, 255, 0.42);
+    background-image:
+        radial-gradient(130% 95% at 4% 0%, rgba(255, 255, 255, 0.92), transparent 60%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0.72), rgba(246, 248, 252, 0.55) 55%, rgba(238, 242, 248, 0.50));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 rgba(20, 30, 45, 0.03),
+        0 24px 60px rgba(20, 30, 45, 0.10);
+}
+
+// 不支持背景模糊时回退为不透明度更高的纯色面板。
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .post-shell {
+        background-image: none;
+        background-color: #0d0d0d;
+        border-color: #3a3a3a;
+    }
+
+    .bg_while .post-shell {
+        background-image: none;
+        background-color: #fafbfd;
+        border-color: #d8deea;
+    }
+}
+
 // 右侧留白不足以放下可读的目录时隐藏，避免目录被压缩成细条。
 @media screen and (max-width: 1100px) {
     .post-toc {
@@ -343,8 +393,12 @@
         padding-top: 20px;
     }
 
-    .post-article {
+    .post-shell {
         width: 100%;
+        padding: 22px 20px 28px;
+        border-radius: 16px;
+        -webkit-backdrop-filter: blur(16px) saturate(120%);
+        backdrop-filter: blur(16px) saturate(120%);
     }
 
     .post-hero-title p {

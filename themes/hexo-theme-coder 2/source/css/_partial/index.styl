@@ -225,6 +225,12 @@ hr{
     display: block;
 }
 
+// 分页脚本会给链接设置 hidden，需要显式覆盖 display: block。
+.home-post-link[hidden],
+.home-year-group[hidden] {
+    display: none;
+}
+
 .home-post-item {
     height: auto;
     min-height: 0;

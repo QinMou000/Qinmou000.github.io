@@ -634,25 +634,40 @@
 
 .post-content table {
     display: block;
-    overflow: auto;
     width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-overflow-scrolling: touch;
 }
 
 .post-content table th {
+    background-color: rgba(255, 255, 255, 0.055);
+    color: #fff;
     font-weight: 600;
+    text-align: left;
 }
 
-.post-content table td,
-.post-content table th {
-    border: 1px solid #6b6b6b;
-    padding: 6px 13px;
+.post-content table th,
+.post-content table td {
+    padding: 10px 14px;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    vertical-align: top;
 }
 
-.post-content table tr {
-    border-top: 1px solid #c6cbd1;
+.post-content table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.018);
 }
 
-.post-content table tr:nth-child(2n) {
+.post-content table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.035);
+}
+
+.post-content table tbody tr:last-child td {
+    border-bottom: 0;
 }
 
 .post-content img {
@@ -1059,20 +1074,27 @@
     border-bottom-color: #ddd;
 }
 
-.post-content table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
+// 浅色主题下表格使用浅色表头与低对比分隔线。
+.bg_while .post-content table th {
+    background-color: rgba(20, 30, 45, 0.045);
+    color: #111;
 }
 
-.post-content th,
-.post-content td {
-    border-color: #444;
+.bg_while .post-content table th,
+.bg_while .post-content table td {
+    border-bottom-color: rgba(20, 30, 45, 0.08);
 }
 
-.bg_while .post-content th,
-.bg_while .post-content td {
-    border-color: #ddd;
+.bg_while .post-content table td {
+    color: #4a4a4a;
+}
+
+.bg_while .post-content table tbody tr:nth-child(even) {
+    background-color: rgba(20, 30, 45, 0.018);
+}
+
+.bg_while .post-content table tbody tr:hover {
+    background-color: rgba(20, 30, 45, 0.035);
 }
 
 .post-content pre,

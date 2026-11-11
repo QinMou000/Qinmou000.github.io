@@ -18,38 +18,42 @@
     }
 %>
 
+<div class="glass-ambient" aria-hidden="true"></div>
+
 <div class="hd post-page posts">
-    <div class="post-hero">
-        <div class="post-meta">
-            <span class="post-meta-item post-meta-date"><%- full_date(page.date, 'MMM DD, YYYY') %></span>
-            <% if (categoryPath) { %>
-                <span class="post-meta-separator">·</span>
-                <span class="post-meta-item post-meta-category"><%= categoryPath %></span>
+    <div class="post-shell">
+        <div class="post-hero">
+            <div class="post-meta">
+                <span class="post-meta-item post-meta-date"><%- full_date(page.date, 'MMM DD, YYYY') %></span>
+                <% if (categoryPath) { %>
+                    <span class="post-meta-separator">·</span>
+                    <span class="post-meta-item post-meta-category"><%= categoryPath %></span>
+                <% } %>
+            </div>
+            <div class="post-title post-hero-title">
+                <p><%= page.title %></p>
+            </div>
+            <hr class="post-hero-divider">
+        </div>
+
+        <div class="post-container">
+            <article class="post-article">
+                <div class="post-content post-article-body">
+                    <%- articleContent %>
+                </div>
+            </article>
+
+            <% if (theme.valine.enable && page.comments) { %>
+                <hr class="fhr post-comments-divider">
+                <div class="post-comments">
+                    <div id="vcomments"></div>
+                </div>
             <% } %>
         </div>
-        <div class="post-title post-hero-title">
-            <p><%= page.title %></p>
-        </div>
-        <hr class="post-hero-divider">
     </div>
-
-    <div class="post-container">
-        <article class="post-article">
-            <div class="post-content post-article-body">
-                <%- articleContent %>
-            </div>
-        </article>
-
-        <aside class="post-toc">
-            <div class="post-toc-title">目录</div>
-            <nav class="post-toc-nav" id="post-toc-nav"></nav>
-        </aside>
-    </div>
-
-    <% if (theme.valine.enable && page.comments) { %>
-        <hr class="fhr post-comments-divider">
-        <div class="post-comments">
-            <div id="vcomments"></div>
-        </div>
-    <% } %>
 </div>
+
+<aside class="post-toc">
+    <div class="post-toc-title">目录</div>
+    <nav class="post-toc-nav" id="post-toc-nav"></nav>
+</aside>
