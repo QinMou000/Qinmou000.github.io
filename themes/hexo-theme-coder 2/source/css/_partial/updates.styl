@@ -1,0 +1,954 @@
+// 「最近更新」页面：git log 风格的时间线，卡片可展开单文件差异。
+
+.updates-page {
+    padding-bottom: 56px;
+    color: #d8deea;
+}
+
+// 页面标题只保留给读屏和搜索引擎，视觉上不显示。
+.updates-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.updates-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 30px;
+}
+
+.updates-summary-item {
+    padding: 4px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 999px;
+    color: #aab3c5;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}
+
+.updates-summary-item b {
+    color: #e7ebf5;
+    font-weight: 600;
+}
+
+.updates-summary-add,
+.updates-summary-item b.updates-summary-add {
+    color: #7ee787;
+}
+
+.updates-summary-del,
+.updates-summary-item b.updates-summary-del {
+    color: #ff7b72;
+}
+
+.updates-notice {
+    margin: 0 0 22px;
+    color: #d29922;
+    font-size: 12px;
+    text-align: center;
+}
+
+.updates-notice code {
+    padding: 1px 5px;
+    border: 1px solid rgba(210, 153, 34, 0.35);
+    border-radius: 5px;
+    background-color: rgba(210, 153, 34, 0.08);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+// 时间线：左侧一条竖线，每天一个节点，每次提交再挂一个节点。
+.updates-timeline {
+    position: relative;
+    padding-left: 26px;
+}
+
+.updates-timeline::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 6px;
+    width: 1px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.07));
+}
+
+.updates-day {
+    position: relative;
+    margin-bottom: 34px;
+}
+
+.updates-day:last-child {
+    margin-bottom: 0;
+}
+
+.updates-day-head {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 14px -26px;
+    padding-left: 26px;
+}
+
+// 日期节点压在竖线上，和提交节点保持同一条视觉轴线。
+.updates-day-head::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 9px;
+    height: 9px;
+    margin-top: -4.5px;
+    box-sizing: border-box;
+    border: 1px solid #6b7688;
+    border-radius: 50%;
+    background-color: #0a0b10;
+}
+
+.updates-day-label {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.updates-day-year {
+    color: #8f9bb3;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+}
+
+.updates-day-week {
+    color: #8f9bb3;
+    font-size: 12px;
+}
+
+.updates-day-count {
+    margin-left: auto;
+    color: #7d879c;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+}
+
+.updates-commits {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.update-commit {
+    position: relative;
+}
+
+.update-commit + .update-commit {
+    margin-top: 14px;
+}
+
+// 提交节点：最新一次用绿色实心点提示。
+.update-commit::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: -23.5px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #59627a;
+}
+
+.update-commit.is-latest::before {
+    background-color: #7ee787;
+    box-shadow: 0 0 0 4px rgba(126, 231, 135, 0.14);
+}
+
+.update-card {
+    padding: 16px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.028);
+    background-image: linear-gradient(158deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012));
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    backdrop-filter: blur(18px) saturate(120%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 16px 36px rgba(0, 0, 0, 0.35);
+    transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.update-card:hover {
+    border-color: rgba(255, 255, 255, 0.26);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 20px 44px rgba(0, 0, 0, 0.42);
+    transform: translateY(-2px);
+}
+
+.update-card.is-open {
+    border-color: rgba(255, 255, 255, 0.22);
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+// 卡片顶部就是展开/收起按钮，去掉原生按钮外观。
+.update-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px 16px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.update-card-head:focus-visible {
+    border-radius: 6px;
+    outline: 2px solid #7ee787;
+    outline-offset: 4px;
+}
+
+.update-card-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+}
+
+// 可展开条目的箭头：未展开朝右，展开后朝下。
+.update-chevron,
+.update-file-chevron {
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid #7d879c;
+    border-bottom: 1.5px solid #7d879c;
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.update-chevron {
+    align-self: center;
+}
+
+.update-card:hover .update-chevron,
+.update-file-inner:hover .update-file-chevron {
+    border-color: #e7ebf5;
+}
+
+.update-card.is-open .update-chevron,
+.update-file.is-open .update-file-chevron {
+    border-color: #e7ebf5;
+    transform: rotate(45deg);
+}
+
+.update-time {
+    color: #99a3b8;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+
+.update-hash {
+    padding: 1px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    color: #8f9bb3;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+}
+
+.update-subject {
+    color: #e7ebf5;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.update-card-side {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+}
+
+.update-card-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12.5px;
+}
+
+.update-file-count {
+    color: #7d879c;
+    font-family: inherit;
+    font-size: 11.5px;
+}
+
+.update-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #8f9bb3;
+    font-size: 11.5px;
+    white-space: nowrap;
+}
+
+.update-card:hover .update-toggle,
+.update-card.is-open .update-toggle {
+    color: #e7ebf5;
+}
+
+.update-delta-add {
+    color: #7ee787;
+}
+
+.update-delta-del {
+    color: #ff7b72;
+}
+
+// 提交级红绿比例条，宽度按增删行数分配。
+.update-bar {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    height: 4px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.update-bar i {
+    display: block;
+    height: 100%;
+}
+
+.update-bar-add {
+    background-color: #2ea043;
+}
+
+.update-bar-del {
+    background-color: #da3633;
+}
+
+.update-files {
+    display: none;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.update-card.is-open .update-files {
+    display: block;
+}
+
+.update-file {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.update-file:last-child {
+    border-bottom: 0;
+}
+
+// 文件行本身就是按钮：展开后在其下方插入该文件的差异。
+.update-file-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.update-file-inner:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.update-file:last-child .update-file-inner {
+    padding-bottom: 0;
+}
+
+.update-file-status {
+    flex-shrink: 0;
+    width: 34px;
+    padding: 1px 0;
+    border-radius: 5px;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.is-status-add {
+    color: #7ee787;
+    background-color: rgba(46, 160, 67, 0.12);
+}
+
+.is-status-mod {
+    color: #d29922;
+    background-color: rgba(210, 153, 34, 0.12);
+}
+
+.is-status-del {
+    color: #ff7b72;
+    background-color: rgba(218, 54, 51, 0.12);
+}
+
+.update-file-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: #cfd6e4;
+    font-size: 13.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.update-file-title.is-missing {
+    color: #8f9bb3;
+    opacity: 0.75;
+}
+
+.update-file-inner:hover .update-file-title {
+    color: #fff;
+}
+
+.update-file-bar {
+    display: flex;
+    overflow: hidden;
+    flex-shrink: 0;
+    width: 52px;
+    height: 4px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.07);
+}
+
+.update-file-delta {
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 8px;
+    min-width: 76px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+}
+
+.update-file-delta.is-binary {
+    color: #7d879c;
+    font-family: inherit;
+}
+
+// 文件差异面板：位于文件行下方，只包含“阅读全文”和 diff 主体。
+.file-diff {
+    padding: 2px 0 14px;
+}
+
+.file-diff[hidden] {
+    display: none;
+}
+
+.diff-file-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 16px;
+    padding: 2px 0 8px;
+}
+
+.diff-scroll-hint {
+    color: #6f7a90;
+    font-size: 11px;
+}
+
+.diff-scroll-hint[hidden] {
+    display: none;
+}
+
+.diff-file-missing {
+    color: #7d879c;
+    font-size: 11.5px;
+}
+
+.diff-file-link {
+    padding-bottom: 1px;
+    border-bottom: 1px dotted #6f7a90;
+    color: #99a3b8;
+    font-size: 11.5px;
+    white-space: nowrap;
+}
+
+.diff-file-link:hover {
+    color: #fff;
+}
+
+// 与正文代码块一致：超过固定高度后在框内滚动，避免长 diff 把页面撑开。
+.diff-block {
+    overflow: auto;
+    // 用 unquote 保留 CSS min()，避免 Stylus 在编译期把它算成固定 36rem。
+    max-height: unquote("min(36rem, 70vh)");
+    padding: 8px 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background-color: #07080c;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #4e596d #07080c;
+}
+
+.diff-block:focus-visible {
+    outline: 2px solid #e7ebf5;
+    outline-offset: -2px;
+}
+
+.diff-line {
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+    padding-right: 14px;
+}
+
+.diff-no {
+    flex: 0 0 auto;
+    width: 38px;
+    padding-right: 10px;
+    color: #4e596d;
+    text-align: right;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+// 博客正文里常有整段中文和长链接，差异行自动换行比横向滚动更好读。
+.diff-code {
+    flex: 1;
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.diff-line.is-add {
+    background-color: rgba(46, 160, 67, 0.16);
+}
+
+.diff-line.is-add .diff-code {
+    color: #a7f3b5;
+}
+
+.diff-line.is-del {
+    background-color: rgba(248, 81, 73, 0.14);
+}
+
+.diff-line.is-del .diff-code {
+    color: #ffc1bd;
+}
+
+.diff-line.is-hunk {
+    background-color: rgba(56, 139, 253, 0.12);
+}
+
+.diff-line.is-hunk .diff-code {
+    color: #8ab4f8;
+}
+
+.diff-line.is-meta .diff-code {
+    color: #6f7a90;
+    font-style: italic;
+}
+
+.diff-line.is-ctx .diff-code {
+    color: #b6c0d2;
+}
+
+.diff-loading,
+.diff-error,
+.diff-empty {
+    margin: 0;
+    padding: 18px 12px;
+    color: #8f9bb3;
+    font-size: 12.5px;
+    text-align: center;
+}
+
+.diff-error a {
+    color: #7ee787;
+    text-decoration: underline;
+}
+
+.updates-empty {
+    padding: 44px 24px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    color: #8f9bb3;
+    text-align: center;
+}
+
+.updates-empty p {
+    margin: 0;
+}
+
+.updates-empty-hint {
+    margin-top: 8px !important;
+    color: #6f7a90;
+    font-size: 12px;
+}
+
+.updates-footnote {
+    margin: 34px 0 0;
+    color: #6f7a90;
+    font-size: 11.5px;
+    line-height: 1.9;
+    text-align: center;
+}
+
+.updates-footnote code {
+    padding: 1px 4px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.06);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+// 浅色主题：玻璃卡片换成半透明白，红绿压低饱和度以适配浅底。
+.bg_while .updates-page {
+    color: #4b5565;
+}
+
+.bg_while .updates-summary-item {
+    border-color: rgba(20, 30, 45, 0.14);
+    color: #55617a;
+}
+
+.bg_while .updates-summary-item b {
+    color: #111;
+}
+
+.bg_while .updates-summary-add,
+.bg_while .updates-summary-item b.updates-summary-add {
+    color: #1a7f37;
+}
+
+.bg_while .updates-summary-del,
+.bg_while .updates-summary-item b.updates-summary-del {
+    color: #cf222e;
+}
+
+.bg_while .updates-notice {
+    color: #9a6700;
+}
+
+.bg_while .updates-timeline::before {
+    background: linear-gradient(180deg, rgba(20, 30, 45, 0.18), rgba(20, 30, 45, 0.05));
+}
+
+.bg_while .updates-day-head::before {
+    border-color: #9aa6b8;
+    background-color: #f6f7fb;
+}
+
+.bg_while .updates-day-label {
+    color: #111;
+}
+
+.bg_while .updates-day-year,
+.bg_while .updates-day-week {
+    color: #6b7688;
+}
+
+.bg_while .updates-day-count {
+    color: #8a93a3;
+}
+
+.bg_while .update-commit::before {
+    background-color: #b8c4db;
+}
+
+.bg_while .update-commit.is-latest::before {
+    background-color: #1a7f37;
+    box-shadow: 0 0 0 4px rgba(26, 127, 55, 0.12);
+}
+
+.bg_while .update-card {
+    border-color: rgba(20, 30, 45, 0.10);
+    background-color: rgba(255, 255, 255, 0.48);
+    background-image: linear-gradient(158deg, rgba(255, 255, 255, 0.72), rgba(247, 249, 252, 0.42));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        0 16px 36px rgba(20, 30, 45, 0.08);
+}
+
+.bg_while .update-card:hover {
+    border-color: rgba(20, 30, 45, 0.20);
+    background-color: rgba(255, 255, 255, 0.66);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 1),
+        0 20px 44px rgba(20, 30, 45, 0.12);
+}
+
+.bg_while .update-card.is-open {
+    border-color: rgba(20, 30, 45, 0.18);
+    background-color: rgba(255, 255, 255, 0.62);
+}
+
+.bg_while .update-card-head:focus-visible {
+    outline-color: #1a7f37;
+}
+
+.bg_while .update-time {
+    color: #6b7688;
+}
+
+.bg_while .update-hash {
+    border-color: rgba(20, 30, 45, 0.14);
+    color: #6b7688;
+}
+
+.bg_while .update-subject {
+    color: #111;
+}
+
+.bg_while .update-file-count {
+    color: #8a93a3;
+}
+
+.bg_while .update-toggle {
+    color: #6b7688;
+}
+
+.bg_while .update-card:hover .update-toggle,
+.bg_while .update-card.is-open .update-toggle {
+    color: #111;
+}
+
+.bg_while .update-delta-add {
+    color: #1a7f37;
+}
+
+.bg_while .update-delta-del {
+    color: #cf222e;
+}
+
+.bg_while .update-bar {
+    background-color: rgba(20, 30, 45, 0.08);
+}
+
+.bg_while .update-files {
+    border-top-color: rgba(20, 30, 45, 0.08);
+}
+
+.bg_while .update-file {
+    border-bottom-color: rgba(20, 30, 45, 0.07);
+}
+
+.bg_while .update-file-title {
+    color: #333c4d;
+}
+
+.bg_while .update-file-inner:hover .update-file-title {
+    color: #000;
+}
+
+.bg_while .update-file-title.is-missing {
+    color: #8a93a3;
+}
+
+.bg_while .update-file-bar {
+    background-color: rgba(20, 30, 45, 0.08);
+}
+
+.bg_while .is-status-add {
+    color: #1a7f37;
+    background-color: rgba(26, 127, 55, 0.10);
+}
+
+.bg_while .is-status-mod {
+    color: #9a6700;
+    background-color: rgba(154, 103, 0, 0.10);
+}
+
+.bg_while .is-status-del {
+    color: #cf222e;
+    background-color: rgba(207, 34, 46, 0.10);
+}
+
+.bg_while .update-chevron,
+.bg_while .update-file-chevron {
+    border-color: #9aa6b8;
+}
+
+.bg_while .update-card:hover .update-chevron,
+.bg_while .update-file-inner:hover .update-file-chevron,
+.bg_while .update-card.is-open .update-chevron,
+.bg_while .update-file.is-open .update-file-chevron {
+    border-color: #111;
+}
+
+.bg_while .diff-file-missing {
+    color: #8a93a3;
+}
+
+.bg_while .diff-scroll-hint {
+    color: #8a93a3;
+}
+
+.bg_while .diff-file-link {
+    border-bottom-color: #b8c4db;
+    color: #55617a;
+}
+
+.bg_while .diff-file-link:hover {
+    color: #000;
+}
+
+.bg_while .diff-block {
+    border-color: rgba(20, 30, 45, 0.10);
+    background-color: #fbfcfe;
+    scrollbar-color: #b8c4db #fbfcfe;
+}
+
+.bg_while .diff-block:focus-visible {
+    outline-color: #111;
+}
+
+.bg_while .diff-no {
+    color: #9aa6b8;
+}
+
+.bg_while .diff-line.is-add {
+    background-color: #e6ffec;
+}
+
+.bg_while .diff-line.is-add .diff-code {
+    color: #1a7f37;
+}
+
+.bg_while .diff-line.is-del {
+    background-color: #ffebe9;
+}
+
+.bg_while .diff-line.is-del .diff-code {
+    color: #cf222e;
+}
+
+.bg_while .diff-line.is-hunk {
+    background-color: #eef3fb;
+}
+
+.bg_while .diff-line.is-hunk .diff-code {
+    color: #57606a;
+}
+
+.bg_while .diff-line.is-ctx .diff-code {
+    color: #333c4d;
+}
+
+.bg_while .diff-loading,
+.bg_while .diff-error,
+.bg_while .diff-empty {
+    color: #7a8597;
+}
+
+.bg_while .diff-error a {
+    color: #1a7f37;
+}
+
+.bg_while .updates-empty {
+    border-color: #ddd;
+    background-color: #fff;
+    color: #7a8597;
+}
+
+.bg_while .updates-empty-hint {
+    color: #8a93a3;
+}
+
+.bg_while .updates-footnote {
+    color: #8a93a3;
+}
+
+.bg_while .updates-footnote code {
+    background-color: rgba(20, 30, 45, 0.06);
+}
+
+@media screen and (max-width: 800px) {
+    .updates-summary {
+        margin-bottom: 24px;
+    }
+
+    .updates-timeline {
+        padding-left: 18px;
+    }
+
+    .updates-day-head {
+        margin-left: -18px;
+        padding-left: 18px;
+    }
+
+    .updates-day-head::before {
+        left: 2px;
+    }
+
+    .update-commit::before {
+        left: -15.5px;
+    }
+
+    .update-card {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .update-card-stats {
+        gap: 8px;
+    }
+
+    .update-file-bar {
+        display: none;
+    }
+
+    .update-file-delta {
+        min-width: 0;
+    }
+
+    .update-subject {
+        font-size: 14px;
+    }
+
+    .diff-block {
+        font-size: 11px;
+    }
+
+    .diff-no {
+        width: 28px;
+        padding-right: 7px;
+    }
+}

@@ -27,6 +27,7 @@ favicon: /img/favicon.ico
 # 菜单栏配置
 menu:
   分类: /categories/
+  最近更新: /updates/
   # 关于: http://wangruqin.site/
   Gitee: https://gitee.com/wang-qin928
   GitHub: https://github.com/QinMou000

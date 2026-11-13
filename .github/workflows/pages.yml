@@ -14,6 +14,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # 「最近更新」页面需要完整提交历史，不能使用默认的浅克隆。
+          fetch-depth: 0
           # If your repository depends on submodule, please see: https://github.com/actions/checkout
           submodules: recursive
       - name: Use Node.js 22

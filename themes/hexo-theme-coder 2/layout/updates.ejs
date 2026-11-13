@@ -1,0 +1,160 @@
+<div class="hd home-hero logodiv">
+    <div class="home-hero-avatar">
+        <%- image_tag(theme.gender,{class: 'logopng', alt: 'logo'}) %>
+    </div>
+    <div class="home-hero-copy">
+        <p class="logot home-hero-title">
+             <%= theme.logo_title %>
+             <span class="logo_2"></span>
+        </p>
+        <p class="words home-hero-subtitle">
+            <%= theme.words %>
+        </p>
+    </div>
+</div>
+
+<%- partial('_partial/nav') %>
+
+<div class="glass-ambient" aria-hidden="true"></div>
+
+<div class="hd updates-page" data-root="<%- url_for('/') %>">
+    <h1 class="updates-sr-only">最近更新</h1>
+
+    <% if (page.available) { %>
+        <div class="updates-summary">
+            <span class="updates-summary-item">本次展示 <b><%= page.shownCommits %></b> 次</span>
+            <% if (page.totalCommits > page.shownCommits) { %>
+                <span class="updates-summary-item">历史共 <b><%= page.totalCommits %></b> 次</span>
+            <% } %>
+            <span class="updates-summary-item">新增 <b class="updates-summary-add"><%= page.added %></b> 行</span>
+            <span class="updates-summary-item">删除 <b class="updates-summary-del"><%= page.deleted %></b> 行</span>
+        </div>
+    <% } %>
+    <% if (page.shallow) { %>
+        <p class="updates-notice">
+            当前仓库是浅克隆，只能看到最近一次提交。CI 中请为 checkout 设置 <code>fetch-depth: 0</code>。
+        </p>
+    <% } %>
+    <noscript>
+        <p class="updates-notice">展开文件列表与差异需要启用 JavaScript。</p>
+    </noscript>
+
+    <% if (!page.available) { %>
+        <div class="updates-empty">
+            <p>暂时读取不到 git 提交历史。</p>
+            <p class="updates-empty-hint">请确认构建目录是一个完整的 git 仓库，并且本机可以执行 git 命令。</p>
+        </div>
+    <% } else if (!page.groups.length) { %>
+        <div class="updates-empty">
+            <p>最近还没有改动过文章的提交。</p>
+        </div>
+    <% } else { %>
+        <%
+            var STATUS_TEXT = { A: '新增', M: '修改', D: '删除', T: '变更' };
+            var STATUS_CLASS = {
+                A: 'is-status-add',
+                M: 'is-status-mod',
+                D: 'is-status-del',
+                T: 'is-status-mod'
+            };
+
+            // 每个文件单独一行：卡片展开时只显示标题列表，点击标题再展开该文件的差异。
+            var renderFile = function (file, index, commitHash) {
+                var statusText = STATUS_TEXT[file.status] || '变更';
+                var statusClass = STATUS_CLASS[file.status] || 'is-status-mod';
+                var panelId = 'file-diff-' + commitHash + '-' + index;
+        %>
+            <li class="update-file" data-file-row>
+                <button class="update-file-inner" type="button"
+                    data-file-index="<%= index %>"
+                    aria-expanded="false"
+                    aria-controls="<%= panelId %>"
+                    title="展开这篇博客的差异">
+                    <span class="update-file-chevron" aria-hidden="true"></span>
+                    <span class="update-file-status <%= statusClass %>"><%= statusText %></span>
+                    <span class="update-file-title<%= file.missing ? ' is-missing' : '' %>"><%= file.title %></span>
+                    <% if (file.binary) { %>
+                        <span class="update-file-delta is-binary">二进制</span>
+                    <% } else { %>
+                        <span class="update-file-bar" aria-hidden="true">
+                            <i class="update-bar-add" style="width: <%= file.addPercent %>%"></i>
+                            <i class="update-bar-del" style="width: <%= file.delPercent %>%"></i>
+                        </span>
+                        <span class="update-file-delta">
+                            <span class="update-delta-add">+<%= file.added %></span>
+                            <span class="update-delta-del">−<%= file.deleted %></span>
+                        </span>
+                    <% } %>
+                </button>
+                <div class="file-diff" id="<%= panelId %>" hidden></div>
+            </li>
+        <%
+            };
+        %>
+
+        <div class="updates-timeline">
+            <% page.groups.forEach(function (group, groupIndex) { %>
+                <section class="updates-day">
+                    <header class="updates-day-head">
+                        <span class="updates-day-label"><%= group.label %></span>
+                        <span class="updates-day-year"><%= group.year %></span>
+                        <span class="updates-day-week"><%= group.weekday %></span>
+                        <span class="updates-day-count"><%= group.commits.length %> 次提交</span>
+                    </header>
+
+                    <ol class="updates-commits">
+                        <% group.commits.forEach(function (commit, commitIndex) { %>
+                            <%
+                                var commitTotal = (commit.added || 0) + (commit.deleted || 0);
+                                var commitAddPercent = commitTotal ? Math.round((commit.added || 0) / commitTotal * 100) : 0;
+                                var commitDelPercent = commitTotal ? 100 - commitAddPercent : 0;
+                                var filesId = 'files-' + commit.hash;
+                            %>
+                            <li class="update-commit<%= groupIndex === 0 && commitIndex === 0 ? ' is-latest' : '' %>"
+                                data-commit-card
+                                data-diff-url="<%- url_for('/updates/diffs/' + commit.hash + '.json') %>"
+                                <%- commit.commitUrl ? 'data-commit-url="' + commit.commitUrl + '"' : '' %>>
+                                <article class="update-card">
+                                    <button class="update-card-head" type="button" aria-expanded="false" aria-controls="<%= filesId %>">
+                                        <span class="update-card-main">
+                                            <span class="update-chevron" aria-hidden="true"></span>
+                                            <time class="update-time" datetime="<%= commit.dateTime %>"><%= commit.time %></time>
+                                            <code class="update-hash" title="<%= commit.hash %>"><%= commit.short %></code>
+                                            <span class="update-subject"><%= commit.subject %></span>
+                                        </span>
+                                        <span class="update-card-side">
+                                            <span class="update-card-stats">
+                                                <span class="update-delta-add">+<%= commit.added %></span>
+                                                <span class="update-delta-del">−<%= commit.deleted %></span>
+                                                <span class="update-file-count"><%= commit.fileCount %> 篇</span>
+                                            </span>
+                                            <span class="update-toggle">
+                                                <span class="update-toggle-label">查看文件</span>
+                                            </span>
+                                        </span>
+                                    </button>
+
+                                    <div class="update-bar" aria-hidden="true">
+                                        <i class="update-bar-add" style="width: <%= commitAddPercent %>%"></i>
+                                        <i class="update-bar-del" style="width: <%= commitDelPercent %>%"></i>
+                                    </div>
+
+                                    <ul class="update-files" id="<%= filesId %>">
+                                        <% commit.files.forEach(function (file, index) { renderFile(file, index, commit.hash); }); %>
+                                    </ul>
+                                </article>
+                            </li>
+                        <% }) %>
+                    </ol>
+                </section>
+            <% }) %>
+        </div>
+
+        <p class="updates-footnote">
+            数据来自 git 提交历史，只统计 <code>source/_posts</code> 下的文章改动；点击提交展开文件列表，点击标题展开单文件差异。
+            <% if (page.generatedAt) { %>页面生成于 <%= page.generatedAt %>。<% } %>
+        </p>
+    <% } %>
+</div>
+
+<script src="<%- url_for('/js/updates.js') %>"></script>

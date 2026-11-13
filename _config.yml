@@ -67,6 +67,13 @@ index_generator:
 
 pagination_dir: page       # 分页路径后缀（比如/page/2）
 
+# 最近更新页面
+# 构建时读取 git 提交历史，展示最近若干次改动过文章的提交。
+# limit: 展示的提交次数；enable: 设为 false 可关闭页面生成。
+recent_updates:
+  enable: true
+  limit: 30
+
 # Category & Tag
 category_generator:
   per_page: 0
